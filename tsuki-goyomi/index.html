@@ -79,6 +79,24 @@ h1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.12e
 .cell.sel{background:#232b52}
 @media (min-width:560px){.cell canvas{width:40px;height:40px}.cell .d{font-size:13.5px}.cell .age,.cell .ev{font-size:11.5px}}
 .note{font-size:12px;color:var(--mute);line-height:1.7}
+
+/* いまの月の方角 */
+.sky{border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.sky h2{grid-column:1/-1;font-family:var(--display);font-size:18px;letter-spacing:.08em;margin:0}
+.sky svg{width:190px;height:190px;display:block}
+.sky .txt{display:flex;flex-direction:column;gap:6px;min-width:0}
+.sky .dir{font-family:var(--display);font-size:28px;font-weight:700;line-height:1.25}
+.sky .sub{font-size:13px;color:var(--mute)}
+.rs{display:flex;gap:8px;flex-wrap:wrap}
+.place{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.place select,.place button{background:var(--sky-2);color:var(--ink);border:1px solid var(--line);border-radius:8px;height:34px;font:inherit;font-size:13px;padding:0 10px;cursor:pointer}
+.place select:focus-visible,.place button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.place .msg{font-size:11.5px;color:var(--mute);flex-basis:100%}
+@media (max-width:480px){
+  .sky{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .sky .txt{align-items:center}
+  .rs,.place{justify-content:center}
+}
 .home{font-size:12px;color:var(--mute);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
 </style>
 </head><body>
@@ -104,6 +122,21 @@ h1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.12e
     </div>
   </section>
 
+  <section class="sky" aria-live="polite">
+    <h2>いま、月はどこ？</h2>
+    <svg id="compass" viewBox="0 0 200 200" role="img" aria-label="月の方角と高さ"></svg>
+    <div class="txt">
+      <div class="dir" id="sDir"></div>
+      <div class="sub" id="sSub"></div>
+      <div class="rs" id="sRS"></div>
+      <div class="place">
+        <select id="city" aria-label="見る場所"></select>
+        <button id="geo">現在地を使う</button>
+        <span class="msg" id="geoMsg"></span>
+      </div>
+    </div>
+  </section>
+
   <section class="cal">
     <div class="calhead">
       <div class="month" id="mLabel"></div>
@@ -114,7 +147,7 @@ h1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.12e
       </div>
     </div>
     <div class="grid" id="grid"></div>
-    <p class="note">日本時間で計算しています。月齢は正午の値です。新月・上弦・満月・下弦はその瞬間をむかえる日に印をつけています。計算はこの端末の中で行っていて、時刻は数分程度ずれることがあります。</p>
+    <p class="note">日本時間で計算しています。月齢は正午の値です。新月・上弦・満月・下弦はその瞬間をむかえる日に印をつけています。月の方角・高さ・月の出入りは、選んだ場所から見た値です。計算はこの端末の中で行っていて、時刻は数分程度ずれることがあります。</p>
   </section>
 </div>
 
@@ -145,6 +178,55 @@ function refine(t,target){for(let i=0;i<8;i++){t-=sgn(elong(t)-target)/12.19*DAY
 function lastNew(ms){let t=refine(ms-elong(ms)/12.19*DAY,0);if(t>ms)t=refine(t-SYN*DAY,0);return t}
 function nextPhase(ms,target){let t=refine(ms+n360(target-elong(ms))/12.19*DAY,target);if(t<=ms)t=refine(t+SYN*DAY,target);return t}
 const illum=E=>(1-Math.cos(E*R))/2;
+
+// ---- 月の方角と高さ（見ている場所から） ----
+const CITIES=[["札幌",43.06,141.35],["仙台",38.27,140.87],["東京",35.68,139.77],["名古屋",35.18,136.91],["大阪",34.69,135.50],["広島",34.39,132.46],["福岡",33.59,130.40],["那覇",26.21,127.68]];
+const DIR16=["北","北北東","北東","東北東","東","東南東","南東","南南東","南","南南西","南西","西南西","西","西北西","北西","北北西"];
+const dirName=az=>DIR16[Math.round(n360(az)/22.5)%16];
+function moonEq(ms){
+  const JD=ms/DAY+2440587.5, T=(JD-2451545)/36525;
+  const M=357.5291092+35999.0502909*T, Lp=218.3164477+481267.88123421*T, D=297.8501921+445267.1114034*T,
+        Mp=134.9633964+477198.8675055*T, F=93.2720950+483202.0175233*T;
+  const s=x=>Math.sin(x*R), c=x=>Math.cos(x*R);
+  const lon=Lp+6.288774*s(Mp)+1.274027*s(2*D-Mp)+0.658314*s(2*D)+0.213618*s(2*Mp)
+    -0.185116*s(M)-0.114332*s(2*F)+0.058793*s(2*D-2*Mp)+0.057066*s(2*D-M-Mp)
+    +0.053322*s(2*D+Mp)+0.045758*s(2*D-M)-0.040923*s(M-Mp)-0.034720*s(D)-0.030383*s(M+Mp)
+    +0.015327*s(2*D-2*F)+0.010980*s(Mp-2*F)+0.010675*s(4*D-Mp)+0.010034*s(3*Mp);
+  const lat=5.128122*s(F)+0.280602*s(Mp+F)+0.277693*s(Mp-F)+0.173237*s(2*D-F)+0.055413*s(2*D-Mp+F)
+    +0.046271*s(2*D-Mp-F)+0.032573*s(2*D+F)+0.017198*s(2*Mp+F)+0.009266*s(2*D+Mp-F)+0.008822*s(2*Mp-F);
+  const dist=385000.56-20905.355*c(Mp)-3699.111*c(2*D-Mp)-2955.968*c(2*D)-569.925*c(2*Mp);
+  const eps=23.439291-0.0130042*T;
+  return{
+    ra:Math.atan2(s(lon)*c(eps)-Math.tan(lat*R)*s(eps),c(lon)),
+    dec:Math.asin(s(lat)*c(eps)+c(lat)*s(eps)*s(lon)),
+    gmst:n360(280.46061837+360.98564736629*(JD-2451545)+0.000387933*T*T),
+    par:Math.asin(6378.14/dist)/R
+  };
+}
+// alt: 見かけの高さ（視差と大気の屈折を補正）, az: 北=0 東=90 南=180 西=270
+function moonAltAz(ms,la,lo){
+  const q=moonEq(ms), H=(q.gmst+lo)*R-q.ra, f=la*R;
+  const geo=Math.asin(Math.sin(f)*Math.sin(q.dec)+Math.cos(f)*Math.cos(q.dec)*Math.cos(H))/R;
+  const az=n360(Math.atan2(Math.sin(H),Math.cos(H)*Math.sin(f)-Math.tan(q.dec)*Math.cos(f))/R+180);
+  let alt=geo-q.par*Math.cos(geo*R);
+  if(alt>-1) alt+=1.02/Math.tan((alt+10.3/(alt+5.11))*R)/60;
+  return{alt,az,geo,h0:0.7275*q.par-0.5667};
+}
+// その日（日本時間0時〜24時）の月の出・月の入り
+function riseSet(y,m,d,la,lo){
+  const s=jstMid(y,m,d), step=10*60e3, f=t=>{const p=moonAltAz(t,la,lo);return p.geo-p.h0};
+  let out={rise:null,set:null}, t0=s, v0=f(t0);
+  for(let t1=s+step;t1<=s+DAY;t1+=step){
+    const v1=f(t1);
+    if((v0<0)!==(v1<0)){
+      let a=t0,b=t1,va=v0;
+      for(let i=0;i<20;i++){const mid=(a+b)/2,vm=f(mid);if((va<0)===(vm<0)){a=mid;va=vm}else b=mid}
+      if(v0<0&&out.rise===null)out.rise=a; else if(v0>=0&&out.set===null)out.set=a;
+    }
+    t0=t1;v0=v1;
+  }
+  return out;
+}
 
 const EV={0:"新月",90:"上弦",180:"満月",270:"下弦"};
 const YOMI={新月:"しんげつ",上弦:"じょうげん",満月:"まんげつ",下弦:"かげん"};
@@ -251,6 +333,64 @@ document.getElementById("prev").onclick=()=>{view.m--;if(view.m<0){view.m=11;vie
 document.getElementById("next").onclick=()=>{view.m++;if(view.m>11){view.m=0;view.y++}renderCal()};
 document.getElementById("thisM").onclick=()=>{view={y:today.y,m:today.m};renderCal()};
 document.getElementById("backToday").onclick=()=>{sel={y:today.y,m:today.m,d:today.d};view={y:today.y,m:today.m};renderHero();renderCal()};
+// ---- 見る場所（都市はこの端末に記憶、現在地は記憶しない） ----
+let place;
+try{const v=localStorage.getItem("tsukigoyomi.city"), i=v===null?2:+v;place={name:CITIES[i]?CITIES[i][0]:"東京",la:(CITIES[i]||CITIES[2])[1],lo:(CITIES[i]||CITIES[2])[2],i:CITIES[i]?i:2}}
+catch(e){place={name:"東京",la:CITIES[2][1],lo:CITIES[2][2],i:2}}
+const citySel=document.getElementById("city");
+citySel.innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}から見る</option>`).join("")+`<option value="geo" hidden>現在地から見る</option>`;
+citySel.value=String(place.i);
+citySel.onchange=()=>{
+  if(citySel.value==="geo")return;
+  const i=+citySel.value;place={name:CITIES[i][0],la:CITIES[i][1],lo:CITIES[i][2],i};
+  try{localStorage.setItem("tsukigoyomi.city",i)}catch(e){}
+  document.getElementById("geoMsg").textContent="";renderSky();
+};
+document.getElementById("geo").onclick=()=>{
+  const msg=document.getElementById("geoMsg");
+  if(!navigator.geolocation){msg.textContent="この端末では現在地が使えません。都市を選んでください。";return}
+  msg.textContent="現在地を調べています…";
+  navigator.geolocation.getCurrentPosition(p=>{
+    place={name:"現在地",la:p.coords.latitude,lo:p.coords.longitude,i:"geo"};
+    citySel.value="geo";msg.textContent="現在地はこの端末の中で計算に使うだけで、どこにも送りません。";renderSky();
+  },()=>{msg.textContent="現在地を取得できませんでした。都市を選んでください。"},{timeout:10000,maximumAge:600000});
+};
+
+function drawCompass(alt,az){
+  const cx=100,cy=100,r=84,up=alt>0;
+  const rr=up?r*(90-alt)/90:r, x=cx+rr*Math.sin(az*R), y=cy-rr*Math.cos(az*R);
+  const lab=[["北",100,11],["東",192,104],["南",100,197],["西",8,104]].map(([t,x,y])=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="12" fill="${t==="南"?"#d9b660":"#8c90b4"}">${t}</text>`).join("");
+  document.getElementById("compass").innerHTML=`
+    <circle cx="100" cy="100" r="${r}" fill="#141a33" stroke="#262d4d"/>
+    <circle cx="100" cy="100" r="${r*2/3}" fill="none" stroke="#262d4d" stroke-dasharray="2 4"/>
+    <circle cx="100" cy="100" r="${r/3}" fill="none" stroke="#262d4d" stroke-dasharray="2 4"/>
+    <line x1="100" y1="${100-r}" x2="100" y2="${100+r}" stroke="#262d4d"/><line x1="${100-r}" y1="100" x2="${100+r}" y2="100" stroke="#262d4d"/>
+    ${lab}
+    <line x1="100" y1="100" x2="${x}" y2="${y}" stroke="#d9b660" stroke-width="1.5" stroke-dasharray="${up?"0":"3 3"}" opacity="${up?.9:.4}"/>
+    <circle cx="${x}" cy="${y}" r="9" fill="#f4eccf" opacity="${up?1:.35}"/>
+    <circle cx="100" cy="100" r="2.5" fill="#8c90b4"/>`;
+}
+function renderSky(){
+  const t=Date.now(), p=moonAltAz(t,place.la,place.lo), up=p.alt>0;
+  drawCompass(p.alt,p.az);
+  const tp=parts(t), hm=`${tp.h}:${String(tp.mi).padStart(2,"0")}`;
+  document.getElementById("sDir").textContent=up?`${dirName(p.az)}の空・高さ${Math.round(p.alt)}°`:"いまは地平線の下";
+  let sub=`${place.name}から見た ${hm} の月。`;
+  if(up)sub+=p.alt<15?"低いので、建物のない方を探してみて。":p.alt>60?"ほぼ頭の上です。":"";
+  else{
+    const tom=parts(t+DAY);
+    const rs=[riseSet(tp.y,tp.m,tp.d,place.la,place.lo).rise,riseSet(tom.y,tom.m,tom.d,place.la,place.lo).rise].filter(x=>x&&x>t)[0];
+    if(rs){const q=moonAltAz(rs,place.la,place.lo);sub+=`次は ${fmtT(rs)} に${dirName(q.az)}から昇ります。`}
+  }
+  document.getElementById("sSub").textContent=sub;
+  const r=riseSet(sel.y,sel.m,sel.d,place.la,place.lo), f=ms=>{const q=parts(ms);return `${q.h}:${String(q.mi).padStart(2,"0")}`};
+  const lbl=isToday(sel)?"今日":`${sel.m+1}/${sel.d}`;
+  document.getElementById("sRS").innerHTML=
+    `<span class="chip"><b>${lbl}の月の出</b>${r.rise?f(r.rise):"なし"}</span><span class="chip"><b>月の入り</b>${r.set?f(r.set):"なし"}</span>`;
+}
+const _rh=renderHero;renderHero=function(){_rh();renderSky()};
+setInterval(renderSky,60000);
+
 let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{renderHero();renderCal()},200)});
 renderHero();renderCal();
 })();
