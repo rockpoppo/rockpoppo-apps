@@ -36,3 +36,7 @@ GitHubへのアップロード（push）やGitHub Pagesでの公開をする前�
 - 各アプリの左上か右上に「← アプリ一覧」（../ へのリンク）を入れる。
 - 各アプリにはホーム画面用の設定を入れる：アプリらしいアイコン（icon-180.png / icon-192.png / icon-512.png）、manifest.webmanifest（display: standalone）、apple-touch-icon と apple-mobile-web-app-capable などのmetaタグ。
 - 公開したら、Xに投稿する文案（140字くらい、URL入り）と、その文が入った投稿画面がタップで開くリンク（https://x.com/intent/post?text=…）も一緒に作る。
+
+## Macのファイルについて
+- 投稿素材の保存先は iCloud Drive の「Rockpoppo Lab 投稿素材」フォルダだけ。アクセスの許可もこのフォルダだけを求めること。
+- iCloud Drive のほかのフォルダや、Mac のほかの場所には個人情報があるので、見たり書き込んだりしない。
