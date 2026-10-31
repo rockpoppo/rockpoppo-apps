@@ -1,0 +1,332 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>マスク図鑑</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="マスク図鑑">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#edf0f3">
+<meta name="description" content="イーロン・マスクの生い立ち、会社、作ってきた物、資産額の移り変わり、これからの計画を5つのタブで見られる図鑑。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: 固定の下タブ(5つ)で切替。親指で押せる位置。中身は1カラムのカードと年表。 */
+:root{
+  --bg:#edf0f3; --card:#ffffff; --fg:#14202b; --muted:#566676; --line:#d5dce3;
+  --accent:#0a6a96; --accent-soft:#d9ecf5; --down:#b3362b; --bar:#0a6a96;
+  --f-display:"Zen Kaku Gothic New","Noto Sans JP",system-ui,sans-serif;
+  --f-body:"Noto Sans JP",system-ui,-apple-system,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1820; --card:#18232d; --fg:#e6edf3; --muted:#9bacba; --line:#2a3946;
+    --accent:#58b6e0; --accent-soft:#1c3646; --down:#ef7b70; --bar:#58b6e0; color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;
+  background:var(--bg); color:var(--fg); font-family:var(--f-body); font-size:15px; line-height:1.75;
+  padding-top:calc(16px + env(safe-area-inset-top,0px));
+  padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+[hidden]{display:none!important}
+main{max-width:640px;margin:0 auto}
+header .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+header .home{font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--accent);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;white-space:nowrap}
+header .home:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header .kicker{font-family:var(--f-num);font-size:12px;color:var(--muted);letter-spacing:.06em}
+header h1{font-family:var(--f-display);font-weight:900;font-size:28px;line-height:1.2;margin:0;text-wrap:balance}
+header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+h2{font-family:var(--f-display);font-weight:700;font-size:19px;margin:22px 0 8px;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:700;font-size:16px;margin:0}
+p{margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 10px;min-width:0}
+.tag{display:inline-block;font-family:var(--f-num);font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:1px 8px;border-radius:4px;letter-spacing:.02em}
+.row{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:13px}
+ul.plain{margin:6px 0 0;padding-left:1.2em}
+ul.plain li{margin:2px 0}
+.hero{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.stat b{display:block;font-family:var(--f-num);font-size:20px;line-height:1.3}
+.stat span{font-size:12px;color:var(--muted)}
+/* net worth bars */
+.nw{display:grid;gap:8px}
+.nw .item{min-width:0}
+.nw .top{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.nw .top .when{font-family:var(--f-num);color:var(--muted);flex:none}
+.nw .top .val{font-family:var(--f-num);font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+.nw .track{height:10px;background:var(--accent-soft);border-radius:5px;margin:3px 0;overflow:hidden}
+.nw .fill{height:100%;background:var(--bar);border-radius:5px}
+.nw .item.down .fill{background:var(--down)}
+.nw .note{font-size:12.5px;color:var(--muted);line-height:1.55}
+.ctl{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:0 0 10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-family:var(--f-display);font-weight:700;font-size:14px;background:var(--card);color:var(--muted);border:0;padding:10px 18px;min-height:44px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--card)}
+.field{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--muted);min-width:0}
+.field input{font:inherit;font-family:var(--f-num);font-size:16px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.res{display:grid;gap:6px;margin-top:12px}
+.res .r{display:flex;justify-content:space-between;gap:8px;font-size:14px;border-top:1px solid var(--line);padding-top:6px}
+.res .r b{font-family:var(--f-num);font-variant-numeric:tabular-nums;text-align:right}
+/* bottom tabs */
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));
+  gap:4px;
+}
+nav button{
+  font:inherit;font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--muted);
+  background:none;border:0;border-radius:8px;padding:12px 2px;min-height:44px;cursor:pointer;
+}
+nav button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent)}
+nav button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.src{font-size:12px;color:var(--muted);margin-top:18px}
+</style>
+</head><body>
+
+<main>
+<header>
+  <div class="bar">
+    <span class="kicker">ELON MUSK</span>
+    <a class="home" href="../">← アプリ一覧</a>
+  </div>
+  <h1>イーロン・マスク図鑑</h1>
+  <p>2026年11月1日時点。資産額はForbes・Bloombergの推計で、株価によって毎日大きく動きます。</p>
+</header>
+
+<!-- 生い立ち -->
+<section class="panel" id="p-life">
+  <h2>生い立ち</h2>
+  <div class="hero">
+    <div class="stat"><b>1971/6/28</b><span>南アフリカ・プレトリア生まれ</span></div>
+    <div class="stat"><b>55歳</b><span>2026年11月時点</span></div>
+  </div>
+  <h2>子ども時代</h2>
+  <div class="card">
+    <p>父は南アフリカの技術者、母はカナダ生まれのモデル兼栄養士。両親は幼いころに離婚し、本を読みふける子だったと言われています。</p>
+    <p>10歳ごろ独学でプログラミングを始め、12歳でゲーム「Blastar」を作って雑誌社に売りました。学校ではいじめも経験したと本人が語っています。</p>
+  </div>
+  <h2>進学と渡米</h2>
+  <div class="card">
+    <ul class="plain">
+      <li><span class="tag">1989</span> 17歳で南アフリカを出てカナダへ。母がカナダ生まれだったのでカナダ国籍を取得</li>
+      <li><span class="tag">〜1997</span> クイーンズ大学からペンシルベニア大学へ移り、物理学と経済学の学位</li>
+      <li><span class="tag">1995</span> スタンフォード大の博士課程に進むも、数日で辞めて起業へ</li>
+    </ul>
+  </div>
+  <h2>最初の成功</h2>
+  <div class="card">
+    <p>弟のキンバルと作った会社Zip2（地図と地域情報）を、1999年にコンパックへ売却。マスク自身の取り分は約2,200万ドルと報じられています。</p>
+    <p>そのお金で作ったX.comがPayPalになり、2002年にeBayへ売却されて約1.8億ドルを手にしました。このお金がSpaceXとTeslaに入っていきます。</p>
+  </div>
+</section>
+
+<!-- 会社 -->
+<section class="panel" id="p-co" hidden>
+  <h2>立ち上げた会社・関わった会社</h2>
+  <div class="card"><div class="row"><span class="tag">1995</span><h3>Zip2</h3></div>
+    <p class="muted">新聞社向けのオンライン地図・情報サービス。1999年にコンパックが約3億ドルで買収。</p></div>
+  <div class="card"><div class="row"><span class="tag">1999</span><h3>X.com → PayPal</h3></div>
+    <p class="muted">ネット銀行として創業し、のちにPayPalと合併。2002年にeBayが買収。</p></div>
+  <div class="card"><div class="row"><span class="tag">2002</span><h3>SpaceX</h3></div>
+    <p class="muted">「人類を多惑星種にする」ために創業。ロケットとStarlink衛星通信が柱。2026年6月12日にナスダックへ上場し、米国史上最大の新規上場になりました。</p></div>
+  <div class="card"><div class="row"><span class="tag">2004</span><h3>Tesla</h3></div>
+    <p class="muted">創業者ではなく初期の大口出資者として会長に就任し、2008年からCEO。のちの和解で共同創業者を名乗れることになりました。</p></div>
+  <div class="card"><div class="row"><span class="tag">2006</span><h3>SolarCity</h3></div>
+    <p class="muted">いとこ2人が創業した太陽光会社に出資・会長。2016年にTeslaが吸収。</p></div>
+  <div class="card"><div class="row"><span class="tag">2015</span><h3>OpenAI</h3></div>
+    <p class="muted">共同創設者・出資者のひとり。2018年に取締役を離れ、のち対立して訴訟に発展しました。</p></div>
+  <div class="card"><div class="row"><span class="tag">2016</span><h3>Neuralink</h3></div>
+    <p class="muted">脳とコンピュータをつなぐ装置の開発会社。</p></div>
+  <div class="card"><div class="row"><span class="tag">2016</span><h3>The Boring Company</h3></div>
+    <p class="muted">地下トンネルで渋滞を減らす構想の会社。</p></div>
+  <div class="card"><div class="row"><span class="tag">2022</span><h3>X（旧Twitter）</h3></div>
+    <p class="muted">2022年10月に約440億ドルで買収。2025年3月にxAIと統合されました。</p></div>
+  <div class="card"><div class="row"><span class="tag">2023</span><h3>xAI</h3></div>
+    <p class="muted">AIチャットボット「Grok」を開発。2026年2月2日にSpaceXが株式交換で買収し、合わせた評価額は約1.25兆ドル（SpaceX 1兆ドル＋xAI 2,500億ドル）と報じられました。</p></div>
+</section>
+
+<!-- 発明 -->
+<section class="panel" id="p-inv" hidden>
+  <h2>何を作ってきたか</h2>
+  <p class="muted">「発明」というより、技術を組み合わせて製品にした仕事が中心です。</p>
+  <div class="card"><h3>ロケットの再利用（SpaceX）</h3>
+    <ul class="plain">
+      <li>2008年 Falcon 1が民間開発の液体燃料ロケットとして初めて軌道到達</li>
+      <li>2012年 Dragonが民間企業として初めて国際宇宙ステーションへ</li>
+      <li>2015年 Falcon 9の1段目が地上に着陸。以後は再利用が当たり前に</li>
+      <li>Starship：完全再利用を目指す超大型ロケット</li>
+      <li>Starlink：低軌道の衛星インターネット</li>
+    </ul></div>
+  <div class="card"><h3>電気自動車とエネルギー（Tesla）</h3>
+    <ul class="plain">
+      <li>2008年 Roadster、2012年 Model S、のちModel 3 / Y、Cybertruck</li>
+      <li>急速充電網のSupercharger</li>
+      <li>家庭用蓄電池Powerwall、大型のMegapack</li>
+      <li>運転支援のAutopilot / FSD、ロボタクシーの試験運行</li>
+      <li>人型ロボットOptimus</li>
+    </ul></div>
+  <div class="card"><h3>AIと脳（xAI・Neuralink）</h3>
+    <ul class="plain">
+      <li>Grok：2023年11月に初公開。巨大なAI計算施設Colossusで学習</li>
+      <li>Neuralink：脳に埋め込むインターフェース</li>
+    </ul></div>
+  <div class="card"><h3>構想だけ出したもの</h3>
+    <p>2013年に発表した高速輸送のHyperloopは、設計案を公開して他の会社に任せました。</p></div>
+</section>
+
+<!-- 資産 -->
+<section class="panel" id="p-nw" hidden>
+  <h2>資産額の移り変わり</h2>
+  <div class="ctl">
+    <div class="seg" role="group" aria-label="通貨">
+      <button id="u-usd" aria-pressed="true">ドル</button>
+      <button id="u-jpy" aria-pressed="false">円</button>
+    </div>
+    <label class="field" style="width:130px">1ドル＝何円
+      <input id="rate" type="number" inputmode="decimal" value="150" min="50" max="300">
+    </label>
+  </div>
+  <p class="muted">棒の長さは桁の大きさがわかるよう対数で描いています。数字はすべて推計の目安です。円にすると、昔の金額も今の為替で換算します。</p>
+  <div class="nw" id="nw"></div>
+
+  <h2>いまの中身を試算</h2>
+  <div class="card">
+    <p class="muted">資産の大半は株式です。会社の時価総額と持ち分を入れると、会社ごとの金額が出ます。</p>
+    <div class="grid2">
+      <label class="field">SpaceX時価総額（兆ドル）<input id="cap-s" type="number" inputmode="decimal" step="0.1" value="1.9"></label>
+      <label class="field">Tesla時価総額（兆ドル）<input id="cap-t" type="number" inputmode="decimal" step="0.1" value="1.2"></label>
+      <label class="field">SpaceX持ち分（%）<input id="pct-s" type="number" inputmode="decimal" step="0.5" value="36"></label>
+      <label class="field">Tesla持ち分（%）<input id="pct-t" type="number" inputmode="decimal" step="0.5" value="12"></label>
+    </div>
+    <div class="res">
+      <div class="r"><span>SpaceX分</span><b id="o-s"></b></div>
+      <div class="r"><span>Tesla分</span><b id="o-t"></b></div>
+      <div class="r"><span>2社の合計</span><b id="o-sum"></b></div>
+    </div>
+    <p class="muted" style="margin-top:10px">最初に入っている数字は、2026年10月下旬の株価（SpaceX 約148ドル、Tesla 約368ドル）と、Forbesが数えた持ち株数から出した目安です。株価は毎日動くので、最新の数字に直して試してください。</p>
+  </div>
+</section>
+
+<!-- これから -->
+<section class="panel" id="p-next" hidden>
+  <h2>これからの計画</h2>
+  <p class="muted">本人や会社が掲げている目標で、これまでもたびたび延期されています。</p>
+  <div class="card"><h3>まず月、そのあとで火星</h3>
+    <p class="muted" style="margin-top:6px">2026年2月、SpaceXは投資家に「月を先に、火星は後」へ方針を変えたと伝えたと報じられました。2026年末に予定していた無人の火星便は見送りに。2027年3月ごろの無人月着陸を目指し、月に「自ら育つ都市」をつくると本人が語っています。</p>
+    <p class="muted">火星の都市づくりは5〜7年後に始めるとマスク本人が発言。何千機ものStarshipで火星に移住地を作る長期構想は変わっていません。</p></div>
+  <div class="card"><h3>宇宙とAIの合体</h3>
+    <p class="muted" style="margin-top:6px">SpaceXとxAIの合併で、ロケット、Starlink、X、Grokが1社になりました。太陽光で動くAIデータセンターを宇宙に置く構想も掲げています。</p></div>
+  <div class="card"><h3>Teslaは「物理AI」の会社へ</h3>
+    <p class="muted" style="margin-top:6px">ロボットOptimusやロボタクシーを柱に掲げています。2025年11月には、条件達成で最大約1兆ドル相当の株が付く報酬案が株主総会で承認されました。</p></div>
+  <div class="card"><h3>SpaceXの報酬は火星とつながる</h3>
+    <p class="muted" style="margin-top:6px">2026年4月、ロイターの報道で、SpaceXの取締役会がマスクに最大2億株を与える報酬案を承認していたことがわかりました。条件は「会社の価値が7.5兆ドル」と「火星に100万人以上が住む居住地をつくる」ことです。</p></div>
+  <p class="src">出典：Forbes・Bloomberg Billionaires Indexの資産推計、Reuters・Wall Street Journal・AP・Bloombergの報道、Wikipedia「Wealth of Elon Musk」など。個人がまとめた非公式のページで、数字は推計の目安です。</p>
+</section>
+</main>
+
+<nav role="tablist" aria-label="ページ切替">
+  <button role="tab" data-t="life" aria-selected="true">生い立ち</button>
+  <button role="tab" data-t="co" aria-selected="false">会社</button>
+  <button role="tab" data-t="inv" aria-selected="false">作った物</button>
+  <button role="tab" data-t="nw" aria-selected="false">資産</button>
+  <button role="tab" data-t="next" aria-selected="false">これから</button>
+</nav>
+
+<script>
+(function(){
+  // 資産データ: [時期, ラベル, 億ドル(1=1億ドル), 表示, 下落か, 補足]
+  var D=[
+    ["1999","Zip2売却",0.22,"約2,200万ドル",0,"弟と作った最初の会社"],
+    ["2002","PayPal売却",1.8,"約1.8億ドル",0,"eBayへの売却"],
+    ["2012","Forbes長者番付に初登場",20,"約20億ドル",0,"Tesla・SpaceXの株が評価された"],
+    ["2020初","年のはじめ",270,"約270億ドル",0,"Tesla株が急上昇する前"],
+    ["2020末","1年で約1,500億ドル増",1770,"約1,770億ドル",0,"Tesla株の高騰"],
+    ["2021/11","世界初の3,000億ドル超",3000,"3,000億ドル超",0,""],
+    ["2022/12","ピークから2,000億ドル減",1400,"約1,400億ドル",1,"Twitter買収とTesla株安。個人の資産減少の記録に"],
+    ["2024/12","4,000億ドルを初めて超える",4000,"4,000億ドル超",0,"米大統領選後のTesla株高"],
+    ["2025/10","5,000億ドル",5000,"5,000億ドル",0,"史上初"],
+    ["2025/12","7,000億ドル台",7000,"7,000億ドル超",0,"SpaceXの株式売出し、Tesla報酬の裁判で逆転"],
+    ["2026/3","xAI買収のあと",8390,"約8,390億ドル",0,"2月にSpaceXがxAIを買収（Forbes、3月10日）"],
+    ["2026/6/12","SpaceX上場で1兆ドル超",11100,"約1.1兆ドル",0,"史上初の1兆ドル長者"],
+    ["2026/6","上場直後の最高値",14500,"約1.45兆ドル",0,"上場後の1週間で一時（取引中の値）"],
+    ["2026/7下旬","SpaceX株の急落",7000,"約7,000億ドル",1,"ピークから約7,500億ドル減。個人の資産減少として史上最大"],
+    ["2026/10上旬","再び1兆ドル超え",10400,"約1.04兆ドル",0,"Bloombergの推計（10月5日）"],
+    ["2026/10末","1兆ドルをはさんで上下",9170,"約9,170億ドル",0,"Forbesの推計（10月30日）"]
+  ];
+  var lo=Math.log10(0.1), hi=Math.log10(20000), jpy=false;
+  function $(id){return document.getElementById(id)}
+  function rate(){var v=parseFloat($("rate").value);return v>0?v:150}
+  function num(id){var v=parseFloat($(id).value);return v>=0?v:0}
+  function nf(n){return Math.round(n).toLocaleString("ja-JP")}
+  // 億ドル → 表示文字列
+  function fmtU(o){
+    if(o>=10000)return "約"+(o/10000).toFixed(2).replace(/0$/,"")+"兆ドル";
+    if(o>=1)return "約"+nf(o)+"億ドル";
+    return "約"+nf(o*10000)+"万ドル";
+  }
+  function fmtJ(o){
+    var y=o*rate();
+    if(y>=10000)return "約"+(y/10000).toFixed(1)+"兆円";
+    return "約"+nf(y)+"億円";
+  }
+  function fmt(o){return jpy?fmtJ(o):fmtU(o)}
+  function bars(){
+    var h="";
+    D.forEach(function(r){
+      var w=Math.max(2,(Math.log10(r[2])-lo)/(hi-lo)*100);
+      h+='<div class="item'+(r[4]?' down':'')+'"><div class="top"><span><span class="when">'+r[0]+'</span> '+r[1]+'</span><span class="val">'+(jpy?fmtJ(r[2]):r[3])+'</span></div>'+
+         '<div class="track"><div class="fill" style="width:'+w.toFixed(1)+'%"></div></div>'+
+         (r[5]?'<div class="note">'+r[5]+'</div>':'')+'</div>';
+    });
+    $("nw").innerHTML=h;
+  }
+  function calc(){
+    var s=num("cap-s")*10000*num("pct-s")/100, t=num("cap-t")*10000*num("pct-t")/100, sum=s+t;
+    var ps=sum?Math.round(s/sum*100):0;
+    $("o-s").textContent=fmt(s)+(sum?"（"+ps+"%）":"");
+    $("o-t").textContent=fmt(t)+(sum?"（"+(100-ps)+"%）":"");
+    $("o-sum").textContent=fmt(sum);
+  }
+  function setUnit(j){
+    jpy=j;
+    $("u-usd").setAttribute("aria-pressed",j?"false":"true");
+    $("u-jpy").setAttribute("aria-pressed",j?"true":"false");
+    bars();calc();
+    try{localStorage.setItem("musk-unit",j?"jpy":"usd")}catch(e){}
+  }
+  $("u-usd").addEventListener("click",function(){setUnit(false)});
+  $("u-jpy").addEventListener("click",function(){setUnit(true)});
+  ["rate","cap-s","cap-t","pct-s","pct-t"].forEach(function(id){
+    $(id).addEventListener("input",function(){bars();calc()});
+  });
+  var u=null; try{u=localStorage.getItem("musk-unit")}catch(e){}
+  setUnit(u==="jpy");
+
+  var tabs=document.querySelectorAll("nav button"), names=["life","co","inv","nw","next"];
+  function show(t){
+    names.forEach(function(n){document.getElementById("p-"+n).hidden=(n!==t)});
+    tabs.forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===t?"true":"false")});
+    window.scrollTo(0,0);
+    try{localStorage.setItem("musk-tab",t)}catch(e){}
+  }
+  tabs.forEach(function(b){b.addEventListener("click",function(){show(b.dataset.t)})});
+  var s=null; try{s=localStorage.getItem("musk-tab")}catch(e){}
+  if(s&&names.indexOf(s)>=0)show(s);
+})();
+</script>
+
+</body></html>
