@@ -34,4 +34,5 @@ GitHubへのアップロード（push）やGitHub Pagesでの公開をする前�
 - 各アプリのフォルダには、iPhone幅で撮った thumb.png（スクリーンショット）を入れる。
 - 新しいアプリを公開したら、apps.js の先頭に1件追加する（title / date / ask＝私がお願いした一言 / point＝工夫したところ / tags）。
 - 各アプリの左上か右上に「← アプリ一覧」（../ へのリンク）を入れる。
+- 各アプリにはホーム画面用の設定を入れる：アプリらしいアイコン（icon-180.png / icon-192.png / icon-512.png）、manifest.webmanifest（display: standalone）、apple-touch-icon と apple-mobile-web-app-capable などのmetaタグ。
 - 公開したら、Xに投稿する文案（140字くらい、URL入り）と、その文が入った投稿画面がタップで開くリンク（https://x.com/intent/post?text=…）も一緒に作る。
