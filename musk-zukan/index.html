@@ -200,7 +200,7 @@ nav button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
       <input id="rate" type="number" inputmode="decimal" value="150" min="50" max="300">
     </label>
   </div>
-  <p class="muted">棒の長さは桁の大きさがわかるよう対数で描いています。数字はすべて推計の目安です。円にすると、昔の金額も今の為替で換算します。</p>
+  <p class="muted">棒の長さは金額そのままの比率です。2020年より前は1兆ドルにくらべて小さすぎて、ほとんど見えません。数字はすべて推計の目安です。円にすると、昔の金額も今の為替で換算します。</p>
   <div class="nw" id="nw"></div>
 
   <h2>いまの中身を試算</h2>
@@ -267,7 +267,7 @@ nav button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
     ["2026/10上旬","再び1兆ドル超え",10400,"約1.04兆ドル",0,"Bloombergの推計（10月5日）"],
     ["2026/10末","1兆ドルをはさんで上下",9170,"約9,170億ドル",0,"Forbesの推計（10月30日）"]
   ];
-  var lo=Math.log10(0.1), hi=Math.log10(20000), jpy=false;
+  var top=Math.max.apply(null,D.map(function(r){return r[2]})), jpy=false;
   function $(id){return document.getElementById(id)}
   function rate(){var v=parseFloat($("rate").value);return v>0?v:150}
   function num(id){var v=parseFloat($(id).value);return v>=0?v:0}
@@ -287,7 +287,7 @@ nav button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   function bars(){
     var h="";
     D.forEach(function(r){
-      var w=Math.max(2,(Math.log10(r[2])-lo)/(hi-lo)*100);
+      var w=Math.max(0.6,r[2]/top*100);
       h+='<div class="item'+(r[4]?' down':'')+'"><div class="top"><span><span class="when">'+r[0]+'</span> '+r[1]+'</span><span class="val">'+(jpy?fmtJ(r[2]):r[3])+'</span></div>'+
          '<div class="track"><div class="fill" style="width:'+w.toFixed(1)+'%"></div></div>'+
          (r[5]?'<div class="note">'+r[5]+'</div>':'')+'</div>';
