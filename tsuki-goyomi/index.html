@@ -1,0 +1,259 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>月ごよみ</title>
+<meta name="description" content="今日の月の満ち欠けと、1ヶ月の月の形を暦で見られるWebアプリ。">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* 夜空一色の単一テーマ。上に今日の月を大きく、下に月めくりの暦。 */
+:root{
+  --sky:#0c1124;
+  --sky-2:#141a33;
+  --line:#262d4d;
+  --ink:#e8e5f2;
+  --mute:#8c90b4;
+  --moon:#f4eccf;
+  --shadow:#20263f;
+  --gold:#d9b660;
+  --sun:#e48a8a;
+  --sat:#86a8e6;
+  --display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--sky);color:var(--ink)}
+body{font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:radial-gradient(120% 60% at 50% 0%,#1a2246 0%,var(--sky) 60%) var(--sky);
+  min-height:100%}
+.wrap{max-width:760px;margin:0 auto;padding-block:20px 40px;display:flex;flex-direction:column;gap:22px}
+header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+h1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.12em;margin:0}
+.tz{font-size:12px;color:var(--mute);letter-spacing:.05em}
+
+/* 今日の月 */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.hero canvas{width:170px;height:170px;display:block}
+.hero .info{min-width:0;display:flex;flex-direction:column;gap:6px}
+.date{color:var(--mute);font-size:13px;letter-spacing:.06em}
+.name{font-family:var(--display);font-size:34px;font-weight:700;line-height:1.2;margin:0;text-wrap:balance}
+.yomi{font-size:13px;color:var(--mute)}
+.stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px}
+.stat .k{font-size:11px;color:var(--mute);letter-spacing:.12em}
+.stat .v{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:13px;color:var(--mute);margin-left:2px}
+.next{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.chip{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink);font-variant-numeric:tabular-nums}
+.chip b{color:var(--gold);font-weight:500;margin-right:4px}
+.back{align-self:flex-start;background:none;border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:3px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+@media (max-width:480px){
+  .hero{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .hero .info{align-items:center}
+  .stats,.next{justify-content:center}
+  .back{align-self:center}
+  .hero canvas{width:150px;height:150px}
+  .name{font-size:30px}
+}
+
+/* 暦 */
+.cal{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.calhead{display:flex;align-items:center;justify-content:space-between}
+.month{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.month span{font-size:13px;color:var(--mute);font-weight:500;margin-left:8px;font-family:var(--body)}
+.nav{display:flex;gap:6px}
+.nav button{background:var(--sky-2);color:var(--ink);border:1px solid var(--line);border-radius:8px;min-width:40px;height:36px;font:inherit;cursor:pointer}
+.nav button:focus-visible,.cell:focus-visible,.back:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.wd{text-align:center;font-size:12px;color:var(--mute);padding-bottom:2px}
+.wd.su{color:var(--sun)}.wd.sa{color:var(--sat)}
+.cell{background:var(--sky-2);border:1px solid transparent;border-radius:8px;padding:5px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--ink);font:inherit;min-width:0}
+.cell.empty{background:none;cursor:default}
+.cell .d{font-size:12.5px;font-variant-numeric:tabular-nums;align-self:flex-start;padding-left:5px;line-height:1.2}
+.cell.su .d{color:var(--sun)}.cell.sa .d{color:var(--sat)}
+.cell canvas{width:30px;height:30px;display:block}
+.cell .age{font-size:10.5px;color:var(--mute);font-variant-numeric:tabular-nums;line-height:1.2}
+.cell .ev{font-size:10.5px;color:var(--gold);font-weight:700;line-height:1.2;white-space:nowrap}
+.cell.today{border-color:var(--gold)}
+.cell.sel{background:#232b52}
+@media (min-width:560px){.cell canvas{width:40px;height:40px}.cell .d{font-size:13.5px}.cell .age,.cell .ev{font-size:11.5px}}
+.note{font-size:12px;color:var(--mute);line-height:1.7}
+.home{font-size:12px;color:var(--mute);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <h1>月ごよみ</h1>
+    <a class="home" href="../">← アプリ一覧</a>
+  </header>
+
+  <section class="hero" aria-live="polite">
+    <canvas id="bigMoon" width="340" height="340" aria-label="月の形"></canvas>
+    <div class="info">
+      <div class="date" id="hDate"></div>
+      <p class="name" id="hName"></p>
+      <div class="yomi" id="hYomi"></div>
+      <div class="stats">
+        <div class="stat"><div class="k">月齢</div><div class="v" id="hAge"></div></div>
+        <div class="stat"><div class="k">輝いている割合</div><div class="v" id="hIllum"></div></div>
+      </div>
+      <div class="next" id="hNext"></div>
+      <button class="back" id="backToday" hidden>今日にもどる</button>
+    </div>
+  </section>
+
+  <section class="cal">
+    <div class="calhead">
+      <div class="month" id="mLabel"></div>
+      <div class="nav">
+        <button id="prev" aria-label="前の月">‹</button>
+        <button id="thisM" aria-label="今月">今月</button>
+        <button id="next" aria-label="次の月">›</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="note">日本時間で計算しています。月齢は正午の値です。新月・上弦・満月・下弦はその瞬間をむかえる日に印をつけています。計算はこの端末の中で行っていて、時刻は数分程度ずれることがあります。</p>
+  </section>
+</div>
+
+<script>
+(function(){
+const DAY=864e5, TZ=9*3600e3, R=Math.PI/180, SYN=29.530588;
+const n360=a=>((a%360)+360)%360;
+const sgn=a=>{a=n360(a);return a>180?a-360:a};
+const jstMid=(y,m,d)=>Date.UTC(y,m,d)-TZ;
+const parts=ms=>{const d=new Date(ms+TZ);return{y:d.getUTCFullYear(),m:d.getUTCMonth(),d:d.getUTCDate(),h:d.getUTCHours(),mi:d.getUTCMinutes(),w:d.getUTCDay()}};
+const WD="日月火水木金土";
+
+// 太陽と月の黄経の差（離角）。0=新月, 90=上弦, 180=満月, 270=下弦
+function elong(ms){
+  const T=(ms/DAY+2440587.5-2451545)/36525;
+  const M=357.52911+35999.05029*T;
+  const sun=280.46646+36000.76983*T+(1.914602-0.004817*T)*Math.sin(M*R)+0.019993*Math.sin(2*M*R)+0.000289*Math.sin(3*M*R);
+  const Lp=218.3164477+481267.88123421*T, D=297.8501921+445267.1114034*T,
+        Mp=134.9633964+477198.8675055*T, F=93.2720950+483202.0175233*T;
+  const s=x=>Math.sin(x*R);
+  const moon=Lp+6.288774*s(Mp)+1.274027*s(2*D-Mp)+0.658314*s(2*D)+0.213618*s(2*Mp)
+    -0.185116*s(M)-0.114332*s(2*F)+0.058793*s(2*D-2*Mp)+0.057066*s(2*D-M-Mp)
+    +0.053322*s(2*D+Mp)+0.045758*s(2*D-M)-0.040923*s(M-Mp)-0.034720*s(D)-0.030383*s(M+Mp)
+    +0.015327*s(2*D-2*F)+0.010980*s(Mp-2*F)+0.010675*s(4*D-Mp)+0.010034*s(3*Mp);
+  return n360(moon-sun);
+}
+function refine(t,target){for(let i=0;i<8;i++){t-=sgn(elong(t)-target)/12.19*DAY}return t}
+function lastNew(ms){let t=refine(ms-elong(ms)/12.19*DAY,0);if(t>ms)t=refine(t-SYN*DAY,0);return t}
+function nextPhase(ms,target){let t=refine(ms+n360(target-elong(ms))/12.19*DAY,target);if(t<=ms)t=refine(t+SYN*DAY,target);return t}
+const illum=E=>(1-Math.cos(E*R))/2;
+
+const EV={0:"新月",90:"上弦",180:"満月",270:"下弦"};
+const YOMI={新月:"しんげつ",上弦:"じょうげん",満月:"まんげつ",下弦:"かげん"};
+const LUNAR={
+  2:["二日月","ふつかづき"],3:["三日月","みかづき"],13:["十三夜","じゅうさんや"],
+  15:["十五夜","じゅうごや"],16:["十六夜","いざよい"],17:["立待月","たちまちづき"],
+  18:["居待月","いまちづき"],19:["寝待月","ねまちづき"],20:["更待月","ふけまちづき"],
+  26:["二十六夜","にじゅうろくや"]
+};
+
+function dayInfo(y,m,d){
+  const s=jstMid(y,m,d), e=s+DAY, noon=s+DAY/2;
+  const Es=elong(s), span=n360(elong(e)-Es);
+  let ev=null;
+  for(const tg of [0,90,180,270]){const off=n360(tg-Es);if(off<span){ev={name:EV[tg],t:refine(s+off/span*DAY,tg)};break}}
+  const nm=lastNew(e-1), p=parts(nm), lday=Math.round((s-jstMid(p.y,p.m,p.d))/DAY)+1;
+  const age=(noon-lastNew(noon))/DAY, En=elong(noon);
+  let name,yomi;
+  if(ev){name=ev.name;yomi=YOMI[ev.name]}
+  else if(LUNAR[lday]){[name,yomi]=LUNAR[lday]}
+  else if(En<90){name="若い月";yomi="細い月が太っていくころ"}
+  else if(En<180){name="満ちていく月";yomi="満月へ向かうころ"}
+  else if(En<270){name="欠けていく月";yomi="下弦へ向かうころ"}
+  else{name="有明の月";yomi="明け方の空に残る月"}
+  return{s,ev,lday,age,E:En,name,yomi};
+}
+
+function litPath(c,cx,cy,r,E){
+  const waning=E>180, a=waning?360-E:E, rx=r*Math.abs(Math.cos(a*R));
+  c.save();
+  if(waning){c.translate(cx*2,0);c.scale(-1,1)}
+  c.beginPath();
+  c.arc(cx,cy,r,-Math.PI/2,Math.PI/2,false);
+  c.ellipse(cx,cy,Math.max(rx,0.01),r,0,Math.PI/2,-Math.PI/2,a<90);
+  c.closePath();c.fill();
+  c.restore();
+}
+
+function drawMoon(cv,E,big){
+  const dpr=Math.max(2,window.devicePixelRatio||1);
+  const css=cv.clientWidth||parseInt(cv.width)/2;
+  cv.width=css*dpr;cv.height=css*dpr;
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
+  const r=css/2*(big?0.82:0.84), cx=css/2, cy=css/2;
+  c.clearRect(0,0,css,css);
+  if(big){const g=c.createRadialGradient(cx,cy,r*0.9,cx,cy,r*1.2);
+    g.addColorStop(0,`rgba(244,236,207,${0.06+0.16*illum(E)})`);g.addColorStop(1,"rgba(244,236,207,0)");
+    c.fillStyle=g;c.fillRect(0,0,css,css)}
+  c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.fillStyle="#20263f";c.fill();
+  const lg=c.createRadialGradient(cx-r*0.25,cy-r*0.3,r*0.1,cx,cy,r);
+  lg.addColorStop(0,"#fbf6e2");lg.addColorStop(1,"#e6dab0");
+  c.fillStyle=lg;litPath(c,cx,cy,r,E);
+  if(big){ // 海の模様をうっすら
+    c.save();c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.clip();
+    c.globalCompositeOperation="source-atop";c.fillStyle="rgba(120,110,80,0.13)";
+    [[-.25,-.25,.22],[.18,-.32,.16],[-.05,.05,.2],[.3,.15,.14],[-.3,.3,.12],[.05,.42,.1]].forEach(([x,y,s])=>{c.beginPath();c.arc(cx+x*r,cy+y*r,s*r,0,Math.PI*2);c.fill()});
+    c.restore();
+  }
+}
+
+const now=Date.now(), today=parts(now);
+let view={y:today.y,m:today.m}, sel={y:today.y,m:today.m,d:today.d};
+const fmtT=ms=>{const p=parts(ms);return `${p.m+1}/${p.d}(${WD[p.w]}) ${p.h}:${String(p.mi).padStart(2,"0")}`};
+const isToday=o=>o.y===today.y&&o.m===today.m&&o.d===today.d;
+
+function renderHero(){
+  const info=dayInfo(sel.y,sel.m,sel.d), tdy=isToday(sel);
+  const t=tdy?now:info.s+DAY/2;
+  const E=tdy?elong(now):info.E, age=tdy?(now-lastNew(now))/DAY:info.age;
+  const w=WD[parts(info.s).w];
+  document.getElementById("hDate").textContent=`${sel.y}年${sel.m+1}月${sel.d}日（${w}）${tdy?"いまの月":"正午の月"}・旧暦${info.lday}日`;
+  document.getElementById("hName").textContent=info.name;
+  document.getElementById("hYomi").textContent=info.ev?`${info.yomi}　${fmtT(info.ev.t)} ちょうど`:info.yomi;
+  document.getElementById("hAge").innerHTML=`${age.toFixed(1)}`;
+  document.getElementById("hIllum").innerHTML=`${Math.round(illum(E)*100)}<small>%</small>`;
+  const nf=nextPhase(t,180), nn=nextPhase(t,0);
+  const chips=[["満月",nf],["新月",nn]].sort((a,b)=>a[1]-b[1]);
+  document.getElementById("hNext").innerHTML=chips.map(([n,ms])=>`<span class="chip"><b>次の${n}</b>${fmtT(ms)}</span>`).join("");
+  document.getElementById("backToday").hidden=tdy;
+  drawMoon(document.getElementById("bigMoon"),E,true);
+}
+
+function renderCal(){
+  const {y,m}=view;
+  document.getElementById("mLabel").innerHTML=`${y}年 ${m+1}月<span>${["睦月","如月","弥生","卯月","皐月","水無月","文月","葉月","長月","神無月","霜月","師走"][m]}</span>`;
+  const g=document.getElementById("grid");g.innerHTML="";
+  [...WD].forEach((w,i)=>{const e=document.createElement("div");e.className="wd"+(i===0?" su":i===6?" sa":"");e.textContent=w;g.appendChild(e)});
+  const first=parts(jstMid(y,m,1)).w, days=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+  for(let i=0;i<first;i++){const e=document.createElement("div");e.className="cell empty";g.appendChild(e)}
+  const draws=[];
+  for(let d=1;d<=days;d++){
+    const info=dayInfo(y,m,d), w=(first+d-1)%7;
+    const b=document.createElement("button");
+    b.className="cell"+(w===0?" su":w===6?" sa":"")+(isToday({y,m,d})?" today":"")+(sel.y===y&&sel.m===m&&sel.d===d?" sel":"");
+    b.setAttribute("aria-label",`${m+1}月${d}日 ${info.name} 月齢${info.age.toFixed(1)}`);
+    b.innerHTML=`<span class="d">${d}</span><canvas></canvas>${info.ev?`<span class="ev">${info.ev.name}</span>`:`<span class="age">${info.age.toFixed(1)}</span>`}`;
+    b.onclick=()=>{sel={y,m,d};renderHero();renderCal();window.scrollTo({top:0,behavior:"smooth"})};
+    g.appendChild(b);draws.push([b.querySelector("canvas"),info.E]);
+  }
+  requestAnimationFrame(()=>draws.forEach(([cv,E])=>drawMoon(cv,E,false)));
+}
+
+document.getElementById("prev").onclick=()=>{view.m--;if(view.m<0){view.m=11;view.y--}renderCal()};
+document.getElementById("next").onclick=()=>{view.m++;if(view.m>11){view.m=0;view.y++}renderCal()};
+document.getElementById("thisM").onclick=()=>{view={y:today.y,m:today.m};renderCal()};
+document.getElementById("backToday").onclick=()=>{sel={y:today.y,m:today.m,d:today.d};view={y:today.y,m:today.m};renderHero();renderCal()};
+let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{renderHero();renderCal()},200)});
+renderHero();renderCal();
+})();
+</script>
+
+</body></html>
