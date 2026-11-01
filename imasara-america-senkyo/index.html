@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="アメリカ選挙">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#1d2333">
+<title>今さら聞けないアメリカ選挙</title>
+<meta name="description" content="共和党と民主党のちがい、中間選挙って結局なに？、トランプはどうなる？を5分でスッキリ。しくみ・用語・クイズつき。">
+<meta property="og:title" content="今さら聞けないアメリカ選挙">
+<meta property="og:description" content="共和党・民主党・中間選挙が5分でスッキリ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1e7; --paper:#fffdf8; --ink:#1d2333; --sub:#5d6475; --line:#e3dccd;
+  --red:#d6403a; --red-soft:#fbe6e3; --blue:#2f5fc4; --blue-soft:#e3ebfb;
+  --gold:#e6a817; --gold-soft:#fdf2d6; --green:#2f9a6a; --green-soft:#dff3e9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Zen Kaku Gothic New",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%}
+h1,h2,h3,.round{font-family:"M PLUS Rounded 1c","Zen Kaku Gothic New",sans-serif}
+header.top{background:var(--ink);color:#fff;padding:14px 16px 10px;position:relative;overflow:hidden}
+header.top::after{content:"";position:absolute;inset:auto 0 0 0;height:5px;background:linear-gradient(90deg,var(--red) 0 50%,var(--blue) 50% 100%)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .flag{font-size:26px}
+.brand h1{font-size:20px;font-weight:800;letter-spacing:.02em}
+.brand p{font-size:11.5px;opacity:.75;margin-top:-2px}
+.home{display:inline-block;font-size:12px;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+nav.tabs{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:9px 10px;scrollbar-width:none;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:0 0 auto;text-decoration:none;color:var(--ink);font-family:"M PLUS Rounded 1c",sans-serif;font-weight:700;font-size:13.5px;padding:7px 13px;border-radius:999px;background:#f0ebe0;white-space:nowrap}
+nav.tabs a.on{background:var(--ink);color:#fff}
+main{max-width:720px;margin:0 auto;padding:18px 14px 90px}
+section.view{display:none;animation:fade .25s ease}
+section.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.08em}
+h2{font-size:23px;font-weight:800;line-height:1.35;margin:2px 0 12px}
+h3{font-size:17px;font-weight:800;margin:0 0 6px}
+p+p{margin-top:.6em}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.lead{font-size:15.5px;color:var(--sub)}
+.big3{display:grid;gap:10px;margin-top:12px}
+.q{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 14px 14px 56px;position:relative}
+.q .n{position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:"M PLUS Rounded 1c";font-weight:800;color:#fff;background:var(--ink)}
+.q b{display:block;font-family:"M PLUS Rounded 1c";font-size:16px}
+.q span{font-size:14.5px;color:var(--sub)}
+.q .go{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:var(--blue)}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;margin-right:4px}
+.pill.r{background:var(--red-soft);color:var(--red)} .pill.d{background:var(--blue-soft);color:var(--blue)} .pill.g{background:var(--gold-soft);color:#946a00}
+.note{font-size:12.5px;color:var(--sub);margin-top:8px}
+.countdown{display:flex;align-items:center;gap:12px;background:var(--gold-soft);border:1px solid #f1d58c;border-radius:16px;padding:12px 14px;margin:12px 0}
+.countdown .num{font-family:"M PLUS Rounded 1c";font-weight:800;font-size:30px;color:#a87400;line-height:1}
+.countdown small{display:block;font-size:12.5px;color:#7a5a00}
+/* 三権 */
+.branches{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.br{border-radius:14px;padding:10px 8px;text-align:center;background:#f3efe6;cursor:pointer;border:2px solid transparent;transition:.15s}
+.br.on{border-color:var(--ink);background:#fff}
+.br .ic{font-size:26px}
+.br b{display:block;font-family:"M PLUS Rounded 1c";font-size:14px}
+.br small{font-size:11.5px;color:var(--sub)}
+.brdetail{margin-top:10px;background:#fff;border-radius:12px;padding:12px;border:1px dashed var(--line);font-size:15px}
+/* 選挙カレンダー */
+.timeline{position:relative;margin:10px 0 0 8px;padding-left:18px;border-left:3px solid var(--line)}
+.tl{position:relative;margin-bottom:12px}
+.tl::before{content:"";position:absolute;left:-26px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--paper);border:3px solid var(--sub)}
+.tl.now::before{border-color:var(--gold);background:var(--gold)}
+.tl b{font-family:"M PLUS Rounded 1c"}
+.tl span{display:block;font-size:14px;color:var(--sub)}
+/* 政党 */
+.parties{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.party{border-radius:16px;padding:14px 12px;color:#fff;text-align:center}
+.party.r{background:var(--red)} .party.d{background:var(--blue)}
+.party .ani{font-size:38px;line-height:1.1}
+.party b{display:block;font-family:"M PLUS Rounded 1c";font-size:18px;margin-top:4px}
+.party small{display:block;font-size:12px;opacity:.9}
+.party ul{list-style:none;text-align:left;margin-top:8px;font-size:13px}
+.party li{padding:3px 0;border-top:1px solid rgba(255,255,255,.25)}
+.issues{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.issues button{font:inherit;font-family:"M PLUS Rounded 1c";font-weight:700;font-size:13.5px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 12px;color:var(--ink);cursor:pointer}
+.issues button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vs > div{border-radius:14px;padding:12px;font-size:14.5px}
+.vs .r{background:var(--red-soft);border:1px solid #f2c5c0}
+.vs .d{background:var(--blue-soft);border:1px solid #c7d6f4}
+.vs h4{font-family:"M PLUS Rounded 1c";font-size:13px;margin-bottom:4px}
+.vs .r h4{color:var(--red)} .vs .d h4{color:var(--blue)}
+.vs .why{display:block;margin-top:6px;font-size:13px;color:var(--sub)}
+/* 議席バー */
+.seatbar{margin:10px 0 4px}
+.seatbar .lbl{display:flex;justify-content:space-between;font-size:13px;font-weight:700;font-family:"M PLUS Rounded 1c"}
+.bar{height:26px;border-radius:8px;overflow:hidden;display:flex;position:relative;background:#ddd;margin-top:4px}
+.bar .d{background:var(--blue)} .bar .r{background:var(--red)}
+.bar .mid{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.bar .d,.bar .r{transition:width .5s ease}
+.racechips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.stat div{background:#f3efe6;border-radius:12px;padding:10px 6px;text-align:center}
+.stat b{display:block;font-family:"M PLUS Rounded 1c";font-size:22px;line-height:1.2}
+.stat small{font-size:11.5px;color:var(--sub)}
+/* シナリオ */
+.scen{display:grid;gap:8px;margin-top:10px}
+.scen button{font:inherit;text-align:left;cursor:pointer;border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:10px 12px;color:var(--ink)}
+.scen button.on{border-color:var(--ink);background:#fff;box-shadow:0 2px 0 var(--ink)}
+.scen button b{font-family:"M PLUS Rounded 1c";font-size:15px;display:block}
+.scen button small{color:var(--sub);font-size:12.5px}
+.scenout{margin-top:12px;background:#fff;border-radius:14px;padding:14px;border:1px solid var(--line)}
+.scenout ul{padding-left:1.2em;margin-top:6px}
+.scenout li{margin:4px 0;font-size:15px}
+.meter{display:flex;gap:4px;margin-top:6px}
+.meter i{flex:1;height:8px;border-radius:4px;background:#e5dfd2}
+.meter i.f{background:var(--gold)}
+/* 用語 */
+.search{width:100%;font:inherit;font-size:16px;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:var(--paper)}
+details.term{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin:8px 0;overflow:hidden}
+details.term summary{list-style:none;cursor:pointer;padding:12px 14px;font-family:"M PLUS Rounded 1c";font-weight:700;display:flex;justify-content:space-between;align-items:center}
+details.term summary::-webkit-details-marker{display:none}
+details.term summary::after{content:"＋";color:var(--sub)}
+details.term[open] summary::after{content:"−"}
+details.term summary small{font-family:"Zen Kaku Gothic New";font-weight:500;color:var(--sub);font-size:12px;margin-left:6px}
+details.term div{padding:0 14px 14px;font-size:15px}
+/* クイズ */
+.quizbox .prog{display:flex;gap:4px;margin-bottom:12px}
+.quizbox .prog i{flex:1;height:6px;border-radius:3px;background:#e5dfd2}
+.quizbox .prog i.ok{background:var(--green)} .quizbox .prog i.ng{background:var(--red)} .quizbox .prog i.cur{background:var(--ink)}
+.quizbox .qq{font-family:"M PLUS Rounded 1c";font-weight:800;font-size:18px;line-height:1.5}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opts button{font:inherit;text-align:left;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink);font-size:15.5px}
+.opts button.ok{border-color:var(--green);background:var(--green-soft)}
+.opts button.ng{border-color:var(--red);background:var(--red-soft)}
+.opts button:disabled{cursor:default}
+.expl{margin-top:12px;padding:12px;border-radius:12px;background:#f3efe6;font-size:15px}
+.btn{display:inline-block;font:inherit;font-family:"M PLUS Rounded 1c";font-weight:800;font-size:15px;border:0;border-radius:999px;padding:11px 20px;background:var(--ink);color:#fff;cursor:pointer;text-decoration:none;margin-top:12px}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.result{text-align:center;padding:10px 0}
+.result .score{font-family:"M PLUS Rounded 1c";font-weight:800;font-size:44px}
+.next{display:flex;justify-content:flex-end;margin-top:18px}
+.jst{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14.5px;margin-top:8px}
+.jst b{font-family:"M PLUS Rounded 1c";white-space:nowrap}
+footer{max-width:720px;margin:0 auto;padding:0 16px 40px;font-size:12px;color:var(--sub)}
+footer a{color:var(--sub)}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="home" href="../">← アプリ一覧</a>
+  <div class="brand"><span class="flag">🗳️</span><div><h1>今さら聞けないアメリカ選挙</h1><p>共和党・民主党・中間選挙が5分でスッキリ</p></div></div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <a href="#start" data-v="start">はじめに</a>
+  <a href="#shikumi" data-v="shikumi">しくみ</a>
+  <a href="#seito" data-v="seito">2つの政党</a>
+  <a href="#chukan" data-v="chukan">中間選挙</a>
+  <a href="#trump" data-v="trump">トランプは？</a>
+  <a href="#yogo" data-v="yogo">用語</a>
+  <a href="#quiz" data-v="quiz">クイズ</a>
+</nav>
+
+<main>
+
+<!-- ===== はじめに ===== -->
+<section class="view" id="v-start">
+  <div class="eyebrow">START HERE</div>
+  <h2>まず、3行でざっくり</h2>
+  <div class="countdown" id="countdown"></div>
+  <div class="big3">
+    <a class="q" href="#seito"><span class="n">1</span><b>共和党と民主党って？</b><span>アメリカはほぼこの2つの党で政治をしている。<span class="pill r">赤・ゾウ</span>共和党は「小さな政府・伝統重視」、<span class="pill d">青・ロバ</span>民主党は「政府が支える・多様性重視」が基本スタイル。</span><span class="go">くわしく →</span></a>
+    <a class="q" href="#chukan"><span class="n">2</span><b>中間選挙って結局何？</b><span>大統領の任期4年の<b style="display:inline">ちょうど真ん中</b>にある、議会（国会）の選挙。大統領は選ばないけど、「大統領への通信簿」と言われる。</span><span class="go">くわしく →</span></a>
+    <a class="q" href="#trump"><span class="n">3</span><b>トランプはどうなる？</b><span>中間選挙で負けても大統領はやめない（任期は2029年1月まで）。ただ議会を野党に取られると、法律が通しにくくなり、調査を受けやすくなる。</span><span class="go">くわしく →</span></a>
+  </div>
+  <div class="card">
+    <h3>💡 日本とのちがい、ひとことで</h3>
+    <p>日本は国会が首相を選ぶけど、アメリカは<b>国民が大統領を直接（に近い形で）選ぶ</b>。だから「大統領の党」と「議会の多数派」がバラバラになることがよくある。これが中間選挙が注目される理由。</p>
+  </div>
+  <div class="next"><a class="btn" href="#shikumi">しくみから読む →</a></div>
+</section>
+
+<!-- ===== しくみ ===== -->
+<section class="view" id="v-shikumi">
+  <div class="eyebrow">HOW IT WORKS</div>
+  <h2>アメリカ政治は「3つの力」の綱引き</h2>
+  <p class="lead">権力が1か所に集まらないように、3つに分けてお互いにブレーキをかけ合う仕組み。タップしてみて。</p>
+  <div class="card">
+    <div class="branches" id="branches">
+      <div class="br on" data-b="0"><div class="ic">🏛️</div><b>大統領</b><small>行政</small></div>
+      <div class="br" data-b="1"><div class="ic">📜</div><b>議会</b><small>立法</small></div>
+      <div class="br" data-b="2"><div class="ic">⚖️</div><b>最高裁</b><small>司法</small></div>
+    </div>
+    <div class="brdetail" id="brdetail"></div>
+  </div>
+
+  <div class="card">
+    <h3>議会は「2階建て」</h3>
+    <div class="vs" style="margin-top:8px">
+      <div style="background:#f3efe6"><h4>⬇️ 下院（House）</h4><b class="round" style="font-size:22px">435人</b><br>任期<b>2年</b>。2年ごとに<b>全員</b>入れ替え。人口が多い州ほど人数が多い。予算や弾劾の「スタート役」。</div>
+      <div style="background:#f3efe6"><h4>⬆️ 上院（Senate）</h4><b class="round" style="font-size:22px">100人</b><br>任期<b>6年</b>。2年ごとに<b>約3分の1</b>ずつ入れ替え。どの州も2人ずつ。大臣や判事の承認役。</div>
+    </div>
+    <p class="note">法律は「下院OK → 上院OK → 大統領がサイン」でやっと成立。どこか1つでもNOなら止まる。</p>
+  </div>
+
+  <div class="card">
+    <h3>大統領選は「州ごとの取り合い」</h3>
+    <p>大統領選は全国の得票数の合計では決まらない。州ごとに「選挙人」が割り当てられていて（全部で<b>538人</b>）、ほとんどの州は<b>1票でも多く取った候補がその州の選挙人を総取り</b>。合計<b>270人</b>を先に取ったほうが勝ち。</p>
+    <div class="seatbar">
+      <div class="bar"><div class="d" style="width:50.2%"></div><div class="r" style="width:49.8%"></div><div class="mid"></div></div>
+      <div class="lbl" style="margin-top:4px"><span>0</span><span>← 270で勝利 →</span><span>538</span></div>
+    </div>
+    <p class="note">だから、どっちに転ぶかわからない「スイングステート（激戦州）」に候補者が集中する。</p>
+  </div>
+
+  <div class="card">
+    <h3>選挙カレンダー</h3>
+    <div class="timeline">
+      <div class="tl"><b>2024年11月</b><span>大統領選＋議会選。トランプ氏が勝ち、共和党が上下両院も押さえた</span></div>
+      <div class="tl"><b>2025年1月</b><span>トランプ氏の2期目スタート</span></div>
+      <div class="tl now"><b>2026年11月3日（いまココ）</b><span>中間選挙。大統領は選ばず、議会と州知事など</span></div>
+      <div class="tl"><b>2028年11月</b><span>次の大統領選。トランプ氏は憲法上、出馬できない（2期まで）</span></div>
+      <div class="tl"><b>2029年1月20日</b><span>トランプ氏の任期おわり・次の大統領が就任</span></div>
+    </div>
+  </div>
+  <div class="next"><a class="btn" href="#seito">次は2つの政党 →</a></div>
+</section>
+
+<!-- ===== 政党 ===== -->
+<section class="view" id="v-seito">
+  <div class="eyebrow">TWO PARTIES</div>
+  <h2>共和党と民主党、なにがちがう？</h2>
+  <p class="lead">ざっくり言うと、<b>「政府はなるべく口を出さないで」</b>派と<b>「政府がしっかり支えて」</b>派。もちろん同じ党の中にもいろいろな人がいます。</p>
+  <div class="parties" style="margin-top:12px">
+    <div class="party r"><div class="ani">🐘</div><b>共和党</b><small>Republican / GOP</small>
+      <ul><li>色：赤</li><li>シンボル：ゾウ</li><li>誕生：1854年（リンカーンの党）</li><li>今の顔：トランプ大統領、バンス副大統領</li><li>強い地域：南部・中西部・農村</li></ul></div>
+    <div class="party d"><div class="ani">🫏</div><b>民主党</b><small>Democratic</small>
+      <ul><li>色：青</li><li>シンボル：ロバ</li><li>誕生：1828年ごろ（現存最古の政党）</li><li>今の顔：ジェフリーズ下院院内総務など</li><li>強い地域：大都市・西海岸・東北部</li></ul></div>
+  </div>
+
+  <div class="card">
+    <h3>テーマ別にくらべる</h3>
+    <p class="note" style="margin-top:0">それぞれの党が「自分たちはこう考える」と言っている内容を並べています。</p>
+    <div class="issues" id="issues"></div>
+    <div class="vs" id="vs"></div>
+  </div>
+
+  <div class="card">
+    <h3>🤔 なんで2つしかないの？</h3>
+    <p>アメリカの選挙は基本「1位だけが当選」。小さな党に入れると票が割れて、自分が一番イヤな候補が勝ってしまうことも。だから自然と2大政党に集まりやすい仕組みになっています。</p>
+  </div>
+  <div class="card">
+    <h3>🐘🫏 なんでゾウとロバなの？</h3>
+    <p>法律で決まっているわけではなく、<b>19世紀の風刺漫画</b>がきっかけで定着しました。</p>
+    <div class="vs" style="margin-top:10px">
+      <div class="d"><h4>🫏 ロバ（民主党）</h4>1828年の大統領選で、民主党のアンドリュー・ジャクソンが対立陣営から「jackass（ロバ＝まぬけ）」と悪口を言われた。ジャクソンはそれを逆手に取って「ロバは頑固で根性がある」とポスターに使った、と言われている。</div>
+      <div class="r"><h4>🐘 ゾウ（共和党）</h4>1870年代に、風刺漫画家のトマス・ナストが雑誌で共和党をゾウとして描いて広まった。ナストは民主党をロバとして描いたことでも有名で、2つのシンボルが定着したのはこの人の影響が大きい。</div>
+    </div>
+    <p style="margin-top:10px">共和党はゾウを党の<b>公式ロゴ</b>にしています。民主党はロバを正式なシンボルにはしていませんが、党の行事やグッズで普通に使っていて、<b>事実上のシンボル</b>です。</p>
+    <p><b>🎨 おまけ：赤と青</b><br>「赤＝共和党、青＝民主党」の色分けは意外と新しく、2000年の大統領選でテレビ各局の開票地図がこの色にそろったことで定着しました。それまでは局によって逆の色を使うこともありました。</p>
+  </div>
+  <div class="next"><a class="btn" href="#chukan">次は中間選挙 →</a></div>
+</section>
+
+<!-- ===== 中間選挙 ===== -->
+<section class="view" id="v-chukan">
+  <div class="eyebrow">MIDTERMS 2026</div>
+  <h2>中間選挙って結局なに？</h2>
+  <p class="lead">大統領の任期（4年）の<b>真ん中の年</b>にある、議会を中心にした選挙。2026年は<b>11月3日（火）</b>。</p>
+  <div class="card">
+    <h3>今回えらぶもの</h3>
+    <div class="stat">
+      <div><b>435</b><small>下院 全議席</small></div>
+      <div><b>35</b><small>上院の議席</small></div>
+      <div><b>36</b><small>州知事</small></div>
+    </div>
+    <p class="note">大統領は選ばない。でも有権者は「いまの大統領どう？」の気持ちで投票しがち。</p>
+  </div>
+
+  <div class="card">
+    <h3>いまの議会の勢力（選挙前）</h3>
+    <div class="seatbar">
+      <div class="lbl"><span style="color:var(--blue)">民主 47</span><span>上院（過半数51）</span><span style="color:var(--red)">共和 53</span></div>
+      <div class="bar"><div class="d" style="width:47%"></div><div class="r" style="width:53%"></div><div class="mid"></div></div>
+    </div>
+    <div class="seatbar" style="margin-top:14px">
+      <div class="lbl"><span style="color:var(--blue)">民主</span><span>下院（過半数218）</span><span style="color:var(--red)">共和</span></div>
+      <div class="bar"><div class="d" style="width:49.4%"></div><div class="r" style="width:50.6%"></div><div class="mid"></div></div>
+    </div>
+    <p class="note">上院の民主には、民主党と組む無所属2人を含む。上院で50対50になると、副大統領（共和党のバンス氏）が1票を入れて決めるので、民主党は51が必要。</p>
+    <p style="margin-top:8px">どちらも共和党がギリギリ多数。<b>民主党は上院も下院も「差し引き4議席くらい」増やせば逆転</b>できる、という接戦の土俵です。</p>
+  </div>
+
+  <div class="card">
+    <h3>📉 歴史の「おきまり」</h3>
+    <p>大統領の党は中間選挙で負けやすい。過去22回の中間選挙のうち<b>20回</b>で、大統領の党が下院の議席を減らしています。</p>
+    <p>なぜかというと…不満を持つ人ほど投票に行きたくなる、野党支持者がやる気になる、「議会でブレーキをかけたい」という気持ちが働く、などと言われます。</p>
+  </div>
+
+  <div class="card">
+    <h3>📊 直前の予想（11月1日時点）</h3>
+    <ul style="padding-left:1.2em;font-size:15px">
+      <li><b>下院</b>：多くの予想で<span class="pill d">民主党有利</span>。ある予想では民主党が下院を取る確率79%。</li>
+      <li><b>上院</b>：<span class="pill g">接戦</span>。共和党が守ってきた州のいくつかで競り合い。予想サイトによって結果が割れている。</li>
+      <li><b>トランプ大統領の支持率</b>：主要調査の平均で<b>36%前後</b>。中間選挙の時期としてはかなり低い水準。</li>
+    </ul>
+    <p class="note">予想はあくまで予想。2016年のように外れることもあります。</p>
+  </div>
+
+  <div class="card">
+    <h3>🔥 今回の争点</h3>
+    <div class="racechips">
+      <span class="pill g">物価・生活費</span><span class="pill g">移民・国境</span><span class="pill g">イランとの戦争</span><span class="pill g">ガソリン価格</span><span class="pill g">医療保険</span><span class="pill g">関税</span><span class="pill g">トランプ氏への評価</span>
+    </div>
+    <div class="vs" style="margin-top:10px">
+      <div class="r"><h4>共和党の訴え</h4>減税（チップや残業代の非課税など）で手取りが増えた。国境の不法越境が大きく減った。安全な街と経済成長を。</div>
+      <div class="d"><h4>民主党の訴え</h4>生活費を下げる「アフォーダビリティ（手頃さ）」が最優先。医療保険の補助を延長し、関税や戦争で上がった負担を戻す。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ 区割りの陣取り合戦</h3>
+    <p>下院の選挙区の線は、普通は10年に1回の国勢調査のあとに引き直します。今回は異例で、選挙前にテキサスなど共和党の州が自分たちに有利な線に引き直し、対抗してカリフォルニアなど民主党の州も引き直しました。線の引き方で議席数が変わるので、これも勝敗に影響します。</p>
+  </div>
+
+  <div class="card">
+    <h3>⏰ 日本時間で見ると</h3>
+    <div class="jst">
+      <b>11/3（火）夜〜</b><span>アメリカで投票（日本は11/3の夜〜11/4の朝）</span>
+      <b>11/4（水）9時ごろ</b><span>東部の州から投票終了 → 開票速報スタート</span>
+      <b>11/4 昼〜夕方</b><span>大勢が見えてくる（接戦なら数日かかることも）</span>
+    </div>
+    <p class="note">11月1日にアメリカは冬時間に切り替わったので、東部とは14時間差。</p>
+  </div>
+  <div class="next"><a class="btn" href="#trump">トランプはどうなる？ →</a></div>
+</section>
+
+<!-- ===== トランプ ===== -->
+<section class="view" id="v-trump">
+  <div class="eyebrow">WHAT ABOUT TRUMP</div>
+  <h2>で、トランプはどうなるの？</h2>
+  <div class="card">
+    <h3>まず大前提</h3>
+    <ul style="padding-left:1.2em">
+      <li>中間選挙で負けても、<b>大統領はやめない</b>。任期は<b>2029年1月20日</b>まで。</li>
+      <li>憲法（修正第22条）で大統領は<b>2期まで</b>。2028年の大統領選には出られない。</li>
+      <li>変わるのは「<b>議会がトランプ氏の味方か、ブレーキ役か</b>」。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>結果別シミュレーション</h3>
+    <p class="note" style="margin-top:0">タップすると、どうなりそうかが変わります。</p>
+    <div class="scen" id="scen">
+      <button data-s="0"><b>🔴🔴 共和党が上下両院キープ</b><small>いまと同じ状態が続く</small></button>
+      <button data-s="1"><b>🔵🔴 民主党が下院だけ取る</b><small>予想でいちばん多いパターン</small></button>
+      <button data-s="2"><b>🔵🔵 民主党が上下両院を取る</b><small>上院の接戦をぜんぶ制した場合</small></button>
+    </div>
+    <div class="scenout" id="scenout"></div>
+  </div>
+
+  <div class="card">
+    <h3>⚖️ 「弾劾」ってそんなにカンタン？</h3>
+    <p>弾劾は、議会が大統領をクビにできる仕組み。でもハードルは2段階あります。</p>
+    <ol style="padding-left:1.3em;margin-top:6px">
+      <li><b>下院</b>が過半数で「訴える（弾劾訴追）」</li>
+      <li><b>上院</b>が裁判をして、<b>3分の2（67人）</b>が賛成したら罷免</li>
+    </ol>
+    <p style="margin-top:8px">トランプ氏は1期目に2回、下院で弾劾訴追されましたが、上院で3分の2に届かず罷免されていません。今回、民主党が上院を取っても67人には遠く届かないので、<b>罷免はかなり難しい</b>のが現実です。</p>
+  </div>
+
+  <div class="card">
+    <h3>🗣️ それぞれの言い分</h3>
+    <div class="vs">
+      <div class="d"><h4>民主党側</h4>下院を取ったら政権を調査するとしていて、ただし「まず弾劾」よりも生活費の問題と、政権や関係企業の調査を優先する姿勢を見せている。</div>
+      <div class="r"><h4>共和党・トランプ氏側</h4>トランプ氏は「民主党が勝ったらまた弾劾してくる」と警告。共和党は民主党の調査計画を「仕返しの政治」だと批判している。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>👀 選挙後に注目するポイント</h3>
+    <ul style="padding-left:1.2em;font-size:15px">
+      <li>下院議長が誰になるか（民主党が勝てばジェフリーズ氏が有力）</li>
+      <li>上院の接戦州の結果（ここで上院の行方が決まる）</li>
+      <li>2028年に向けて、両党の「次の顔」が誰になるか</li>
+    </ul>
+  </div>
+  <div class="next"><a class="btn" href="#yogo">ニュース用語をおさえる →</a></div>
+</section>
+
+<!-- ===== 用語 ===== -->
+<section class="view" id="v-yogo">
+  <div class="eyebrow">GLOSSARY</div>
+  <h2>ニュースでよく聞く言葉</h2>
+  <input class="search" id="q" type="search" placeholder="🔍 ことばを探す（例：弾劾、スイング）">
+  <div id="terms"></div>
+  <div class="next"><a class="btn" href="#quiz">理解度クイズへ →</a></div>
+</section>
+
+<!-- ===== クイズ ===== -->
+<section class="view" id="v-quiz">
+  <div class="eyebrow">QUIZ</div>
+  <h2>みるみるわかったかチェック</h2>
+  <div class="card quizbox" id="quiz"></div>
+</section>
+
+</main>
+
+<footer>
+  2026年11月1日時点の情報をもとにまとめています。選挙結果・支持率・予想はこの後変わります。どちらの党を応援するものでもありません。<br>つくった人：ロックポッポ（<a href="https://x.com/rockpoppocom">@rockpoppocom</a>）
+</footer>
+
+<script>
+/* ---------- タブ切替（#ハッシュ） ---------- */
+const views=["start","shikumi","seito","chukan","trump","yogo","quiz"];
+function show(){
+  let v=location.hash.replace("#","");
+  if(!views.includes(v)) v="start";
+  document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  document.querySelectorAll("nav.tabs a").forEach(a=>{
+    const on=a.dataset.v===v; a.classList.toggle("on",on);
+    if(on) a.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
+  });
+  window.scrollTo({top:0});
+}
+window.addEventListener("hashchange",show);
+
+/* ---------- カウントダウン ---------- */
+(function(){
+  const el=document.getElementById("countdown");
+  // 投票日 2026/11/3（米東部）→ 開票速報は日本時間 11/4 9:00ごろ
+  const results=new Date("2026-11-04T09:00:00+09:00");
+  const now=new Date();
+  const ms=results-now, days=Math.floor(ms/86400000), hrs=Math.floor(ms/3600000);
+  if(ms>0){
+    const label=days>=1?`<div class="num">${days}</div><div><b class="round">日ちょっとで開票速報</b>`:`<div class="num">${hrs}</div><div><b class="round">時間後に開票速報</b>`;
+    el.innerHTML=`${label}<small>中間選挙の投票日はアメリカ時間 11月3日（火）。日本時間では11月4日の朝から結果が出はじめます。</small></div>`;
+  }else{
+    el.innerHTML=`<div class="num">🗳️</div><div><b class="round">中間選挙の開票が始まりました</b><small>このアプリの数字は選挙前（11月1日時点）のもの。最新の結果はニュースで確認してね。</small></div>`;
+  }
+})();
+
+/* ---------- 三権 ---------- */
+const branches=[
+  "<b>大統領（ホワイトハウス）</b><br>国のリーダーで軍のトップ。法律を実行する役。議会が作った法律に<b>「拒否権」</b>を出してストップできる。任期4年・2期まで。",
+  "<b>議会（連邦議会）</b><br>法律と予算を作る役。大統領の拒否権も、上下両院が<b>3分の2</b>で再可決すればひっくり返せる。大統領を辞めさせる<b>「弾劾」</b>もできる。",
+  "<b>最高裁判所</b><br>9人の判事が「その法律や命令は憲法違反じゃない？」を判断する。判事は大統領が指名し、上院が承認。<b>終身制</b>なので、誰を選ぶかが何十年も影響する。"
+];
+const brd=document.getElementById("brdetail");
+document.querySelectorAll(".br").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".br").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on"); brd.innerHTML=branches[b.dataset.b];
+}));
+brd.innerHTML=branches[0];
+
+/* ---------- 政党テーマ比較 ---------- */
+const issues=[
+  {k:"💰 税金",r:"税金は低く。企業や個人の税を下げれば、投資と雇用が増えて経済が伸びる。",rw:"自分で稼いだお金は自分で使うのが基本",d:"お金持ちや大企業にもっと負担してもらい、医療や教育、中間層の支援に回す。",dw:"格差を小さくするのが政府の役目"},
+  {k:"🏛️ 政府の大きさ",r:"「小さな政府」。規制を減らし、州や個人に任せる。",rw:"政府が大きいとムダと借金が増える",d:"「大きめの政府」。社会保障や規制で暮らしを守る。",dw:"市場まかせだと取り残される人が出る"},
+  {k:"🛂 移民",r:"国境の取り締まりを強化。不法移民の強制送還を進める。",rw:"法と安全を守るのが先",d:"取り締まりは必要だが、すでに暮らす人には合法化の道も。人道的な扱いを重視。",dw:"移民が国を支えてきた歴史がある"},
+  {k:"🏥 医療",r:"民間の保険と競争で費用を下げる。政府の関与は小さく。",rw:"選ぶ自由とコスト削減",d:"オバマケア（医療保険制度）を守り、補助を広げて無保険の人を減らす。",dw:"医療は誰でも受けられるべき"},
+  {k:"🔫 銃",r:"銃を持つ権利は憲法（修正第2条）で守られた大事な権利。規制には慎重。",rw:"自分と家族を守る権利",d:"購入時の身元チェック強化など、規制を強めて銃の事件を減らす。",dw:"銃による被害を減らすのが先"},
+  {k:"🤰 中絶",r:"制限すべきという立場が多い（どこまで制限するかは州ごとに議論）。",rw:"おなかの赤ちゃんの命を守る",d:"女性が選べる権利を守るべきという立場が多い。",dw:"自分の体のことは自分で決める"},
+  {k:"🌎 環境・エネルギー",r:"石油・ガスなど国内エネルギーを増産して、電気代やガソリン代を下げる。",rw:"エネルギーの自立と雇用",d:"気候変動対策として再生可能エネルギーへの移行を進める。",dw:"地球温暖化は待ったなし"},
+  {k:"🌐 外交・貿易",r:"「アメリカ・ファースト」。関税で国内産業を守り、同盟国にも負担を求める。",rw:"まず自国の利益を",d:"同盟国との協力を重視。関税は物価を上げると批判的な人が多い。",dw:"仲間と組んだほうが強い"}
+];
+const issEl=document.getElementById("issues"), vsEl=document.getElementById("vs");
+function showIssue(i){
+  [...issEl.children].forEach((b,j)=>b.classList.toggle("on",i===j));
+  const x=issues[i];
+  vsEl.innerHTML=`<div class="r"><h4>🐘 共和党</h4>${x.r}<span class="why">💭 ${x.rw}</span></div><div class="d"><h4>🫏 民主党</h4>${x.d}<span class="why">💭 ${x.dw}</span></div>`;
+}
+issues.forEach((x,i)=>{const b=document.createElement("button");b.textContent=x.k;b.onclick=()=>showIssue(i);issEl.appendChild(b);});
+showIssue(0);
+
+/* ---------- シナリオ ---------- */
+const scen=[
+  {t:"トランプ氏はやりやすい状態が続く",m:4,l:["政権が進めたい法律が通りやすいまま","大臣や判事の人事も上院でスムーズに承認","議会からの本格的な調査はほぼない","ただし上院では多くの法案に60票が必要（フィリバスター）なので、何でも通るわけではない"]},
+  {t:"いちばん「変わる」パターン",m:2,l:["下院で民主党が反対すれば、政権の法案や予算は通りにくくなる","下院の委員会が政権を調査し、証人を呼んだり書類を求めたりできる（召喚状）","弾劾訴追も理論上は可能。ただ民主党指導部は「まず生活費と調査」の姿勢","上院は共和党なので、大臣や判事の承認はこれまで通り進む","予算をめぐって対立し、政府閉鎖が起きやすくなる"]},
+  {t:"トランプ氏にとって最も厳しい",m:1,l:["法案も予算も、両院とも民主党の同意が必要に","大臣・判事など人事の承認も上院で止められる","下院・上院の両方から調査を受ける","それでも罷免には上院の3分の2が必要なので、大統領は任期まで続く可能性が高い","大統領は議会を通さない「大統領令」をより多く使うかも"]}
+];
+const sbtn=document.querySelectorAll("#scen button"), sout=document.getElementById("scenout");
+function showScen(i){
+  sbtn.forEach((b,j)=>b.classList.toggle("on",i===j));
+  const s=scen[i];
+  const meter=[0,1,2,3].map(n=>`<i class="${n<s.m?'f':''}"></i>`).join("");
+  sout.innerHTML=`<h3>${s.t}</h3><div style="font-size:12.5px;color:var(--sub)">トランプ政権の「動きやすさ」</div><div class="meter">${meter}</div><ul>${s.l.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+}
+sbtn.forEach((b,i)=>b.onclick=()=>showScen(i));
+showScen(1);
+
+/* ---------- 用語 ---------- */
+const terms=[
+  ["中間選挙","Midterm election","大統領の任期4年の真ん中にある議会選挙。下院の全員と上院の約3分の1、多くの州知事などを選ぶ。"],
+  ["下院","House of Representatives","435人。任期2年。人口に応じて州ごとに議席数が決まる。予算案や弾劾はここから始まる。"],
+  ["上院","Senate","100人（各州2人）。任期6年。条約や大臣・最高裁判事の承認をする。"],
+  ["過半数","Majority","下院は218、上院は51。上院が50対50のときは副大統領が1票を投じる。"],
+  ["選挙人団","Electoral College","大統領選で各州に割り当てられた「選挙人」。全部で538人、270人取れば勝ち。多くの州は勝った候補の総取り。"],
+  ["スイングステート","Swing state／激戦州","選挙のたびに共和・民主のどちらが勝つか変わる州。ペンシルベニア、ミシガン、ジョージアなど。"],
+  ["レッドステート／ブルーステート","Red / Blue state","共和党が強い州が赤、民主党が強い州が青。テレビの開票地図の色から定着した呼び方。"],
+  ["GOP","Grand Old Party","共和党のニックネーム。「偉大な古い党」の略。"],
+  ["MAGA","Make America Great Again","「アメリカを再び偉大に」。トランプ氏のスローガンで、熱心な支持層を指す言葉にもなっている。"],
+  ["予備選挙","Primary","本番の前に、各党の中で「誰を候補にするか」を決める選挙。"],
+  ["弾劾","Impeachment","議会が大統領などを辞めさせる手続き。下院が過半数で訴追し、上院が3分の2で有罪にすると罷免。"],
+  ["拒否権","Veto","議会が通した法律に大統領がNOを出すこと。両院が3分の2で再可決すれば覆せる。"],
+  ["フィリバスター","Filibuster","上院で、長い演説などで採決を引き延ばす戦術。止めるには60票が必要なので、多くの法案は実質60票ないと通らない。"],
+  ["召喚状","Subpoena","議会の委員会が、証言や書類の提出を強制的に求める命令。多数派になると出せる。"],
+  ["ゲリマンダー","Gerrymandering","自分の党に有利になるように選挙区の線を引くこと。昔の州知事の名前と、区割りの形がサラマンダー（トカゲ）に似ていたことから。"],
+  ["下院議長","Speaker of the House","下院のリーダー。多数派の党から選ばれる。大統領・副大統領に次ぐ、大統領継承順位3位。"],
+  ["支持率","Approval rating","大統領の仕事ぶりを「支持する」と答えた人の割合。40%を下回ると中間選挙で苦戦しやすいと言われる。"],
+  ["政府閉鎖","Government shutdown","議会で予算が決まらず、一部の役所が業務を止めること。上下両院や大統領の対立が強いと起きやすい。"],
+  ["アフォーダビリティ","Affordability","「手が届くこと」。家賃・食費・医療費など生活費の高さを指す、今回の選挙のキーワード。"],
+  ["修正第22条","22nd Amendment","大統領を2期までに制限する憲法の条文（1951年に追加）。"]
+];
+const tEl=document.getElementById("terms");
+function renderTerms(f=""){
+  f=f.trim().toLowerCase();
+  const list=terms.filter(t=>!f||t.join(" ").toLowerCase().includes(f));
+  tEl.innerHTML=list.length?list.map(t=>`<details class="term"><summary><span>${t[0]}<small>${t[1]}</small></span></summary><div>${t[2]}</div></details>`).join(""):`<p class="note">見つからなかった…別の言葉で探してみて</p>`;
+}
+document.getElementById("q").addEventListener("input",e=>renderTerms(e.target.value));
+renderTerms();
+
+/* ---------- クイズ ---------- */
+const quiz=[
+  {q:"中間選挙で選ばれないのはどれ？",o:["下院議員","上院議員","大統領","州知事"],a:2,e:"中間選挙は大統領の任期の真ん中にある選挙で、大統領そのものは選びません。"},
+  {q:"共和党のシンボルの動物は？",o:["ロバ","ゾウ","ワシ","クマ"],a:1,e:"共和党はゾウ（色は赤）、民主党はロバ（色は青）です。"},
+  {q:"下院議員の任期は？",o:["2年","4年","6年","終身"],a:0,e:"下院は2年ごとに全員が入れ替わります。上院は6年、最高裁判事は終身です。"},
+  {q:"大統領選で勝つのに必要な選挙人の数は？",o:["218","270","300","538"],a:1,e:"選挙人は全部で538人。その過半数の270人を取った候補が勝ちます。"},
+  {q:"上院で50対50になったら、誰が決める？",o:["下院議長","最高裁長官","副大統領","くじ引き"],a:2,e:"副大統領が上院議長を兼ねていて、同数のときに1票を投じます。今はバンス副大統領（共和党）。"},
+  {q:"中間選挙で民主党が下院を取ったら、トランプ大統領は？",o:["すぐに辞任する","任期は続くが、法案が通りにくくなる","2028年にもう一度出馬できる","何も変わらない"],a:1,e:"大統領は任期（2029年1月まで）を続けます。ただ下院で反対されると法律や予算が通りにくくなり、調査も受けやすくなります。"},
+  {q:"大統領を罷免（クビに）するのに必要なのは？",o:["下院の過半数だけ","上院の過半数だけ","下院で訴追＋上院の3分の2","国民投票"],a:2,e:"下院が過半数で弾劾訴追し、上院の裁判で3分の2（67人）が賛成すると罷免です。"},
+  {q:"「フィリバスター」があるせいで、上院で多くの法案を通すのに実質必要な票数は？",o:["51","60","67","100"],a:1,e:"討論を打ち切るのに60票が必要なため、多数派でも60票ないと法案が止まりがちです。"}
+];
+let qi=0, score=0, marks=[];
+const qEl=document.getElementById("quiz");
+function renderQuiz(){
+  const prog=quiz.map((_,i)=>`<i class="${marks[i]===true?'ok':marks[i]===false?'ng':i===qi?'cur':''}"></i>`).join("");
+  if(qi>=quiz.length){
+    const msg=score===quiz.length?"完ペキ！もう人に説明できるレベル 🎉":score>=6?"すごい！ニュースがかなり読めるはず 👍":score>=4?"いい感じ！気になったタブを読み返してみて 📖":"大丈夫、もう一回読めばみるみるわかる 💪";
+    qEl.innerHTML=`<div class="prog">${prog}</div><div class="result"><div class="score">${score} / ${quiz.length}</div><p>${msg}</p><button class="btn" id="retry">もう一回</button></div>`;
+    document.getElementById("retry").onclick=()=>{qi=0;score=0;marks=[];renderQuiz();};
+    return;
+  }
+  const x=quiz[qi];
+  qEl.innerHTML=`<div class="prog">${prog}</div><div class="eyebrow">Q${qi+1} / ${quiz.length}</div><div class="qq">${x.q}</div><div class="opts">${x.o.map((o,i)=>`<button data-i="${i}">${o}</button>`).join("")}</div><div id="ex"></div>`;
+  qEl.querySelectorAll(".opts button").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i, ok=i===x.a;
+    if(ok) score++; marks[qi]=ok;
+    qEl.querySelectorAll(".opts button").forEach((bb,j)=>{bb.disabled=true; if(j===x.a) bb.classList.add("ok"); else if(j===i) bb.classList.add("ng");});
+    document.getElementById("ex").innerHTML=`<div class="expl"><b>${ok?"⭕ 正解！":"❌ おしい！"}</b> ${x.e}</div><button class="btn" id="nx">${qi===quiz.length-1?"結果を見る":"次へ →"}</button>`;
+    document.getElementById("nx").onclick=()=>{qi++;renderQuiz();};
+  });
+}
+renderQuiz();
+
+show();
+</script>
+</body>
+</html>
