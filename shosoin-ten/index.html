@@ -64,7 +64,7 @@ a { color: var(--kon); }
 h1, h2, h3 { font-family: var(--f-display); font-weight: 700; line-height: 1.4; text-wrap: balance; margin: 0; }
 p { margin: 0; }
 ruby { ruby-position: over; }
-rt { font-size: .5em; font-weight: 400; letter-spacing: 0; opacity: .85; }
+rt { font-size: .5em; font-weight: 400; letter-spacing: 0; opacity: .85; line-height: 1; padding-bottom: 1px; }
 .wrap {
   max-width: 720px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -173,7 +173,11 @@ table.hours th { color: var(--muted); font-weight: 500; font-size: 12px; }
 .calc select, .calc input[type="time"] {
   font: 500 17px var(--f-body); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
   background: var(--bg); color: var(--ink); width: 100%; min-height: 46px;
+  min-width: 0; max-width: 100%; display: block;
 }
+.calc input[type="time"] { -webkit-appearance: none; appearance: none; text-align: left; }
+.calc input[type="time"]::-webkit-date-and-time-value { text-align: left; }
+.calc label { min-width: 0; }
 .calc .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .calc .row.one { grid-template-columns: 1fr; }
 .result { background: var(--kon); color: var(--surface); border-radius: 10px; padding: 14px 16px; }
