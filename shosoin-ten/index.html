@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="正倉院展">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1D2B58">
+<meta name="description" content="第78回正倉院展（2026年10月24日〜11月9日）の見どころ、家を出る時刻がわかる行き方、奈良の歴史をまとめたガイド。">
+<title>正倉院展ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@500;700&display=swap">
+<style>
+/* Layout: 紺色の校倉(あぜくら)風ヘッダー + 上に固定した3タブ。スマホは1カラム、ボタンはすべて画面上部と各カード内に置く。 */
+:root {
+  --bg: #ECEEF3;
+  --surface: #FFFFFF;
+  --ink: #1A2033;
+  --muted: #5A6478;
+  --line: #D2D8E3;
+  --kon: #23356B;
+  --kon-soft: #E1E6F4;
+  --beni: #A52F3C;
+  --beni-soft: #F6E2E5;
+  --kita: #23356B;
+  --naka: #3C6A58;
+  --minami: #8A6618;
+  --hero-bg: #1D2B58;
+  --hero-fg: #F2F4FA;
+  --hero-sub: #B9C3E3;
+  --water: #CFDDF0;
+  --f-display: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11151F; --surface: #1B2130; --ink: #E7EAF2; --muted: #9AA5BC; --line: #2E364A;
+    --kon: #A9B9F2; --kon-soft: #232C4A; --beni: #F09AA3; --beni-soft: #3A2328;
+    --kita: #A9B9F2; --naka: #8FC9B0; --minami: #E0BC6A;
+    --hero-bg: #1A2447; --hero-fg: #F2F4FA; --hero-sub: #A9B5DC; --water: #26364F;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.75;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--hero-bg);
+}
+a { color: var(--kon); }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; line-height: 1.4; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+ruby { ruby-position: over; }
+rt { font-size: .5em; font-weight: 400; letter-spacing: 0; opacity: .85; }
+.wrap {
+  max-width: 720px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ヘッダー */
+.hero {
+  background-color: var(--hero-bg); color: var(--hero-fg);
+  background-image: repeating-linear-gradient(0deg, transparent 0 13px, rgba(255,255,255,.06) 13px 14px);
+  padding-block: 14px 20px;
+}
+.hero .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.hero .kicker { font-size: 12px; letter-spacing: .14em; color: var(--hero-sub); }
+.home { font-size: 12px; color: var(--hero-fg); text-decoration: none; border: 1px solid rgba(255,255,255,.35); border-radius: 99px; padding: 4px 12px; white-space: nowrap; }
+.hero h1 { font-size: 30px; margin-top: 6px; letter-spacing: .04em; }
+.hero .dates { margin-top: 10px; font-size: 15px; font-weight: 500; }
+.hero .dates b { font-family: var(--f-display); font-size: 20px; font-variant-numeric: tabular-nums; }
+.status {
+  display: inline-block; margin-top: 12px; padding: 3px 12px;
+  border: 1px solid var(--hero-sub); border-radius: 99px; font-size: 13px; color: var(--hero-fg);
+}
+
+/* タブ */
+.tabs {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--hero-bg); color: var(--hero-fg);
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.tabs .wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
+.tab {
+  appearance: none; border: 0; background: none; color: var(--hero-sub);
+  font: 500 15px/1 var(--f-body); padding: 14px 4px 12px; cursor: pointer;
+  border-bottom: 3px solid transparent; letter-spacing: .04em;
+}
+.tab[aria-selected="true"] { color: var(--hero-fg); border-bottom-color: #E9A0A8; font-weight: 700; }
+.tab:focus-visible, summary:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 3px solid var(--beni); outline-offset: 2px;
+}
+
+main { padding-block: 22px 40px; }
+.panel { display: flex; flex-direction: column; gap: 26px; }
+.panel[hidden] { display: none; }
+.sec { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.sec > h2 { font-size: 21px; color: var(--kon); }
+.sec > h2 small { font-family: var(--f-body); font-weight: 500; font-size: 12px; color: var(--muted); margin-left: 8px; letter-spacing: .04em; }
+.lead { color: var(--muted); font-size: 14px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px; min-width: 0;
+}
+.note { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+/* 概要 */
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.fact .k { font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.fact .v { font-family: var(--f-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; line-height: 1.35; }
+.fact .v small { font-family: var(--f-body); font-size: 12px; font-weight: 500; color: var(--muted); }
+.fact.hl .v { color: var(--beni); }
+
+/* 倉ごとの内訳 */
+.split { display: flex; height: 30px; border-radius: 6px; overflow: hidden; font-size: 12px; font-weight: 700; color: #fff; }
+.split span { display: flex; align-items: center; justify-content: center; min-width: 0; white-space: nowrap; }
+.split .a { background: #3A4F94; } .split .b { background: #3C6A58; } .split .c { background: #8A6618; } .split .d { background: #6A7288; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+/* 宝物 */
+.theme { font-family: var(--f-display); font-size: 17px; font-weight: 700; margin-top: 6px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.theme span { font-family: var(--f-body); font-size: 12px; font-weight: 400; color: var(--muted); }
+details.t { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+details.t + details.t { margin-top: 8px; }
+details.t summary { list-style: none; cursor: pointer; padding: 13px 14px; display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; }
+details.t summary::-webkit-details-marker { display: none; }
+details.t summary::after { content: "＋"; grid-row: 1 / 3; grid-column: 2; color: var(--muted); font-size: 18px; }
+details.t[open] summary::after { content: "－"; }
+.t .name { font-family: var(--f-display); font-weight: 700; font-size: 18px; line-height: 1.35; }
+.t .yomi { font-size: 12px; color: var(--muted); grid-column: 1; }
+.t .body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12px; padding: 1px 9px; border-radius: 4px; font-weight: 700; color: #fff; }
+.tag.kita { background: #3A4F94; } .tag.naka { background: #3C6A58; } .tag.minami { background: #8A6618; }
+.tag.plain { background: var(--kon-soft); color: var(--kon); font-weight: 500; }
+.tag.first { background: var(--beni-soft); color: var(--beni); }
+
+/* 開館カレンダー */
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal .dow { text-align: center; font-size: 12px; color: var(--muted); padding-bottom: 2px; }
+.cal .d { position: relative; aspect-ratio: 1 / 1; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; font-variant-numeric: tabular-nums; line-height: 1.1; min-width: 0; background: var(--kon-soft); color: var(--ink); }
+.cal .d.out { background: transparent; color: var(--muted); opacity: .45; }
+.cal .d.late { background: var(--kon); color: var(--surface); font-weight: 700; }
+.cal .d.today { outline: 3px solid var(--beni); outline-offset: 1px; }
+.cal .d .ev { position: absolute; bottom: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--beni); }
+.cal .d.late .ev { background: #FFB3BA; }
+.keys { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.keys i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -2px; }
+table.hours { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.hours th, table.hours td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+table.hours th { color: var(--muted); font-weight: 500; font-size: 12px; }
+.tbl { overflow-x: auto; }
+
+/* 行き方 */
+.calc { display: flex; flex-direction: column; gap: 12px; }
+.calc label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+.calc select, .calc input[type="time"] {
+  font: 500 17px var(--f-body); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--ink); width: 100%; min-height: 46px;
+}
+.calc .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.calc .row.one { grid-template-columns: 1fr; }
+.result { background: var(--kon); color: var(--surface); border-radius: 10px; padding: 14px 16px; }
+.result .big { font-family: var(--f-display); font-weight: 700; font-size: 34px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.result .sub { font-size: 13px; opacity: .9; margin-top: 4px; }
+.route { display: flex; flex-direction: column; gap: 10px; }
+.route h3 { font-size: 18px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.route h3 .pill { font-family: var(--f-body); font-size: 12px; font-weight: 700; padding: 1px 10px; border-radius: 99px; background: var(--beni-soft); color: var(--beni); }
+.route ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; }
+.route ol li::marker { color: var(--kon); font-weight: 700; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meta b { color: var(--ink); }
+.mapbox { overflow-x: auto; }
+svg.map { display: block; width: 100%; height: auto; min-width: 320px; }
+svg.map text { font-family: var(--f-body); font-size: 11px; fill: var(--ink); }
+svg.map .sm { font-size: 10px; fill: var(--muted); }
+svg.map .bd { font-weight: 700; font-size: 12px; }
+
+/* 歴史 */
+.tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tl li { display: grid; grid-template-columns: 76px 1fr; gap: 0 14px; padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.tl li:last-child { border-bottom: 0; }
+.tl .yr { font-family: var(--f-display); font-weight: 700; font-size: 20px; color: var(--kon); font-variant-numeric: tabular-nums; line-height: 1.4; }
+.tl .yr small { display: block; font-family: var(--f-body); font-size: 11px; font-weight: 400; color: var(--muted); }
+.tl h3 { font-size: 16px; }
+.tl p { font-size: 14px; color: var(--muted); margin-top: 2px; }
+.tl li.sho .yr { color: var(--beni); }
+.tl li.sho h3::after { content: "正倉院に関わる出来事"; margin-left: 8px; font-family: var(--f-body); font-size: 11px; font-weight: 700; color: var(--beni); background: var(--beni-soft); padding: 1px 8px; border-radius: 4px; vertical-align: 2px; white-space: nowrap; }
+.walks { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.walk { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
+.walk h3 { font-size: 17px; }
+.walk .m { font-size: 13px; color: var(--muted); grid-column: 1; }
+.walk .t { grid-row: 1 / 3; grid-column: 2; align-self: center; font-size: 12px; color: var(--kon); background: var(--kon-soft); padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
+
+footer .src { font-size: 12px; color: var(--muted); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 8px; }
+footer .src a { word-break: break-all; }
+footer .by { margin-top: 10px; font-size: 12px; color: var(--muted); text-align: center; }
+footer .by a { color: var(--muted); }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.plink { display: inline-block; align-self: flex-start; font-size: 13px; font-weight: 700; text-decoration: none; padding: 6px 12px; border: 1px solid var(--kon); border-radius: 6px; }
+.btn { display: inline-block; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 14px; background: var(--kon); color: var(--surface); }
+.btn.ghost { background: transparent; color: var(--kon); border: 1px solid var(--kon); }
+@media (min-width: 560px) { .walks { grid-template-columns: 1fr 1fr; } .hero h1 { font-size: 36px; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="top">
+      <div class="kicker">奈良国立博物館 東西新館</div>
+      <a class="home" href="../">← アプリ一覧</a>
+    </div>
+    <h1>第78回 <ruby>正倉院<rt>しょうそういん</rt></ruby>展</h1>
+    <div class="dates"><b>2026.10.24</b> 土 〜 <b>11.9</b> 月 <span style="opacity:.8">・会期中無休</span></div>
+    <div class="status" id="status">会期を確認中</div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="ページ切り替え">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" id="t-mitokoro" data-tab="mitokoro" aria-selected="true" aria-controls="mitokoro">見どころ</button>
+    <button class="tab" role="tab" id="t-ikikata" data-tab="ikikata" aria-selected="false" aria-controls="ikikata">行き方</button>
+    <button class="tab" role="tab" id="t-rekishi" data-tab="rekishi" aria-selected="false" aria-controls="rekishi">奈良の歴史</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ 見どころ ============ -->
+<section class="panel" id="mitokoro" role="tabpanel" aria-labelledby="t-mitokoro">
+
+  <div class="sec">
+    <h2>今年のあらまし</h2>
+    <div class="facts">
+      <div class="fact hl"><div class="k"><ruby>出陳<rt>しゅっちん</rt></ruby><ruby>宝物<rt>ほうもつ</rt></ruby></div><div class="v">60<small> 件</small></div></div>
+      <div class="fact hl"><div class="k">うち<ruby>初出陳<rt>はつしゅっちん</rt></ruby></div><div class="v">11<small> 件</small></div></div>
+      <div class="fact"><div class="k">観覧料（一般）</div><div class="v">2,000<small> 円</small></div></div>
+      <div class="fact"><div class="k">開館</div><div class="v">8:00<small> 〜 18:00</small></div></div>
+    </div>
+    <p class="note">今年は昭和21年（1946）の第1回から80年の節目です。ポスターには、ペルシア風の水差し「<ruby>漆胡瓶<rt>しっこへい</rt></ruby>」が使われています。観覧は日時指定制です。空き状況は公式サイトで確認してください。</p>
+    <div class="links">
+      <a class="btn" href="https://shosoin-ten.jp/info/ticket/" target="_blank" rel="noopener">チケット（公式）</a>
+      <a class="btn ghost" href="https://shosoin-ten.jp/info/treasures/782026/" target="_blank" rel="noopener"><ruby>出陳<rt>しゅっちん</rt></ruby><ruby>宝物<rt>ほうもつ</rt></ruby>（公式）</a>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>倉ごとの内訳<small>60件</small></h2>
+    <div class="split" role="img" aria-label="北倉13件、中倉22件、南倉22件、聖語蔵3件">
+      <span class="a" style="flex:13">北 13</span><span class="b" style="flex:22">中 22</span><span class="c" style="flex:22">南 22</span><span class="d" style="flex:3"></span>
+    </div>
+    <div class="legend">
+      <span><i style="background:#3A4F94"></i>北倉（きたぐら）13件</span>
+      <span><i style="background:#3C6A58"></i>中倉（なかぐら）22件</span>
+      <span><i style="background:#8A6618"></i>南倉（みなみぐら）22件</span>
+      <span><i style="background:#6A7288"></i>聖語蔵（しょうごぞう）3件</span>
+    </div>
+    <p class="note"><ruby>正倉院<rt>しょうそういん</rt></ruby><ruby>宝物<rt>ほうもつ</rt></ruby>は<ruby>北倉<rt>きたぐら</rt></ruby>・<ruby>中倉<rt>なかぐら</rt></ruby>・<ruby>南倉<rt>みなみぐら</rt></ruby>の3つの倉に分かれて伝わりました。<ruby>北倉<rt>きたぐら</rt></ruby>には<ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>のご<ruby>遺愛品<rt>いあいひん</rt></ruby>が多く納められています。</p>
+  </div>
+
+  <div class="sec">
+    <h2>注目の<ruby>宝物<rt>ほうもつ</rt></ruby><small>タップで開きます</small></h2>
+    <p class="note"><ruby>宝物<rt>ほうもつ</rt></ruby>の写真は、公式サイトが無断転載を禁止しているため、このページには載せていません。各<ruby>宝物<rt>ほうもつ</rt></ruby>の「写真を見る」から、公式サイトの写真つきページが開きます。</p>
+
+    <div class="theme"><ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>ゆかり <span>ご<ruby>遺愛品<rt>いあいひん</rt></ruby>と考えられる品</span></div>
+    <div>
+      <details class="t" open>
+        <summary><span class="name">漆胡瓶</span><span class="yomi">しっこへい ・ ペルシア風の水差し</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag kita">北倉</span><span class="tag plain">出陳番号 7（北倉43）</span><span class="tag plain">高41.3cm</span></div>
+          <p>西アジアに由来する、把手（とって）付きの水差しを「<ruby>胡瓶<rt>こへい</rt></ruby>」といいます。<ruby>黒漆<rt>くろうるし</rt></ruby>の地に、草花、シカ、オシドリ、山岳などの形に切った銀の薄板を貼って飾っています。</p>
+          <p>銀板の文様に<ruby>唐代<rt>とうだい</rt></ruby>に流行した技法が使われているため、唐から運ばれた品である可能性が高いとされます。X線撮影で、本体は木の薄板を巻き上げるか輪積みして漆を塗っていることも分かっています。</p>
+          <p><ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>の<ruby>四十九日<rt>しじゅうくにち</rt></ruby>に<ruby>東大寺<rt>とうだいじ</rt></ruby>の<ruby>大仏<rt>だいぶつ</rt></ruby>に<ruby>献納<rt>けんのう</rt></ruby>された<ruby>宝物<rt>ほうもつ</rt></ruby>で、『<ruby>国家珍宝帳<rt>こっかちんぽうちょう</rt></ruby>』に記されています。</p>
+          <p class="note">前回の<ruby>出陳<rt>しゅっちん</rt></ruby>は2019年（東京国立博物館）、その前は2016年です。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000465/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+      <details class="t">
+        <summary><span class="name">紅牙撥鏤碁子</span><span class="yomi">こうげばちるのきし ・ 染め象牙の碁石</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag kita">北倉</span><span class="tag plain">出陳番号 9（北倉25）</span><span class="tag plain">径1.5〜1.7cm</span><span class="tag plain">厚0.7〜0.8cm</span></div>
+          <p><ruby>象牙<rt>ぞうげ</rt></ruby>で作った<ruby>碁石<rt>ごいし</rt></ruby>です。10円玉（直径約2.3cm）よりひとまわり小さく、赤い地に鳥が彫られています。近づいて文様を探してみてください。</p>
+          <p>「<ruby>撥鏤<rt>ばちる</rt></ruby>」は、<ruby>象牙<rt>ぞうげ</rt></ruby>を染めてから表面を彫り、白い地を出して文様を表す技法です。この<ruby>碁石<rt>ごいし</rt></ruby>は、形を整えた<ruby>象牙<rt>ぞうげ</rt></ruby>を赤く染め、ヤツガシラとみられる鳥が花をくわえた「花喰鳥」の文様を彫り出しています。文様の一部には、緑と黄の彩色が加えられています。</p>
+          <p><ruby>正倉院<rt>しょうそういん</rt></ruby>には、赤い<ruby>紅牙撥鏤碁子<rt>こうげばちるのきし</rt></ruby>が132枚、紺色の<ruby>紺牙撥鏤碁子<rt>こんげばちるのきし</rt></ruby>が120枚伝わっています。今回はそれぞれ10枚が展示され、2色を見比べられます。</p>
+          <p><ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>の<ruby>四十九日<rt>しじゅうくにち</rt></ruby>に<ruby>東大寺<rt>とうだいじ</rt></ruby>の<ruby>大仏<rt>だいぶつ</rt></ruby>に<ruby>献納<rt>けんのう</rt></ruby>されたことが、『<ruby>国家珍宝帳<rt>こっかちんぽうちょう</rt></ruby>』に記されています。</p>
+          <p class="note">前回の<ruby>出陳<rt>しゅっちん</rt></ruby>は2019年（東京国立博物館）、その前は2005年です。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000464/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+    </div>
+
+    <div class="theme">東西交流 <span>シルクロードの国際色</span></div>
+    <div>
+      <details class="t">
+        <summary><span class="name">白瑠璃瓶</span><span class="yomi">はくるりのへい ・ 白いガラスの瓶</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag naka">中倉</span><span class="tag plain">中倉69</span></div>
+          <p>洗練された造形の美しさを示す、ガラスの瓶です。<ruby>漆胡瓶<rt>しっこへい</rt></ruby>とあわせて、西方の文化が奈良に届いていたことを伝えます。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000467/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+      <details class="t">
+        <summary><span class="name">鳥獣花背方鏡</span><span class="yomi">ちょうじゅうかはいのほうきょう ・ 四角い鏡</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag minami">南倉</span><span class="tag plain">南倉70</span></div>
+          <p>西方に起源をもつ葡萄唐草文（ぶどうからくさもん）が、鏡の背面に細かく<ruby>鋳出<rt>いだ</rt></ruby>されています。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000470/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+    </div>
+
+    <div class="theme">祈りの心 <span>書と工芸</span></div>
+    <div>
+      <details class="t">
+        <summary><span class="name">梵網経</span><span class="yomi">ぼんもうきょう ・ 経典</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag naka">中倉</span><span class="tag plain">中倉34</span></div>
+          <p>格調高い書風を示す<ruby>経典<rt>きょうてん</rt></ruby>です。当時の人々の<ruby>敬虔<rt>けいけん</rt></ruby>な祈りが伝わります。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000466/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+      <details class="t">
+        <summary><span class="name">密陀彩絵箱</span><span class="yomi">みつださいえのはこ ・ 彩色の箱</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag naka">中倉</span><span class="tag plain">中倉143</span></div>
+          <p><ruby>躍動的<rt>やくどうてき</rt></ruby>な文様が、不思議な魅力を放つ箱です。力強い祈りの心を伝える品のひとつです。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000468/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+    </div>
+
+    <div class="theme">久しぶりの公開 <span><ruby>南倉<rt>みなみぐら</rt></ruby>の<ruby>宝物<rt>ほうもつ</rt></ruby></span></div>
+    <div>
+      <details class="t">
+        <summary><span class="name">伎楽面 酔胡王</span><span class="yomi">ぎがくめん すいこおう ・ 62年ぶりの公開</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag minami">南倉</span><span class="tag plain">南倉1</span><span class="tag first">前回 1964年</span></div>
+          <p>伎楽（ぎがく）で使われた仮面です。西方の異国の王を演じる役柄を表しています。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000469/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+      <details class="t">
+        <summary><span class="name">藺筵</span><span class="yomi">いむしろ ・ 58年ぶりの公開</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag minami">南倉</span><span class="tag plain">南倉151</span><span class="tag first">前回 1968年</span></div>
+          <p>イグサを織った敷物です。宮内庁<ruby>正倉院<rt>しょうそういん</rt></ruby>事務所による、素材や技法の最新の調査成果とあわせて紹介されています。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000471/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+      <details class="t">
+        <summary><span class="name">金銅幡</span><span class="yomi">こんどうのばん ・ 31年ぶりの公開</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag minami">南倉</span><span class="tag plain">南倉156</span><span class="tag plain">長さ約170cm</span></div>
+          <p>透かし彫りの文様と、たくさんの鈴を付けた幡（ばん）です。寺院で揺れて音を立てていた様子を想像させます。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000472/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+      <details class="t">
+        <summary><span class="name">虹龍</span><span class="yomi">こうりゅう ・ ニホンテンのミイラ</span></summary>
+        <div class="body">
+          <div class="tags"><span class="tag minami">南倉</span><span class="tag plain">南倉174</span><span class="tag plain">長さ23.0cm</span><span class="tag plain">前回 2008年</span></div>
+          <p>龍のミイラと伝えられてきた品です。近年の研究で、体型、指の数、歯の特徴などから、イタチ科のニホンテンのミイラと分かりました。雌の可能性が高いとされています。</p>
+          <p>1429年（永享元年）に将軍の足利義教（あしかがよしのり）が名香「蘭奢待（らんじゃたい）」を切り取った際、「竜日干（りゅうのひぼし）」を見たという記録があります。本品は、この記録にあたる動物のミイラと見られます。この龍がいるため、<ruby>正倉院<rt>しょうそういん</rt></ruby>の扉を開くときには雨が降る、とも伝えられてきました。</p>
+          <p>2025年に宮内庁<ruby>正倉院<rt>しょうそういん</rt></ruby>事務所が発表した調査では、成獣で、放射性炭素年代測定の結果は11世紀中ごろ〜12世紀中ごろでした。この方法で年代を調べたのは初めてです。人の手で加工した明らかな跡は見つかっていません。</p>
+          <p><ruby>宝庫<rt>ほうこ</rt></ruby>に入り込んだテンが自然に乾燥したのか、龍に見立てたミイラとして納められたのかは、まだ分かっていません。</p>
+          <a class="plink" href="https://shosoin-ten.jp/info/treasures/000473/" target="_blank" rel="noopener">写真を見る（公式）↗</a>
+        </div>
+      </details>
+    </div>
+    <p class="note">60件のうち<ruby>初出陳<rt>はつしゅっちん</rt></ruby>の11件は、<ruby>宝物<rt>ほうもつ</rt></ruby>の名前が公表資料で確認できていません。会場の<ruby>出陳<rt>しゅっちん</rt></ruby>リストか、公式サイトの<ruby>宝物<rt>ほうもつ</rt></ruby>紹介で確認してください。</p>
+  </div>
+
+  <div class="sec">
+    <h2>開館日と時間</h2>
+    <div class="card">
+      <div class="cal" id="cal" aria-label="会期カレンダー"></div>
+      <div class="keys" style="margin-top:12px">
+        <span><i style="background:var(--kon)"></i>20時まで開館</span>
+        <span><i style="background:var(--kon-soft)"></i>18時まで</span>
+        <span><i style="background:var(--beni);border-radius:50%;width:8px;height:8px"></i>特別企画の日</span>
+      </div>
+    </div>
+    <div class="card tbl">
+      <table class="hours">
+        <thead><tr><th>曜日</th><th>開館</th><th>最終入館</th></tr></thead>
+        <tbody>
+          <tr><td>月〜木</td><td>8:00 〜 18:00</td><td>17:00</td></tr>
+          <tr><td>金・土・日・祝（11/3）</td><td>8:00 〜 20:00</td><td>19:00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>料金とチケット</h2>
+    <div class="card tbl">
+      <table class="hours">
+        <thead><tr><th>区分</th><th>通常</th><th>レイト割</th></tr></thead>
+        <tbody>
+          <tr><td>一般</td><td>2,000円</td><td>1,500円</td></tr>
+          <tr><td>高校生・大学生</td><td>1,500円</td><td>1,000円</td></tr>
+          <tr><td>小学生・中学生</td><td>500円</td><td>無料</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <p><b>レイト割の対象は、入館枠が月〜木は16時以降、金・土・日・祝は17時以降</b>の券です。</p>
+      <p style="margin-top:8px">観覧は日時指定券が基本です。決めるのは入館する時刻で、入ったあとの鑑賞時間に制限はありません。70歳以上も日時指定券が必要です。</p>
+      <p style="margin-top:8px">当日券は、空きがある枠だけ特設窓口で買えます。1枚につき手数料200円がかかります。日時指定券は変更、取り消し、払い戻しができません。</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:16px">混雑の目安</h3>
+      <p style="margin-top:6px">博物館は、午前中から15時ごろまで混み合う見込みと案内しています。比較的空いているのは、8時台の早い時間と夕方以降です。初めてなら、見終えるまで1時間半〜2時間ほどが目安とされています。</p>
+    </div>
+    <p class="note">料金とレイト割の時間は、奈良国立博物館の案内（2026年10月27日確認）によります。混雑の目安は展覧会紹介記事の内容です。</p>
+  </div>
+
+  <div class="sec">
+    <h2>特別企画</h2>
+    <div class="card">
+      <h3 style="font-size:17px"><ruby>正倉院<rt>しょうそういん</rt></ruby>の宴 — 井上館長とたどる絲（シルク）路の記憶</h3>
+      <p class="note" style="margin-top:6px">奈良国立博物館と<ruby>登大路<rt>のぼりおおじ</rt></ruby>ホテルによる企画です。日程は10月25日（日）、10月30日（金）、11月3日（火）。申込方法は奈良国立博物館の公式サイトで案内されています。</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ 行き方 ============ -->
+<section class="panel" id="ikikata" role="tabpanel" aria-labelledby="t-ikikata" hidden>
+
+  <div class="sec">
+    <h2>何時に家を出る？</h2>
+    <div class="card calc">
+      <div class="row one">
+        <label for="c-time">入館したい時刻（日時指定券の枠）
+          <input type="time" id="c-time" value="10:00">
+        </label>
+      </div>
+      <div class="row">
+        <label for="c-from">出発駅
+          <select id="c-from">
+            <option value="osaka" selected>大阪駅</option>
+            <option value="namba">大阪難波駅（近鉄）</option>
+            <option value="kyoto">京都駅</option>
+          </select>
+        </label>
+        <label for="c-route">乗り方
+          <select id="c-route"></select>
+        </label>
+      </div>
+      <div class="result" aria-live="polite">
+        <div class="sub">この時刻までに出発</div>
+        <div class="big" id="c-out">--:--</div>
+        <div class="sub" id="c-sub"></div>
+      </div>
+      <p class="note">所要時間は目安です。乗り換えや待ち時間、入館前の列の余裕として15分を足しています。当日の時刻表は乗換案内で確認してください。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>位置関係<small>縮尺なしの略図</small></h2>
+    <div class="card mapbox">
+      <svg class="map" viewBox="0 0 360 250" role="img" aria-label="JR奈良駅と近鉄奈良駅から奈良国立博物館までの位置関係の略図">
+        <ellipse cx="118" cy="196" rx="30" ry="12" fill="var(--water)"/>
+        <text x="118" y="199" text-anchor="middle" class="sm">猿沢池</text>
+
+        <rect x="128" y="132" width="62" height="26" rx="4" fill="var(--kon-soft)"/>
+        <text x="159" y="149" text-anchor="middle">興福寺</text>
+        <rect x="128" y="84" width="46" height="22" rx="4" fill="var(--kon-soft)"/>
+        <text x="151" y="99" text-anchor="middle">県庁</text>
+
+        <line x1="92" y1="120" x2="252" y2="120" stroke="var(--kon)" stroke-width="5" stroke-linecap="round"/>
+        <text x="172" y="116" text-anchor="middle" class="sm" style="font-weight:700">登大路（東へ）</text>
+
+        <line x1="34" y1="206" x2="88" y2="128" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4"/>
+        <text x="20" y="168" class="sm">徒歩約15分</text>
+
+        <path d="M34 214 C 120 240, 230 220, 262 138" fill="none" stroke="var(--beni)" stroke-width="2.5" stroke-dasharray="7 4"/>
+        <text x="196" y="236" class="sm" style="fill:var(--beni);font-weight:700">奈良交通 市内循環（外回り）</text>
+
+        <circle cx="34" cy="208" r="7" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/>
+        <text x="10" y="236" class="bd" text-anchor="start">JR奈良駅</text>
+        <circle cx="90" cy="120" r="8" fill="var(--surface)" stroke="var(--kon)" stroke-width="3"/>
+        <text x="90" y="144" text-anchor="middle" class="bd">近鉄奈良駅</text>
+
+        <rect x="236" y="96" width="92" height="38" rx="6" fill="var(--beni)"/>
+        <text x="282" y="112" text-anchor="middle" class="bd" style="fill:#fff">奈良国立</text>
+        <text x="282" y="127" text-anchor="middle" class="bd" style="fill:#fff">博物館</text>
+        <text x="282" y="150" text-anchor="middle" class="sm">バス停「氷室神社・国立博物館」</text>
+        <text x="236" y="86" class="sm">氷室神社</text>
+
+        <text x="352" y="48" text-anchor="end">東大寺 ↗</text>
+        <text x="352" y="196" text-anchor="end">春日大社 ↘</text>
+        <text x="172" y="134" text-anchor="middle" class="sm" style="fill:var(--kon);font-weight:700">徒歩約15分</text>
+      </svg>
+      <p class="note" style="margin-top:8px"><ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅から<ruby>登大路<rt>のぼりおおじ</rt></ruby>を東へ、奈良公園の中を歩きます。博物館には駐車スペースがありません。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>ルート</h2>
+
+    <div class="card route">
+      <h3>近鉄で行く <span class="pill">博物館に近い</span></h3>
+      <div class="meta"><span>大阪駅から <b>約55分</b></span><span>運賃 <b>790円</b></span><span>駅から徒歩 <b>約15分</b></span></div>
+      <ol>
+        <li>JR大阪環状線の外回りで<ruby>鶴橋<rt>つるはし</rt></ruby>駅へ。</li>
+        <li><ruby>鶴橋<rt>つるはし</rt></ruby>駅で<ruby>近鉄奈良<rt>きんてつなら</rt></ruby>線の快速急行または急行（<ruby>近鉄奈良<rt>きんてつなら</rt></ruby>行）に乗り換える。</li>
+        <li><ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅で下車。<ruby>登大路<rt>のぼりおおじ</rt></ruby>を東へ歩いて奈良国立博物館へ。</li>
+      </ol>
+      <p class="note">大阪難波駅からなら、<ruby>近鉄奈良<rt>きんてつなら</rt></ruby>線の快速急行で約40分、680円です。乗り換えはありません。</p>
+    </div>
+
+    <div class="card route">
+      <h3>JRで行く <span class="pill">乗り換えなし</span></h3>
+      <div class="meta"><span>大阪駅から <b>約55分</b></span><span>運賃 <b>840円</b></span></div>
+      <ol>
+        <li>JR大阪駅から<ruby>大和路快速<rt>やまとじかいそく</rt></ruby>（加茂・奈良行）に乗る。</li>
+        <li>JR奈良駅で下車。</li>
+        <li>JR奈良駅からバスで「<ruby>氷室神社<rt>ひむろじんじゃ</rt></ruby>・国立博物館」へ（奈良交通 市内循環・外回り）。</li>
+      </ol>
+      <p class="note"><ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅まで歩いて向かう場合、JR奈良駅から約15分かかります。</p>
+    </div>
+
+    <div class="card route">
+      <h3>京都から <span class="pill">近鉄京都線</span></h3>
+      <div class="meta"><span>特急 <b>約35分</b></span><span>急行 <b>約45分</b></span><span>駅から徒歩 <b>約15分</b></span></div>
+      <ol>
+        <li>近鉄京都線で<ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅へ。</li>
+        <li><ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅から<ruby>登大路<rt>のぼりおおじ</rt></ruby>を東へ歩く。</li>
+      </ol>
+    </div>
+
+    <p class="note">運賃は2026年2月時点のICカード運賃を紹介した記事に基づきます。会期中は混み合うため、時間に余裕をもって出発してください。</p>
+  </div>
+
+</section>
+
+<!-- ============ 奈良の歴史 ============ -->
+<section class="panel" id="rekishi" role="tabpanel" aria-labelledby="t-rekishi" hidden>
+
+  <div class="sec">
+    <h2>奈良の歴史を5分で</h2>
+    <p>奈良が日本の都だったのは、710年から784年までの74年間です。<ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>の時代に<ruby>大仏<rt>だいぶつ</rt></ruby>が造られ、その<ruby>遺愛品<rt>いあいひん</rt></ruby>を納めたのが<ruby>正倉院<rt>しょうそういん</rt></ruby>です。<ruby>正倉院<rt>しょうそういん</rt></ruby>展の<ruby>宝物<rt>ほうもつ</rt></ruby>は、その1300年前の暮らしと祈りを今に伝えています。</p>
+  </div>
+
+  <div class="sec">
+    <h2>年表</h2>
+    <div class="card">
+      <ol class="tl">
+        <li>
+          <div class="yr">710<small>和銅3</small></div>
+          <div><h3><ruby>平城京<rt>へいじょうきょう</rt></ruby>に都を移す</h3><p><ruby>元明天皇<rt>げんめいてんのう</rt></ruby>が<ruby>藤原京<rt>ふじわらきょう</rt></ruby>から<ruby>遷都<rt>せんと</rt></ruby>しました。奈良時代の始まりです。</p></div>
+        </li>
+        <li>
+          <div class="yr">741〜743</div>
+          <div><h3><ruby>国分寺<rt>こくぶんじ</rt></ruby>の詔と<ruby>大仏<rt>だいぶつ</rt></ruby>造立の詔</h3><p><ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>が、全国に<ruby>国分寺<rt>こくぶんじ</rt></ruby>を置く詔と、<ruby>大仏<rt>だいぶつ</rt></ruby>を造る詔を出しました。</p></div>
+        </li>
+        <li>
+          <div class="yr">752</div>
+          <div><h3><ruby>東大寺<rt>とうだいじ</rt></ruby>の<ruby>大仏<rt>だいぶつ</rt></ruby><ruby>開眼<rt>かいげん</rt></ruby></h3><p><ruby>東大寺<rt>とうだいじ</rt></ruby>の<ruby>大仏<rt>だいぶつ</rt></ruby>の<ruby>開眼<rt>かいげん</rt></ruby>供養が行われました。</p></div>
+        </li>
+        <li class="sho">
+          <div class="yr">756</div>
+          <div><h3><ruby>遺愛品<rt>いあいひん</rt></ruby>が<ruby>大仏<rt>だいぶつ</rt></ruby>に<ruby>献納<rt>けんのう</rt></ruby>される</h3><p><ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>の没後、<ruby>四十九日<rt>しじゅうくにち</rt></ruby>に際して<ruby>遺愛品<rt>いあいひん</rt></ruby>が<ruby>東大寺<rt>とうだいじ</rt></ruby>の<ruby>大仏<rt>だいぶつ</rt></ruby>に<ruby>献納<rt>けんのう</rt></ruby>されました。これが<ruby>正倉院<rt>しょうそういん</rt></ruby><ruby>宝物<rt>ほうもつ</rt></ruby>の始まりとされます。<ruby>漆胡瓶<rt>しっこへい</rt></ruby>もこのとき納められた品です。</p></div>
+        </li>
+        <li>
+          <div class="yr">784</div>
+          <div><h3><ruby>長岡京<rt>ながおかきょう</rt></ruby>へ<ruby>遷都<rt>せんと</rt></ruby></h3><p>都が奈良を離れ、<ruby>平城京<rt>へいじょうきょう</rt></ruby>の時代が終わりました。</p></div>
+        </li>
+        <li>
+          <div class="yr">1180</div>
+          <div><h3><ruby>南都<rt>なんと</rt></ruby>焼き討ち</h3><p><ruby>平重衡<rt>たいらのしげひら</rt></ruby>の軍勢により、<ruby>東大寺<rt>とうだいじ</rt></ruby>と<ruby>興福寺<rt>こうふくじ</rt></ruby>が焼けました。のちに復興が進められます。</p></div>
+        </li>
+        <li>
+          <div class="yr">1895</div>
+          <div><h3>奈良国立博物館の創立</h3><p>明治28年に創立されました。レンガ造りの「なら仏像館」は重要文化財です。<ruby>正倉院<rt>しょうそういん</rt></ruby>展の会場の東西新館は、<ruby>校倉造<rt>あぜくらづくり</rt></ruby>をイメージした建物です。</p></div>
+        </li>
+        <li class="sho">
+          <div class="yr">1946</div>
+          <div><h3>第1回 <ruby>正倉院<rt>しょうそういん</rt></ruby>展</h3><p>昭和21年に始まり、今年で80年になります。</p></div>
+        </li>
+        <li>
+          <div class="yr">1998</div>
+          <div><h3>「古都奈良の文化財」が<ruby>世界遺産<rt>せかいいさん</rt></ruby>に</h3><p><ruby>東大寺<rt>とうだいじ</rt></ruby>、<ruby>興福寺<rt>こうふくじ</rt></ruby>、<ruby>春日大社<rt>かすがたいしゃ</rt></ruby>、<ruby>元興寺<rt>がんごうじ</rt></ruby>、<ruby>薬師寺<rt>やくしじ</rt></ruby>、<ruby>唐招提寺<rt>とうしょうだいじ</rt></ruby>、<ruby>平城宮跡<rt>へいじょうきゅうせき</rt></ruby>などが登録されました。</p></div>
+        </li>
+        <li class="sho">
+          <div class="yr">2026</div>
+          <div><h3>第78回 <ruby>正倉院<rt>しょうそういん</rt></ruby>展</h3><p>10月1日の「<ruby>開封<rt>かいふう</rt></ruby>の儀」で<ruby>宝庫<rt>ほうこ</rt></ruby>の扉が開き、12月4日の「<ruby>閉封<rt>へいふう</rt></ruby>の儀」まで<ruby>宝物<rt>ほうもつ</rt></ruby>の点検が行われます。展覧会はその間の10月24日から11月9日です。</p></div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2><ruby>正倉院<rt>しょうそういん</rt></ruby>ってどんなところ？</h2>
+    <div class="card">
+      <p><ruby>正倉院<rt>しょうそういん</rt></ruby><ruby>宝物<rt>ほうもつ</rt></ruby>は約9,000件にのぼります。<ruby>聖武天皇<rt>しょうむてんのう</rt></ruby>のご<ruby>遺愛品<rt>いあいひん</rt></ruby>を中心に、当時一級の工芸品から人々の暮らしを伝える文書まで、内容は多彩です。</p>
+      <p style="margin-top:10px"><ruby>宝庫<rt>ほうこ</rt></ruby>の扉を開けるには、天皇の許可を得る「<ruby>勅封<rt>ちょくふう</rt></ruby>」という仕組みが使われてきました。この管理のもとで受け継がれてきた、世界でも他に例のない遺産です。<ruby>宝物<rt>ほうもつ</rt></ruby>を納めた<ruby>正倉<rt>しょうそう</rt></ruby>は<ruby>東大寺<rt>とうだいじ</rt></ruby>の境内にあります。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>博物館のまわりを歩く</h2>
+    <div class="walks">
+      <div class="walk"><h3><ruby>東大寺<rt>とうだいじ</rt></ruby></h3><span class="m"><ruby>大仏<rt>だいぶつ</rt></ruby>と南大門。博物館の隣です。</span><span class="t"><ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅から徒歩15〜20分</span></div>
+      <div class="walk"><h3><ruby>興福寺<rt>こうふくじ</rt></ruby></h3><span class="m"><ruby>登大路<rt>のぼりおおじ</rt></ruby>沿い。<ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅から博物館へ向かう途中にあります。</span><span class="t">駅から徒歩5〜10分</span></div>
+      <div class="walk"><h3><ruby>春日大社<rt>かすがたいしゃ</rt></ruby></h3><span class="m">博物館から奈良公園の奥へ。</span><span class="t">博物館の周辺</span></div>
+      <div class="walk"><h3>奈良公園</h3><span class="m">鹿と芝生。展覧会の前後に歩けます。</span><span class="t"><ruby>近鉄奈良<rt>きんてつなら</rt></ruby>駅から徒歩5〜10分</span></div>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <div class="src">
+    <b>出典・確認先</b><br>
+    <a href="https://shosoin-ten.jp/" target="_blank" rel="noopener"><ruby>正倉院<rt>しょうそういん</rt></ruby>展 公式サイト</a> ／
+    <a href="https://www.narahaku.go.jp/exhibition/special/special_exhibition/202610_shosoin/" target="_blank" rel="noopener">奈良国立博物館</a> ／
+    <a href="https://artexhibition.jp/topics/news/20260714-AEJ2947917/" target="_blank" rel="noopener">Art Exhibition Japan</a> ／
+    <a href="https://www.gltjp.com/ja/article/item/20915/" target="_blank" rel="noopener">大阪から奈良への行き方（GLT）</a><br>
+    情報は2026年10月27日に調べたものです。チケット、料金、開館時間、ダイヤは変わることがあるため、出かける前に公式の案内を確認してください。
+  </div>
+  <div class="by">作成：ロックポッポ（<a href="https://x.com/rockpoppocom">@rockpoppocom</a>）</div>
+</footer>
+
+</main>
+
+<script>
+(function () {
+  var DAY = 864e5;
+  var START = Date.UTC(2026, 9, 24), END = Date.UTC(2026, 10, 9);
+
+  function todayJST() {
+    try {
+      var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()).split('-').map(Number);
+      return Date.UTC(p[0], p[1] - 1, p[2]);
+    } catch (e) {
+      var n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate());
+    }
+  }
+  var TODAY = todayJST();
+
+  /* 状況表示 */
+  (function () {
+    var el = document.getElementById('status'), t;
+    if (TODAY < START) {
+      var n = Math.round((START - TODAY) / DAY);
+      t = n === 1 ? '明日開幕' : '開幕まであと ' + n + '日';
+    } else if (TODAY <= END) {
+      var k = Math.round((TODAY - START) / DAY) + 1, left = Math.round((END - TODAY) / DAY);
+      t = '会期 ' + k + '日目 ／ ' + (left === 0 ? '本日が最終日' : '閉幕まであと ' + left + '日');
+    } else { t = '今年の会期は終了しました'; }
+    el.textContent = t;
+  })();
+
+  /* カレンダー */
+  (function () {
+    var cal = document.getElementById('cal');
+    var dows = ['月', '火', '水', '木', '金', '土', '日'];
+    var html = dows.map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
+    var ev = [Date.UTC(2026, 9, 25), Date.UTC(2026, 9, 30), Date.UTC(2026, 10, 3)];
+    var first = Date.UTC(2026, 9, 19);
+    for (var i = 0; i < 28; i++) {
+      var ms = first + i * DAY, d = new Date(ms), dow = d.getUTCDay();
+      var inR = ms >= START && ms <= END;
+      var late = inR && (dow === 5 || dow === 6 || dow === 0 || ms === Date.UTC(2026, 10, 3));
+      var cls = 'd' + (inR ? '' : ' out') + (late ? ' late' : '') + (ms === TODAY ? ' today' : '');
+      var label = (d.getUTCDate() === 1 || ms === first) ? (d.getUTCMonth() + 1) + '/' + d.getUTCDate() : d.getUTCDate();
+      html += '<div class="' + cls + '">' + label + (ev.indexOf(ms) >= 0 ? '<span class="ev"></span>' : '') + '</div>';
+    }
+    cal.innerHTML = html;
+  })();
+
+  /* 出発時刻の計算（分）: 出発駅 → 乗り方 → 博物館入口 */
+  var ROUTES = {
+    osaka:  [{ id: 'kintetsu', name: '近鉄（鶴橋乗り換え）', min: 55 + 15 }, { id: 'jr', name: 'JR大和路快速＋バス', min: 55 + 20 }],
+    namba:  [{ id: 'kintetsu', name: '近鉄 快速急行', min: 40 + 15 }],
+    kyoto:  [{ id: 'express', name: '近鉄 急行', min: 45 + 15 }, { id: 'ltd', name: '近鉄 特急（別料金）', min: 35 + 15 }]
+  };
+  var BUFFER = 15;
+  var selFrom = document.getElementById('c-from'), selRoute = document.getElementById('c-route'),
+      inTime = document.getElementById('c-time'), out = document.getElementById('c-out'), sub = document.getElementById('c-sub');
+
+  function fill() {
+    var list = ROUTES[selFrom.value];
+    selRoute.innerHTML = list.map(function (r, i) { return '<option value="' + i + '">' + r.name + '</option>'; }).join('');
+    calc();
+  }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function calc() {
+    var list = ROUTES[selFrom.value], r = list[+selRoute.value] || list[0];
+    var m = (inTime.value || '10:00').split(':').map(Number);
+    var arrive = m[0] * 60 + m[1];
+    var dep = arrive - r.min - BUFFER;
+    var prev = false;
+    if (dep < 0) { dep += 1440; prev = true; }
+    out.textContent = (prev ? '前日 ' : '') + pad(Math.floor(dep / 60)) + ':' + pad(dep % 60);
+    sub.textContent = '乗車 約' + r.min + '分（駅からの徒歩・バスを含む）＋ 余裕' + BUFFER + '分';
+  }
+  selFrom.addEventListener('change', fill);
+  selRoute.addEventListener('change', calc);
+  inTime.addEventListener('input', calc);
+  fill();
+
+  /* タブ */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var nav = document.querySelector('.tabs');
+  var ids = ['mitokoro', 'ikikata', 'rekishi'];
+  function show(id, scroll) {
+    if (ids.indexOf(id) < 0) id = 'mitokoro';
+    ids.forEach(function (x) { document.getElementById(x).hidden = (x !== id); });
+    tabs.forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === id)); });
+    if (scroll) {
+      var top = nav.offsetTop;
+      if (window.scrollY > top) window.scrollTo(0, top);
+    }
+  }
+  tabs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      show(b.dataset.tab, true);
+      try { history.replaceState(null, '', '#' + b.dataset.tab); } catch (e) {}
+    });
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), true); });
+  show(location.hash.slice(1), false);
+})();
+</script>
+
+</body>
+</html>
