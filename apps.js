@@ -2,6 +2,14 @@
 // path: アプリのフォルダ名 / date: 公開日 / ask: Claudeにお願いした一言 / point: 工夫したところ
 window.APPS = [
   {
+    path: "agent-kurabe-cho",
+    title: "AIエージェントくらべ帳",
+    date: "2026-11-01",
+    ask: "MuseとdotsとGrok Botの違いを、わかりやすく把握できるWebアプリ作って／Claudeにもある？なら追加して、日本ではまだ使えないこともわかるように",
+    point: "話題のAIエージェント4つを、カード・比較表・たとえ話・4問の診断で見比べられます。「日本で使える？」をどの画面でも印で示し、日本ではまだ使えないClaude Duetもひと目でわかるようにしました。出典つき。",
+    tags: ["AI", "比較", "AIなし"]
+  },
+  {
     path: "shosoin-ten",
     title: "正倉院展ガイド",
     date: "2026-11-01",

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="くらべ帳">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6f4ef">
+<title>AIエージェントくらべ帳</title>
+<meta name="description" content="Muse・dots・Grok Bot・Claude Duet。話題の「任せっぱなしAIエージェント」4つのちがいを、比較表・たとえ話・診断でざっくり把握できる非公式まとめ。">
+<meta property="og:title" content="AIエージェントくらべ帳">
+<meta property="og:description" content="Muse・dots・Grok Bot・Claude Duetのちがいをざっくり把握できる非公式まとめ">
+<style>
+:root{
+  --bg:#f6f4ef;--card:#fff;--ink:#1f2328;--sub:#5d6470;--line:#e4e0d8;
+  --muse:#7b5cff;--muse-bg:#f0ecff;
+  --dots:#10a37f;--dots-bg:#e6f6f1;
+  --grok:#222;--grok-bg:#ececec;
+  --duet:#d97757;--duet-bg:#fbeee8;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:15px}
+header{padding:14px 16px 6px}
+h1{font-size:20px;margin:0}
+.home{display:inline-block;font-size:12.5px;color:var(--sub);text-decoration:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;margin-bottom:6px}
+.lead{font-size:12.5px;color:var(--sub);margin:2px 0 0}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{flex:1 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 9px;font-size:13.5px;white-space:nowrap;font-weight:600;color:var(--sub)}
+nav button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{padding:12px 12px 40px;max-width:760px;margin:0 auto}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid var(--line)}
+.who{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:24px;flex:none}
+.name{font-weight:800;font-size:18px;line-height:1.2}
+.maker{font-size:12px;color:var(--sub)}
+.catch{font-weight:700;font-size:16px;margin:6px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:12px;padding:3px 9px;border-radius:999px;background:#f2f0ea}
+.muse .badge{background:var(--muse-bg)} .muse .catch{color:var(--muse)}
+.dots .badge{background:var(--dots-bg)} .dots .catch{color:var(--dots)}
+.grok .badge{background:var(--grok-bg)} .grok .catch{color:var(--grok)}
+.duet .badge{background:var(--duet-bg)} .duet .catch{color:var(--duet)}
+.card.duet{border:2px dashed #e3b9a6;background:#fffdfb}
+.jp{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:6px}
+.jp.ok{background:#e3f5e9;color:#1d7a3e}.jp.mid{background:#fff3d6;color:#8a6100}.jp.ng{background:#fde4e4;color:#b42318}
+.ngbox{background:#fde4e4;color:#b42318;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;margin-bottom:8px}
+.ngmark{font-size:10.5px;color:#b42318;font-weight:700;margin-left:4px}
+.note{background:#fff8e1;border:1px solid #f1dfa6;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.pick{display:flex;gap:6px;margin-bottom:10px}
+.pick button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 4px;font-weight:700;font-size:13px}
+.pick button.on.m{border-color:var(--muse);background:var(--muse-bg)}
+.pick button.on.d{border-color:var(--dots);background:var(--dots-bg)}
+.pick button.on.g{border-color:var(--grok);background:var(--grok-bg)}
+.pick button.on.u{border-color:var(--duet);background:var(--duet-bg)}
+.pick button{white-space:nowrap;font-size:12.5px;padding:8px 2px;min-width:0}
+.row{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.row h3{margin:0 0 6px;font-size:13px;color:var(--sub)}
+.cell{display:flex;gap:8px;padding:4px 0;border-top:1px dashed var(--line);font-size:14px}
+.cell:first-of-type{border-top:none}
+.cell b{flex:none;width:68px;font-size:12.5px}
+.cell.u b{color:var(--duet)} .cell.m b{color:var(--muse)} .cell.d b{color:var(--dots)} .cell.g b{color:var(--grok)}
+.cell.hide{display:none}
+.q{font-weight:700;margin:0 0 8px}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;font-size:14px}
+.opts button:active{background:#f2f0ea}
+.prog{font-size:12px;color:var(--sub);margin-bottom:6px}
+.result{text-align:center}
+.result .big{font-size:44px}
+.result .rname{font-size:22px;font-weight:800}
+.btn{display:inline-block;margin-top:10px;border:none;background:var(--ink);color:#fff;border-radius:999px;padding:10px 18px;font-weight:700;font-size:14px}
+.bar{height:10px;border-radius:5px;background:#eee;overflow:hidden;margin:2px 0 8px}
+.bar i{display:block;height:100%}
+.small{font-size:12px;color:var(--sub)}
+.story p{margin:6px 0}
+a{color:#2a5bd7}
+.foot{margin-top:20px;font-size:12.5px;color:var(--sub)}
+.foot details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.foot summary{font-weight:700;cursor:pointer}
+.credit{text-align:center;margin-top:14px;font-size:11.5px}
+ul{padding-left:20px;margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="../">← アプリ一覧</a>
+  <h1>AIエージェントくらべ帳</h1>
+  <p class="lead">Muse・dots・Grok Bot・Claude Duet ― 話題のAIエージェント4つのちがいをざっくり把握（2026年11月1日時点）</p>
+</header>
+<nav id="nav">
+  <button data-t="hito" class="on">ひとことで</button>
+  <button data-t="hyo">くらべる</button>
+  <button data-t="tatoe">たとえ話</button>
+  <button data-t="shindan">どれ向き？</button>
+</nav>
+<main>
+
+<!-- ひとことで -->
+<section id="hito" class="on">
+  <div class="note">💡 <b>AIエージェント</b>とは、質問に答えるだけでなく、メールや予約、資料づくりなどの作業を<b>任せっぱなしで進めてくれるAI</b>のこと。2026年の秋、大手各社から一気に登場しました。ここでは個人で使える4つを比べます。</div>
+
+  <div class="card muse">
+    <div class="who"><div class="badge">🌸</div><div><div class="name">Muse</div><div class="maker">Meta（Facebook・Instagramの会社）</div></div></div>
+    <span class="jp ok">🇯🇵 日本で使える</span>
+    <div class="catch">暮らしの用事を片づける、個人の秘書</div>
+    <div>メール・予定・旅行の予約・買い物など、生活の「やっておいて」を任せる。<b>無料で始められて、日本でも10月23日から提供開始</b>。</div>
+    <div class="tags"><span class="tag">無料あり</span><span class="tag">スマホ中心</span><span class="tag">Instagram連携</span><span class="tag">買う前に確認</span></div>
+  </div>
+
+  <div class="card dots">
+    <div class="who"><div class="badge">⚪</div><div><div class="name">dots</div><div class="maker">OpenAI（ChatGPTの会社）</div></div></div>
+    <span class="jp ok">🇯🇵 日本で使える（Proプラン）</span>
+    <div class="catch">仕事を丸ごと任せる、有能な相棒1人</div>
+    <div>1体の「dot」が、会話を閉じたあとも裏で作業を続ける。4,000以上のアプリとつながり、Slack・Teamsからも指示できる。<b>月100ドル〜のChatGPT Proが必要</b>。</div>
+    <div class="tags"><span class="tag">無料なし</span><span class="tag">仕事向け</span><span class="tag">Slack/Teams</span><span class="tag">GPT-6 Astra</span></div>
+  </div>
+
+  <div class="card grok">
+    <div class="who"><div class="badge">🤖</div><div><div class="name">Grok Bot</div><div class="maker">xAI（Grokの会社。Cursor経由の提供も）</div></div></div>
+    <span class="jp mid">🇯🇵 公式には未対応（使えた報告あり）</span>
+    <div class="catch">役割別のBotを何体も持てる、AIチーム</div>
+    <div>「調べる係」「まとめる係」など名前つきのBotを複数作り、決まった時間に動かせる。X（旧Twitter）の公開投稿の収集が得意。<b>月20〜30ドルのプランで使える</b>（まだベータ）。</div>
+    <div class="tags"><span class="tag">お試しあり</span><span class="tag">複数Bot</span><span class="tag">X検索</span><span class="tag">PCアプリ</span></div>
+  </div>
+  <div class="card duet">
+    <div class="who"><div class="badge">🧡</div><div><div class="name">Claude Duet</div><div class="maker">Anthropic（Claudeの会社）</div></div></div>
+    <span class="jp ng">🇯🇵 日本ではまだ使えません</span>
+    <div class="catch">先回りして知らせてくれる、仕事の参謀</div>
+    <div>毎朝メールと予定の大事なところをまとめて報告し、アプリを閉じても裏で作業を続ける。送信・支払い・署名・削除の前には必ず確認。<b>ClaudeのProプラン（月20ドル）に追加料金なしで含まれる</b>が、今はアメリカのPro・Max会員だけが順番待ちで申し込める研究プレビュー。</div>
+    <div class="tags"><span class="tag">米国のみ</span><span class="tag">仕事向け</span><span class="tag">毎朝のまとめ</span><span class="tag">Claude Opus 5.5</span></div>
+  </div>
+</section>
+
+<!-- くらべる -->
+<section id="hyo">
+  <div class="pick" id="pick">
+    <button class="m on" data-k="m">🌸 Muse</button>
+    <button class="d on" data-k="d">⚪ dots</button>
+    <button class="g on" data-k="g">🤖 Grok</button>
+    <button class="u on" data-k="u">🧡 Duet<span class="ngmark">🇯🇵×</span></button>
+  </div>
+  <div id="rows"></div>
+  <p class="small">※Claude Duetは日本では未提供（2026年11月1日時点）。<br>※料金はドル表記が基本。日本円は報道ベースの参考値。Grok Botの入口プランは記事により「SuperGrok」「X Premium」「Cursor Pro」と書き方が分かれています。</p>
+</section>
+
+<!-- たとえ話 -->
+<section id="tatoe">
+  <div class="card story">
+    <p><b>同じお願い</b>：「来週の出張、新幹線とホテルを取って、関係者にメールしといて」</p>
+  </div>
+  <div class="card muse story">
+    <div class="who"><div class="badge">🌸</div><div class="name">Muse の場合</div></div>
+    <p>LINEみたいにメッセージを送ると、カレンダーを見て候補を出し、予約サイトで手配。<b>支払いやメール送信の直前に「これでいい？」と聞いてくる</b>。パスワードやカード番号はAIから見えない作り。</p>
+    <p class="small">→ 気の利く執事。家族旅行・買い物・返品など「生活」の用事が一番得意。</p>
+  </div>
+  <div class="card dots story">
+    <div class="who"><div class="badge">⚪</div><div class="name">dots の場合</div></div>
+    <p>1体のdotが計画を立て、裏で手分けして作業。<b>ChatGPTを閉じても続けてくれて</b>、終わったらSlackやChatGPTに報告。仕事の資料作りやコード修正まで同じ相棒に頼める。</p>
+    <p class="small">→ できる部下1人に全部任せる感じ。ただし月額が高く、スマホからはdotを新規作成できない。</p>
+  </div>
+  <div class="card grok story">
+    <div class="who"><div class="badge">🤖</div><div class="name">Grok Bot の場合</div></div>
+    <p>「出張手配Bot」「連絡Bot」を別々に作って役割分担。Bot同士は<b>同じクラウドPCを共有</b>していて、ファイルやログインを受け渡せる。毎週の定例作業として登録も可能。</p>
+    <p class="small">→ 班長がチームに仕事を振る感じ。仕組みは分かりやすいが、まだベータでBotが存在しない機能を言うことも。</p>
+  </div>
+  <div class="card duet story">
+    <div class="who"><div class="badge">🧡</div><div class="name">Claude Duet の場合</div></div>
+    <div class="ngbox">🇯🇵 日本ではまだ使えません（アメリカのみ）</div>
+    <p>頼む前に、<b>朝のまとめで「来週の出張、まだ新幹線取ってないよ」と先に教えてくれる</b>タイプ。手配やメールの下書きを進めて、送る・払う前に確認。パスワードはAIに見えず、支払いは1回限りのカード番号。</p>
+    <p class="small">→ 先回りする参謀。ただしチケット予約など個人の用事はまだ苦手で、チェックも数時間おき。</p>
+  </div>
+</section>
+
+<!-- 診断 -->
+<section id="shindan">
+  <div class="card" id="quiz"></div>
+</section>
+
+<footer class="foot">
+  <details>
+    <summary>出典・この比較について</summary>
+    <ul>
+      <li><a href="https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/">Meta：Museを日本で提供開始</a></li>
+      <li><a href="https://www.inside.com.tw/article/42702-anthropic-claude-duet-proactive-ai-agent">INSIDE：Claude Duetとは</a></li>
+      <li><a href="https://www.businessinsider.jp/article/2610-openai-dots-ai-agent-review/?page=2">Business Insider Japan：dotsレビュー</a></li>
+      <li><a href="https://smartscope.blog/blog/muse-grok-bot-dots-claude-duet-choose-availability-2026/">SmartScope：Muse・Grok Bot・dots・Claude Duetの使い分け</a></li>
+      <li><a href="https://www.betterclaw.io/blog/openai-dots-vs-meta-muse-vs-grok-bot">BetterClaw：Dots vs Muse vs Grok Bot</a></li>
+      <li><a href="https://www.digitaltoday.co.kr/jp/view/117877/anthropic-unveils-claude-duet-self-starting-ai-assistant">Digital Today：Claude Duet発表</a></li>
+    </ul>
+    <p>2026年11月1日時点の公開情報をもとにした<b>非公式の個人まとめ</b>です。各社とは関係ありません。料金・対応地域・機能は変わりやすいので、契約前は必ず公式サイトで確認してください。日本円は報道ベースの参考値です。</p>
+  </details>
+  <p class="credit">つくった人：ロックポッポ（<a href="https://x.com/rockpoppocom">@rockpoppocom</a>）</p>
+</footer>
+</main>
+
+<script>
+// ===== タブ =====
+const nav=document.getElementById('nav');
+function show(t){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===t));
+  window.scrollTo(0,0);
+  try{localStorage.setItem('agentTab',t)}catch(e){}
+}
+nav.addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.t)});
+try{const t=localStorage.getItem('agentTab');if(t&&document.getElementById(t))show(t)}catch(e){}
+
+// ===== 比較表 =====
+const rows=[
+ ["どんな役？",
+  "個人の生活エージェント（秘書）",
+  "仕事のエージェント（相棒1人）",
+  "役割別のBotチーム",
+  "先回りして知らせる仕事の参謀"],
+ ["会社",
+  "Meta",
+  "OpenAI",
+  "xAI（SpaceXAI）。Cursorアカウント経由でも提供",
+  "Anthropic（Claudeの会社）"],
+ ["始まった日",
+  "米国 2026/9/8、日本 2026/10/23",
+  "2026/9/29（DevDayで発表）",
+  "2026/8/11（ベータ）",
+  "2026/10/21（研究プレビュー）"],
+ ["中のAI",
+  "Muse Spark（Meta製）",
+  "GPT-6 Astra",
+  "非公開（作業ごとに自動選択）",
+  "Claude Opus 5.5"],
+ ["無料で使える？",
+  "◎ 基本機能は無料",
+  "✕ 無料なし",
+  "△ 回数限定のお試しのみ",
+  "△ 無料版は対象外。Pro（月20ドル）以上に追加料金なしで含まれる"],
+ ["料金",
+  "無料／Power 月20ドル／Maximum 月100ドル（日本は報道で約2,799円／13,990円）",
+  "ChatGPT Pro 月100ドル〜（日本で月16,800円〜）。200・500ドルプランも",
+  "SuperGrok 月30ドル、またはCursor Pro 月20ドル（日本の記事ではX Premium 月5,280円）",
+  "Pro 月20ドル／Max に含まれる（研究プレビュー中）。他のClaude機能と利用枠を共有し、裏の作業も枠を使う"],
+ ["日本で使える？",
+  "◎ 公式に提供中",
+  "○ 使える（EU・英国・スイスはPro対象外）",
+  "△ 公式の対象国一覧に日本なし。ただし国内で使えたという記事もあり",
+  "✕ 使えない（アメリカのPro・Max会員のみ、順番待ち）"],
+ ["使う場所",
+  "iPhone・Android・Mac・iPad・Web・WhatsApp",
+  "ChatGPT（Web・PC・スマホ）、Slack、Teams",
+  "PCアプリ（Mac・Windows・Linux）、iPhone、Android",
+  "iPhone・Android・claude.ai（Web）"],
+ ["つながるアプリ",
+  "Gmail、Googleカレンダー、Instagram、Stripe、Shopify、Trip.com、Agoda、Klook。メルカリ・マネーフォワードME・チケットぴあとも連携予定",
+  "4,000以上（OpenAIのプラグイン経由）。Gmail、Googleドライブ、GitHubなど",
+  "Gmail、Googleカレンダー、Googleドライブ、Slack、Notion、GitHub、X",
+  "6,000以上（Claudeのマーケットプレイス）。Gmail、Slack、QuickBooks、Stripeなど。Microsoft 365は未対応"],
+ ["エージェントの数",
+  "1体",
+  "1体（裏で手分けして並列作業）",
+  "複数の名前つきBot（1台のクラウドPCを共有）",
+  "1体"],
+ ["安全のしくみ",
+  "購入・送信の前に確認。別のAI「Sentinel」が外向きの操作をチェック。パスワードは見えない",
+  "組み込みルール＋自分で決めるルール。保存パスワードはAIに見せずに使える",
+  "危ない操作は自動レビュー。ただしBot同士は同じPCなので完全には分離されない",
+  "送信・支払い・署名・削除の前に確認。パスワードやログイン情報はAIに見えない。支払いは1回限りのカード番号"],
+ ["学習への利用",
+  "初期設定オン。自分で止める（オプトアウト）",
+  "個人プランは自分で止められる。法人向けは初期オフ",
+  "止める設定あり",
+  "（このアプリでは未確認）"],
+ ["得意なこと",
+  "予定管理・予約・買い物・旅行・Instagram",
+  "仕事の長時間作業・資料・コード・業務ツールまたぎ",
+  "Xの情報収集・定期作業・開発ツール連携",
+  "毎朝のまとめ、メール・予定の見張り、ダッシュボードや売上予測づくり"],
+ ["弱いところ",
+  "複雑な調べ物はまだ不安という声。Amazonが利用をブロック（9月21日〜）",
+  "月額が一番高い。作業が遅めで中身が見えにくいという声",
+  "まだベータ。利用上限が非公開。Botがない機能を言うことも",
+  "チェックは数時間おきで急ぎを逃すことも。チケット予約など個人の用事は苦手。作業中のブラウザは見られない"]
+];
+const show_={m:true,d:true,g:true,u:true};
+function renderRows(){
+  document.getElementById('rows').innerHTML=rows.map(r=>`
+   <div class="row"><h3>${r[0]}</h3>
+    <div class="cell m ${show_.m?'':'hide'}"><b>Muse</b><span>${r[1]}</span></div>
+    <div class="cell d ${show_.d?'':'hide'}"><b>dots</b><span>${r[2]}</span></div>
+    <div class="cell g ${show_.g?'':'hide'}"><b>Grok Bot</b><span>${r[3]}</span></div>
+    <div class="cell u ${show_.u?'':'hide'}"><b>Duet</b><span>${r[4]}</span></div>
+   </div>`).join('');
+}
+document.getElementById('pick').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const k=b.dataset.k;
+  if(show_[k] && Object.values(show_).filter(Boolean).length===1)return;
+  show_[k]=!show_[k];b.classList.toggle('on',show_[k]);renderRows();
+});
+renderRows();
+
+// ===== 診断 =====
+const Q=[
+ {q:"何を任せたい？",o:[
+  ["生活の用事（予約・買い物・予定）",{m:3}],
+  ["仕事の作業（資料・コード・業務）",{d:2,g:1,u:2}],
+  ["情報集め（特にXの話題）",{g:3}]]},
+ {q:"月にいくらまでなら払える？",o:[
+  ["まずは無料がいい",{m:3,g:1}],
+  ["3,000〜5,000円くらい",{g:2,m:1,u:2}],
+  ["1万円以上でもOK",{d:3}]]},
+ {q:"ふだんよく使っているのは？",o:[
+  ["Instagram・Gmail・Googleカレンダー",{m:2}],
+  ["ChatGPT・Slack・Teams",{d:3}],
+  ["Claude・Gmail・Slack",{u:3}],
+  ["X・GitHub・Notion・Cursor",{g:3}]]},
+ {q:"AIの使い方のイメージは？",o:[
+  ["スマホでLINEみたいに頼みたい",{m:2}],
+  ["1人の相棒に全部まとめて任せたい",{d:2}],
+  ["係ごとにAIを分けて動かしたい",{g:3}],
+  ["頼む前に先回りして教えてほしい",{u:3}]]}
+];
+const info={
+ m:{e:"🌸",n:"Muse",c:"var(--muse)",t:"生活の用事を任せるならMuse。無料で始められて日本でも公式に使えるので、まず試すのにも向いています。"},
+ d:{e:"⚪",n:"dots",c:"var(--dots)",t:"仕事をまるごと1人の相棒に任せたいならdots。ChatGPT Proを使っている（使う予定がある）人向けです。"},
+ g:{e:"🤖",n:"Grok Bot",c:"var(--grok)",t:"係ごとにBotを分けたい・Xの情報を集めたいならGrok Bot。安めの入口だけど、日本の公式対応は要確認です。"},
+ u:{e:"🧡",n:"Claude Duet",c:"var(--duet)",t:"先回りして知らせてほしい・Claudeをふだん使っているならClaude Duet。ただし日本ではまだ使えないので、今は待つことになります。"}
+};
+let step=0,score={m:0,d:0,g:0,u:0};
+function renderQuiz(){
+  const el=document.getElementById('quiz');
+  if(step<Q.length){
+    const it=Q[step];
+    el.innerHTML=`<div class="prog">質問 ${step+1} / ${Q.length}</div><p class="q">${it.q}</p>
+      <div class="opts">${it.o.map((o,i)=>`<button data-i="${i}">${o[0]}</button>`).join('')}</div>`;
+    el.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{
+      const add=it.o[b.dataset.i][1];for(const k in add)score[k]+=add[k];step++;renderQuiz();
+    });
+  }else{
+    const order=Object.keys(score).sort((a,b)=>score[b]-score[a]);
+    const top=info[order[0]];const max=Math.max(...Object.values(score))||1;
+    el.innerHTML=`<div class="result"><div class="big">${top.e}</div>
+      <div class="small">あなたに合いそうなのは</div><div class="rname" style="color:${top.c}">${top.n}</div>
+      <p style="text-align:left">${top.t}</p>
+      ${order[0]==='u'?`<div class="ngbox" style="text-align:left">🇯🇵 日本ではまだ使えません。今すぐ使うなら次点の <b>${info[order[1]].n}</b> がおすすめ。</div>`:''}</div>
+      ${order.map(k=>`<div class="small">${info[k].e} ${info[k].n}（${score[k]}点）${k==='u'?'<span class="ngmark">日本未提供</span>':''}</div>
+        <div class="bar"><i style="width:${score[k]/max*100}%;background:${info[k].c}"></i></div>`).join('')}
+      <div style="text-align:center"><button class="btn" id="again">もう一度</button></div>`;
+    document.getElementById('again').onclick=()=>{step=0;score={m:0,d:0,g:0,u:0};renderQuiz()};
+  }
+}
+renderQuiz();
+</script>
+</body>
+</html>
