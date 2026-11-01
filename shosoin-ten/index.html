@@ -198,11 +198,12 @@ svg.map .bd { font-weight: 700; font-size: 12px; }
 
 /* 歴史 */
 .tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.tl li { display: grid; grid-template-columns: 76px 1fr; gap: 0 14px; padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.tl li { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 0 14px; padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.tl li > div { min-width: 0; overflow-wrap: anywhere; }
 .tl li:last-child { border-bottom: 0; }
 .tl .yr { font-family: var(--f-display); font-weight: 700; font-size: 20px; color: var(--kon); font-variant-numeric: tabular-nums; line-height: 1.4; }
 .tl .yr small { display: block; font-family: var(--f-body); font-size: 11px; font-weight: 400; color: var(--muted); }
-.tl h3 { font-size: 16px; }
+.tl h3 { font-size: 16px; text-wrap: wrap; }
 .tl p { font-size: 14px; color: var(--muted); margin-top: 2px; }
 .tl li.sho .yr { color: var(--beni); }
 .tl li.sho h3::after { content: "正倉院に関わる出来事"; margin-left: 8px; font-family: var(--f-body); font-size: 11px; font-weight: 700; color: var(--beni); background: var(--beni-soft); padding: 1px 8px; border-radius: 4px; vertical-align: 2px; white-space: nowrap; }
