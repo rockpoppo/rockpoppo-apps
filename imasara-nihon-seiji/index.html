@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="日本の政治">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6f3ec">
+<meta name="description" content="高市内閣はいつ終わる？解散したらリセット？衆議院・参議院の勢力図、大臣の顔ぶれ、選挙のしくみがざっとわかる。">
+<meta property="og:title" content="今さら聞けない日本の政治">
+<meta property="og:description" content="内閣・国会・選挙がざっとわかる">
+<title>今さら聞けない日本の政治</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#2b2a27; --sub:#6f6a60; --line:#e3ddd0;
+  --accent:#c8402f; --accent2:#2f5d8a; --soft:#f0e9da; --ok:#3f8a5a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+body{line-height:1.75;font-size:15.5px}
+header{padding:20px 16px 10px;max-width:760px;margin:0 auto}
+.home{display:inline-block;font-size:12px;color:var(--sub);text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.kicker{font-size:12px;color:var(--sub);letter-spacing:.08em}
+h1{font-size:25px;margin:2px 0 4px;font-weight:900;line-height:1.35}
+h1 .red{color:var(--accent)}
+.asof{font-size:12px;color:var(--sub)}
+nav{position:sticky;top:0;z-index:20;background:rgba(246,243,236,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;max-width:760px;margin:0 auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:14px;padding:7px 13px;border-radius:999px;cursor:pointer}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{max-width:760px;margin:0 auto;padding:14px 14px 60px}
+section{display:none}
+section.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:20px;margin:18px 0 8px;font-weight:900}
+h3{font-size:16.5px;margin:16px 0 6px;font-weight:900}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.big3{display:grid;gap:10px}
+.big3 .card{margin:0;display:flex;gap:12px;align-items:flex-start}
+.num{flex:0 0 34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:17px}
+.num.b{background:var(--accent2)} .num.g{background:var(--ok)}
+.lead{font-weight:900;font-size:16.5px;line-height:1.5}
+.muted{color:var(--sub);font-size:13.5px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 9px;border-radius:999px;background:var(--soft);color:var(--ink);margin:2px 4px 2px 0;white-space:nowrap}
+.pill.red{background:#fbe2dd;color:#a1301f}.pill.blue{background:#dfe9f4;color:#244b72}.pill.green{background:#e0efe5;color:#2b6b42}
+.stat{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat .card{margin:0;text-align:center;padding:12px 8px}
+.stat .v{font-size:26px;font-weight:900;line-height:1.2}
+.stat .k{font-size:12.5px;color:var(--sub)}
+.hemi{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px;margin-top:6px}
+.legend span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.bar{position:relative;height:30px;border-radius:8px;display:flex;background:#eee;margin:26px 0 30px}
+.bar div:first-child{border-radius:8px 0 0 8px}.bar div:last-of-type{border-radius:0 8px 8px 0}
+.bar div{height:100%}
+.mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.mark.up b{top:-20px}
+.mark b{position:absolute;top:34px;left:50%;transform:translateX(-50%);font-size:11px;white-space:nowrap;font-weight:700}
+.callout{border-left:5px solid var(--accent);background:#fff6f2;padding:10px 12px;border-radius:0 12px 12px 0;margin:10px 0}
+.callout.blue{border-color:var(--accent2);background:#f1f6fb}
+.callout.green{border-color:var(--ok);background:#f0f7f2}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12.5px;color:var(--sub);font-weight:700}
+td.r,th.r{text-align:right;white-space:nowrap}
+.minister{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}
+.minister:last-child{border-bottom:none}
+.mrole{flex:0 0 92px;font-size:12.5px;font-weight:900;color:var(--accent2);line-height:1.4;padding-top:2px}
+.mname{font-weight:900;font-size:16px}
+.mwhat{font-size:13px;color:var(--sub);line-height:1.5}
+.filter{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px}
+.filter button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:4px 11px;cursor:pointer}
+.filter button.on{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.tl{position:relative;margin:10px 0 0 6px;padding-left:18px;border-left:3px solid var(--line)}
+.tl .ev{position:relative;margin:0 0 14px}
+.tl .ev::before{content:"";position:absolute;left:-26px;top:7px;width:13px;height:13px;border-radius:50%;background:var(--card);border:3px solid var(--accent2)}
+.tl .ev.hot::before{border-color:var(--accent);background:var(--accent)}
+.tl .ev.future::before{border-color:#b9b2a3;border-style:dashed}
+.tl .ev.future{color:var(--sub)}
+.tl .d{font-size:12.5px;font-weight:900;color:var(--accent2)}
+.tl .ev.hot .d{color:var(--accent)}
+.tl .t{font-weight:700}
+.tl .x{font-size:13px;color:var(--sub);line-height:1.55}
+.nowline{margin:4px 0 16px -30px;font-size:12.5px;font-weight:900;color:#fff;background:var(--accent);display:inline-block;padding:2px 10px;border-radius:999px}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden}
+summary{list-style:none;cursor:pointer;padding:12px 14px;font-weight:900;display:flex;gap:8px;align-items:flex-start}
+summary::-webkit-details-marker{display:none}
+summary .q{flex:0 0 auto;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;padding:1px 7px;margin-top:3px}
+summary::after{content:"＋";margin-left:auto;color:var(--sub)}
+details[open] summary::after{content:"－"}
+details .a{padding:0 14px 14px;font-size:14.5px}
+.ends{display:grid;gap:10px}
+.ends .card{margin:0}
+.ends .h{font-weight:900;display:flex;gap:8px;align-items:center}
+.ends .h em{font-style:normal;white-space:nowrap;flex:0 0 auto;font-size:12px;background:var(--soft);padding:1px 8px;border-radius:999px;font-weight:700}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmp .card{margin:0}
+.cmp .card h3{margin-top:0}
+.cmp ul{margin:0;padding-left:1.1em;font-size:14px}
+.party{display:flex;gap:12px;align-items:flex-start}
+.party .dot{flex:0 0 14px;height:14px;border-radius:50%;margin-top:6px}
+.party .pn{font-weight:900;font-size:16px}
+.seats{font-size:13px;color:var(--sub)}
+.gl dt{font-weight:900;margin-top:10px}
+.gl dd{margin:2px 0 0;font-size:14.5px}
+.next{display:grid;gap:8px}
+.next .row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px}
+.next .when{flex:0 0 96px;font-weight:900;color:var(--accent2);font-size:13.5px;line-height:1.35}
+.next .what{font-size:14px;line-height:1.5}
+.next .cd{margin-left:auto;font-size:12px;font-weight:900;background:var(--soft);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.src a{color:var(--accent2);word-break:break-all}
+.src li{font-size:13px;margin:4px 0}
+footer{max-width:760px;margin:0 auto;padding:0 16px 40px;font-size:12px;color:var(--sub)}
+.sim{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.sim label{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:4px 10px;font-size:13.5px;font-weight:700;cursor:pointer;user-select:none}
+.sim input{accent-color:var(--accent2)}
+.simres{font-weight:900;font-size:15px}
+@media (max-width:420px){.cmp{grid-template-columns:1fr}.mrole{flex-basis:80px}}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="../">← アプリ一覧</a>
+  <div class="kicker">内閣・国会・選挙がざっとわかる</div>
+  <h1>今さら聞けない<span class="red">日本の政治</span></h1>
+  <div class="asof">2026年11月2日時点の情報で作っています</div>
+  <div class="asof" style="margin-top:6px;background:#fff6f2;border:1px solid #f1d3cb;border-radius:10px;padding:6px 10px;color:#7a3b2e">⚠ この内容はAI（Claude）が調べてまとめたものです。まちがいや古い情報がふくまれることがあるので、鵜呑みにせず、大事なことは公式サイトやニュースで確かめてください。</div>
+</header>
+<nav><div class="tabs" id="tabs"></div></nav>
+<main>
+
+<!-- ===== ざっくり ===== -->
+<section id="top" data-label="ざっくり">
+  <h2>まず3行で</h2>
+  <div class="big3">
+    <div class="card"><div class="num">1</div><div><div class="lead">首相は高市早苗さん。自民党と維新の会の連立政権。</div><div class="muted">2025年10月に日本初の女性首相に。いまは「第2次高市改造内閣」。</div></div></div>
+    <div class="card"><div class="num b">2</div><div><div class="lead">衆議院は与党が約4分の3。でも参議院は過半数に届いていない。</div><div class="muted">2026年2月の総選挙で自民が316議席の大勝。参院は2025年夏の選挙の結果のまま。</div></div></div>
+    <div class="card"><div class="num g">3</div><div><div class="lead">内閣に「任期」はない。終わるのは首相がやめた時か、選挙のあと。</div><div class="muted">次に決まっている大きな節目は、2027年9月の自民党総裁選と2028年夏の参院選。</div></div></div>
+  </div>
+
+  <h2>数字でみる「いま」</h2>
+  <div class="stat">
+    <div class="card"><div class="v">351<span style="font-size:14px">/465</span></div><div class="k">衆議院の与党（自民＋維新）</div></div>
+    <div class="card"><div class="v">120<span style="font-size:14px">/248</span></div><div class="k">参議院の与党（過半数は125）</div></div>
+    <div class="card"><div class="v">19人</div><div class="k">首相をふくむ大臣の数</div></div>
+    <div class="card"><div class="v">49%前後</div><div class="k">内閣支持率（10月の共同通信調査で49.1%、発足以来最低）</div></div>
+  </div>
+
+  <h2>いま国会でもめていること</h2>
+  <div class="card">
+    <div class="muted">臨時国会：2026年10月5日〜12月12日（69日間）</div>
+    <h3>① 食料品の消費税を 8% → 1% に</h3>
+    <div>2027年4月から2年間だけ下げる法案。10月20日に衆院で審議入り。財源（2年で約10兆円）や、あわせて始める「所得に応じた給付」の中身が議論の的です。</div>
+    <h3>② 衆議院議員の数を減らす</h3>
+    <div>自民・維新・国民民主の3党が10月29日、比例代表を31減らす案で合意。実現すると衆議院は465→<b>434</b>人に。公明・民主改革の会・参政・チームみらいなどは反対しています。</div>
+    <h3>③ 大臣の交代</h3>
+    <div>10月14日、簗（やな）農林水産大臣が公職選挙法違反の疑いなどで事実上の更迭。翌日、武部新（あらた）さんが後任に。</div>
+  </div>
+
+  <h2>次の「節目」カレンダー</h2>
+  <div class="next" id="nextList"></div>
+</section>
+
+<!-- ===== 国会 ===== -->
+<section id="diet" data-label="国会のいま">
+  <h2>国会は「2つの部屋」</h2>
+  <div class="callout blue">日本の国会は<b>衆議院</b>（465人）と<b>参議院</b>（248人）の二院制。法律は基本的に両方で賛成されないと成立しません。ただし<b>衆議院のほうが強い</b>（解散があって民意に近いから）。</div>
+
+  <h3>衆議院（定数465）</h3>
+  <svg class="hemi" id="hemiLower" viewBox="0 0 400 220"></svg>
+  <div class="legend" id="legLower"></div>
+  <div class="bar" id="barLower"></div>
+  <div class="card">
+    <b>与党 自民315＋維新36＝351人。</b>過半数（233）どころか<b>3分の2（310）</b>も超えています。<br>
+    <span class="muted">3分の2あると何ができる？ → 参議院で否決された法案でも、衆議院でもう一度3分の2で可決すれば成立させられます（再可決）。</span>
+  </div>
+  <table>
+    <tr><th>会派</th><th class="r">人数</th><th>ひとこと</th></tr>
+    <tbody id="tblLower"></tbody>
+  </table>
+  <p class="muted">衆議院の会派別人数は2026年9月28日時点（衆議院HP）。議長・副議長は会派を離れるので「無所属」に入っています。</p>
+
+  <h3>参議院（定数248）</h3>
+  <svg class="hemi" id="hemiUpper" viewBox="0 0 400 220"></svg>
+  <div class="legend" id="legUpper"></div>
+  <div class="bar" id="barUpper"></div>
+  <div class="card">
+    <b>与党 自民101＋維新19＝120人。過半数の125まで、あと5人足りません。</b><br>
+    <span class="muted">このため法案を通すには野党の協力が必要。2026年度予算は日本保守党や無所属議員の賛成でぎりぎり過半数を確保して成立しました。国民民主党（25人）が賛成すると、自民＋維新＋国民で145人になり余裕で過半数です。</span>
+  </div>
+  <table>
+    <tr><th>会派</th><th class="r">人数</th><th>ひとこと</th></tr>
+    <tbody id="tblUpper"></tbody>
+  </table>
+  <p class="muted">参議院の会派別人数は2026年10月31日時点（参議院HP）。</p>
+
+  <h2>あそんでみる：参議院で過半数をつくれる？</h2>
+  <div class="card">
+    <div class="muted">自民＋維新（120人）に、どこが賛成すれば125人に届くかな。チェックしてみてください。</div>
+    <div class="sim" id="sim"></div>
+    <div class="simres" id="simres"></div>
+  </div>
+
+  <div class="callout green"><b>「会派」ってなに？</b><br>国会の中で一緒に行動するグループのこと。だいたい政党と同じですが、別々の政党が1つの会派を組むこともあります。たとえば衆議院の「中道」は、<b>民主改革の会（立憲民主党出身）＋公明党</b>などが組んだ会派です。</div>
+</section>
+
+<!-- ===== 内閣 ===== -->
+<section id="cabinet" data-label="内閣の顔ぶれ">
+  <h2>第2次高市改造内閣</h2>
+  <div class="card">
+    <div>2026年9月17日に発足。首相をふくめ19人。<span class="pill">留任 8</span><span class="pill red">初入閣 7</span><span class="pill blue">再入閣 3</span>（改造時）</div>
+    <div class="muted" style="margin-top:6px">ポイント：これまで「閣外協力」だった日本維新の会から初めて大臣が出ました（規制改革担当の中司さん）。10月に農水大臣が交代しています。</div>
+  </div>
+  <div class="filter" id="mfilter"></div>
+  <div class="card" id="mlist"></div>
+  <p class="muted">年齢は2026年9月17日時点（武部さんは10月時点）。「衆」「参」はどちらの議院の議員か。</p>
+
+  <h3>自民党の主な役員</h3>
+  <div class="card">
+    <table>
+      <tr><td>総裁</td><td><b>高市早苗</b>（首相が兼ねる。任期は2027年9月まで）</td></tr>
+      <tr><td>副総裁</td><td>麻生太郎</td></tr>
+      <tr><td>幹事長</td><td>鈴木俊一（党のお金と選挙をしきるナンバー2）</td></tr>
+      <tr><td>政調会長</td><td>小林鷹之（党の政策をまとめる）</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== いつ終わる ===== -->
+<section id="when" data-label="いつ終わる？">
+  <h2>高市内閣はいつ始まって、いつ終わる？</h2>
+  <div class="callout"><b>答え：内閣には「任期」がありません。</b><br>アメリカの大統領は「4年」と決まっていますが、日本の首相は<b>衆議院の多数派に選ばれている限り続けられます</b>。なので「いつ終わる」は決まっていないんです。</div>
+
+  <h3>内閣が終わる4つのパターン</h3>
+  <div class="ends">
+    <div class="card"><div class="h">① 首相が自分でやめる <em>いちばん多い</em></div><div class="muted">支持率の低下、病気、選挙の敗北の責任など。石破前首相も2025年9月に辞任を表明しました。</div></div>
+    <div class="card"><div class="h">② 自民党の総裁選で負ける <em>2027年9月</em></div><div class="muted">首相＝自民党総裁なので、総裁でなくなると首相も交代するのが普通。高市さんの総裁任期は<b>2027年9月まで</b>（石破さんの残り任期を引き継いだため）。そこで総裁選があり、勝てば続投です。</div></div>
+    <div class="card"><div class="h">③ 衆議院で「内閣不信任案」が可決 <em>今はほぼ無い</em></div><div class="muted">可決されたら10日以内に「衆議院を解散する」か「内閣総辞職」のどちらか。与党が4分の3いる今は、可決の可能性はかなり低いです。</div></div>
+    <div class="card"><div class="h">④ 衆議院の選挙のあと <em>必ず起きる</em></div><div class="muted">総選挙のあとに新しい国会が開かれると、内閣はいったん全員やめて（総辞職）、首相を選び直します。同じ人が選ばれたら「第○次」の数字が1つ増えます。</div></div>
+  </div>
+
+  <h2>よくある疑問</h2>
+  <details open><summary><span class="q">Q</span>途中で解散総選挙があったら、全部リセット？</summary><div class="a">
+    <b>リセットされるのは衆議院の465人だけ</b>です。<br>
+    ・解散すると衆議院議員は全員いったん議員でなくなり、選挙をやり直します。<br>
+    ・<b>参議院は解散しないので、そのまま</b>残ります。<br>
+    ・選挙後に首相を選び直します。2026年2月の選挙では高市さんがまた選ばれたので「第1次」→「第2次高市内閣」になりました。<br>
+    ・衆議院の任期4年も、選挙の日から数え直しになります。
+  </div></details>
+  <details><summary><span class="q">Q</span>衆議院の任期4年がきたら、内閣も変わるの？</summary><div class="a">
+    <b>形の上では毎回いったん変わります。でも首相が同じ人のまま続くことはよくあります。</b><br>
+    ・衆議院の選挙（任期満了でも解散でも）のあとは、内閣は必ず<b>総辞職</b>して、国会で首相を選び直します。<br>
+    ・そこで与党がまた過半数をとっていれば、<b>同じ人がまた首相に選ばれる</b>ので、実質は続投。数字だけ「第○次」が増えます。<br>
+    ・逆に、与党が負けて別の党や人が多数派になれば、そこで首相が交代します（政権交代）。<br>
+    つまり「4年で自動的に内閣が終わる」のではなく、<b>「選挙のたびに、続けていいか国会で選び直す」</b>イメージです。2026年2月の「第1次→第2次高市内閣」がまさにこれでした。
+  </div></details>
+  <details><summary><span class="q">Q</span>解散っていつでもできるの？</summary><div class="a">実際には<b>首相が「解散する」と決めればできます</b>（「首相の専権事項」と言われます）。今の衆議院は2026年2月8日に選ばれたので、解散がなければ任期満了は<b>2030年2月</b>。でもたいていは任期満了の前に、首相が有利なタイミングで解散します。2026年1月の解散も、支持率が高いうちに国会の初日に解散した「冒頭解散」でした。</div></details>
+  <details><summary><span class="q">Q</span>参議院の選挙はいつ？</summary><div class="a">参議院は<b>任期6年・解散なし</b>。<b>3年ごとに半分ずつ</b>入れ替わります。次は<b>2028年夏</b>（今の半分の議員の任期が2028年7月25日まで）。アメリカの「中間選挙」と同じように、日程が決まっている選挙です。ここで与党が勝てば参院のねじれが解消、負ければ政権にとって大打撃になります。</div></details>
+  <details><summary><span class="q">Q</span>「第2次」「改造」ってなに？</summary><div class="a">
+    <b>第1次 → 第2次</b>：選挙のあと首相に選ばれ直すと数字が増えます。<br>
+    <b>改造</b>：首相は同じまま、大臣を入れ替えること。数字は増えません。<br>
+    なので<br>
+    2025年10月 <b>高市内閣</b>（第1次）<br>
+    2026年2月 <b>第2次高市内閣</b>（選挙後。大臣は全員そのまま）<br>
+    2026年9月 <b>第2次高市改造内閣</b>（大臣を10人入れ替え）
+  </div></details>
+  <details><summary><span class="q">Q</span>首相はどうやって決まるの？国民が選ぶんじゃないの？</summary><div class="a">国民が直接選ぶのは<b>国会議員</b>まで。首相は<b>国会議員の投票（首相指名選挙）</b>で決まります。衆議院と参議院で結果が違ったら、<b>衆議院の結果が優先</b>。だから「衆議院の多数派のリーダー＝首相」になります。自民党が多数なので、実質的には「自民党の総裁選で勝った人＝首相」です。</div></details>
+
+  <h2>高市内閣のあゆみ</h2>
+  <div class="tl" id="timeline"></div>
+</section>
+
+<!-- ===== しくみ ===== -->
+<section id="system" data-label="選挙のしくみ">
+  <h2>衆議院と参議院のちがい</h2>
+  <div class="cmp">
+    <div class="card"><h3 style="color:var(--accent)">衆議院</h3><ul>
+      <li>465人（定数削減の議論中）</li>
+      <li>任期4年</li>
+      <li><b>解散あり</b>（いつリセットされるかわからない）</li>
+      <li>25歳から立候補OK</li>
+      <li>選挙：小選挙区289＋比例代表176</li>
+      <li>首相を決める力が強い</li>
+    </ul></div>
+    <div class="card"><h3 style="color:var(--accent2)">参議院</h3><ul>
+      <li>248人</li>
+      <li>任期6年</li>
+      <li><b>解散なし</b>（3年ごとに半分改選）</li>
+      <li>30歳から立候補OK</li>
+      <li>選挙：選挙区＋比例代表（全国1つ）</li>
+      <li>じっくり見直す「良識の府」</li>
+    </ul></div>
+  </div>
+
+  <h2>衆議院選挙は「2枚の投票用紙」</h2>
+  <div class="card">
+    <b>1枚目：小選挙区</b>（人の名前を書く）<br>
+    全国を289の区域に分けて、それぞれ<b>1位の人だけ</b>当選。大きい政党に有利。<br><br>
+    <b>2枚目：比例代表</b>（政党の名前を書く）<br>
+    全国11ブロックで、<b>得票の割合に応じて</b>政党に議席を配分。小さい政党も議席をとりやすい。チームみらいの11議席は全部こちらでした。<br><br>
+    <span class="muted">2026年2月の選挙では、自民は小選挙区で249議席（約49%の得票で約86%の議席）、比例で67議席でした。</span>
+  </div>
+  <div class="callout">今議論されている「定数削減」は、この<b>比例代表を176→145に減らす</b>案。比例が減ると小さい政党が議席をとりにくくなるので、多くの野党が反対しています。一方、自民・維新・国民民主は人口減少にあわせた見直しなどを理由に賛成しています。</div>
+
+  <h2>法律ができるまで</h2>
+  <div class="card">
+    法案 → 衆議院で可決 → 参議院で可決 → <b>成立</b><br>
+    <span class="muted">参議院で否決されたら？ → 衆議院で<b>3分の2以上</b>で再可決すれば成立。予算や条約は、衆議院の決定がもっと強く優先されます（参院で否決されても衆院の議決で成立）。</span>
+  </div>
+
+  <h2>アメリカとくらべると</h2>
+  <table>
+    <tr><th></th><th>アメリカ</th><th>日本</th></tr>
+    <tr><td><b>トップ</b></td><td>大統領</td><td>首相（内閣総理大臣）</td></tr>
+    <tr><td><b>選び方</b></td><td>国民が選ぶ（選挙人を通じて）</td><td>国会議員が選ぶ</td></tr>
+    <tr><td><b>任期</b></td><td>4年（2期まで）</td><td>決まっていない</td></tr>
+    <tr><td><b>議会</b></td><td>下院・上院</td><td>衆議院・参議院</td></tr>
+    <tr><td><b>途中の選挙</b></td><td>中間選挙（2年ごと）</td><td>参院選（3年ごと）＋解散があれば衆院選</td></tr>
+    <tr><td><b>政党</b></td><td>ほぼ2大政党</td><td>与党2＋野党がたくさん（多党化）</td></tr>
+  </table>
+</section>
+
+<!-- ===== 政党 ===== -->
+<section id="parties" data-label="政党ずかん">
+  <h2>政党ずかん</h2>
+  <div class="muted">議席は「衆議院／参議院」。会派の人数を元にしています。主張は各党が掲げていることを短くまとめたものです。</div>
+  <div id="plist"></div>
+  <h3>2026年の野党の動き（ややこしいところ）</h3>
+  <div class="card">
+    <div class="tl" style="margin-top:4px">
+      <div class="ev"><div class="d">2025年10月</div><div class="t">公明党が自民党との連立から離脱</div></div>
+      <div class="ev"><div class="d">2026年1月</div><div class="t">衆議院の立憲民主党と公明党が合流し「中道改革連合」を結成</div><div class="x">参議院の議員は合流せず、立憲・公明のまま。</div></div>
+      <div class="ev"><div class="d">2026年2月</div><div class="t">総選挙で中道改革連合は172→49議席に</div></div>
+      <div class="ev"><div class="d">2026年9月</div><div class="t">中道改革連合が事実上の解体</div><div class="x">立憲出身の議員は新党「民主改革の会」へ、公明出身の28人は公明党に戻る。ただし衆議院では統一会派「中道」として一緒に行動（野党第1会派・47人）。</div></div>
+      <div class="ev"><div class="d">2026年8月</div><div class="t">れいわ新選組が「いのちの党」に党名変更</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ことば ===== -->
+<section id="words" data-label="ことば">
+  <h2>ニュースによく出ることば</h2>
+  <dl class="gl card">
+    <dt>与党／野党</dt><dd>内閣をつくっている政党が与党（今は自民・維新）。それ以外が野党。</dd>
+    <dt>連立政権</dt><dd>複数の政党が組んで内閣をつくること。自民と維新は2025年10月から連立。</dd>
+    <dt>閣外協力</dt><dd>連立はするけど大臣は出さない関わり方。維新は最初これでしたが、2026年9月から大臣を出しています。</dd>
+    <dt>首相指名選挙（首班指名）</dt><dd>国会議員の投票で首相を決めること。</dd>
+    <dt>解散</dt><dd>衆議院議員を任期の途中で全員やめさせて、選挙をやり直すこと。参議院にはない。</dd>
+    <dt>総選挙</dt><dd>衆議院議員の選挙のこと（全員を選ぶので「総」）。</dd>
+    <dt>総辞職</dt><dd>首相と大臣が全員いっぺんにやめること。</dd>
+    <dt>内閣改造</dt><dd>首相はそのままで大臣を入れ替えること。</dd>
+    <dt>更迭（こうてつ）</dt><dd>問題を起こした大臣などを、事実上やめさせること。</dd>
+    <dt>内閣不信任案</dt><dd>衆議院が「この内閣は信用できない」と決める案。可決されたら解散か総辞職。</dd>
+    <dt>問責決議案</dt><dd>参議院が首相や大臣の責任を問う決議。可決されても法的な効力はない。</dd>
+    <dt>ねじれ国会</dt><dd>衆議院と参議院で多数派が違う状態。今は衆院が与党多数、参院は与党が過半数に足りない。</dd>
+    <dt>衆議院の優越</dt><dd>衆参の意見が分かれたとき、衆議院の決定が優先されるルール（首相指名・予算・条約・法律の再可決）。</dd>
+    <dt>会派</dt><dd>国会の中で一緒に行動する議員のグループ。政党とほぼ同じだが、別々の党で組むこともある。</dd>
+    <dt>臨時国会・通常国会・特別国会</dt><dd>通常国会＝毎年1月から150日間（予算を決める）。臨時国会＝必要に応じて開く（今は秋の臨時国会）。特別国会＝総選挙のあとに開いて首相を選ぶ。</dd>
+    <dt>冒頭解散</dt><dd>国会が始まってすぐ、ほとんど審議せずに解散すること。2026年1月がこれ。</dd>
+    <dt>比例代表・小選挙区</dt><dd>「選挙のしくみ」タブを見てね。</dd>
+  </dl>
+</section>
+
+<!-- ===== 出典 ===== -->
+<section id="src" data-label="出典">
+  <h2>出典・確認したところ</h2>
+  <div class="card src"><ul>
+    <li>衆議院「会派名及び会派別所属議員数」（2026年9月28日現在）<br><a href="https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/shiryo/kaiha_m.htm">shugiin.go.jp</a></li>
+    <li>参議院「会派別所属議員数一覧」第222回国会（2026年10月31日現在）<br><a href="https://www.sangiin.go.jp/japanese/joho1/kousei/giin/222/giinsu.htm">sangiin.go.jp</a></li>
+    <li>首相官邸「第2次高市内閣 閣僚名簿」<br><a href="https://www.kantei.go.jp/jp/105/meibo/index.html">kantei.go.jp</a></li>
+    <li>nippon.com「第2次高市改造内閣の顔ぶれ」<br><a href="https://www.nippon.com/ja/japan-data/h02906/">nippon.com</a></li>
+    <li>nippon.com「衆院選2026：自民歴史的大勝で3分の2の議席確保」<br><a href="https://www.nippon.com/ja/japan-data/h02703/">nippon.com</a></li>
+    <li>共同通信（熊本日日新聞）「臨時国会、10月5日召集伝達」「農相に武部新氏起用」「内閣支持、最低49%」「衆院比例『31減』で正式合意」<br><a href="https://kumanichi.com/articles/2051894">kumanichi.com</a></li>
+    <li>共同通信（神奈川新聞）「消費減税、衆院で論戦スタート」<br><a href="https://www.kanaloco.jp/news/social/article-1313854.html">kanaloco.jp</a></li>
+    <li>毎日新聞（Yahoo!ニュース）「立憲系と公明系で構成の会派、名称は『中道』に」<br><a href="https://news.yahoo.co.jp/articles/cf53a48dd986dc57f1defbd30b2bcbef1b96037a">news.yahoo.co.jp</a></li>
+    <li>共同通信（千葉日報）「自民総裁に高市氏」（総裁任期2027年9月まで）<br><a href="https://www.chibanippo.co.jp/newspack/20251004/1506872">chibanippo.co.jp</a></li>
+  </ul></div>
+  <p class="muted">このアプリはAI（Claude）が上の資料をもとにまとめたものです。まちがいや古い情報がふくまれることがあります。政治の状況は日々変わるので、最新の数字は衆議院・参議院の公式サイトやニュースで確認してください。</p>
+</section>
+
+</main>
+<footer>今さら聞けない日本の政治 ／ 2026年11月2日時点 ／ AIがまとめた内容です。大事なことは公式情報で確認してください。</footer>
+
+<script>
+/* ---------- データ ---------- */
+const C = {
+  ldp:'#d9473a', ishin:'#5aa64a', chudo:'#2f6db0', dpp:'#e9b326', sansei:'#ea7a2c',
+  mirai:'#1fb3bd', jcp:'#a83a6a', shishi:'#8a6fb3', ind:'#a7a39a', vac:'#e5e1d8',
+  cdp:'#3a5ba8', komei:'#e7609a', inochi:'#d4568f', hoshu:'#4f7a92', okinawa:'#62a99a', sdp:'#6f87c9'
+};
+const lower = [
+  {k:'jcp',n:'日本共産党',s:4,note:'野党'},
+  {k:'chudo',n:'中道',s:47,note:'野党第1会派。民主改革の会18＋公明27など'},
+  {k:'shishi',n:'志士の会',s:2,note:'泉健太・緒方林太郎'},
+  {k:'mirai',n:'チームみらい',s:11,note:'2026年に衆院初議席'},
+  {k:'sansei',n:'参政党',s:15,note:'野党'},
+  {k:'dpp',n:'国民民主党・無所属クラブ',s:28,note:'野党（定数削減では与党と合意）'},
+  {k:'ind',n:'無所属',s:6,note:'議長・副議長、いのちの党1、減税日本・ゆうこく1など'},
+  {k:'ishin',n:'日本維新の会',s:36,note:'与党'},
+  {k:'ldp',n:'自由民主党・無所属の会',s:315,note:'与党'},
+  {k:'vac',n:'欠員',s:1,note:''}
+];
+const upper = [
+  {k:'jcp',n:'日本共産党',s:7,note:'野党'},
+  {k:'sdp',n:'社会民主党',s:2,note:'野党'},
+  {k:'okinawa',n:'沖縄の風',s:2,note:'野党'},
+  {k:'inochi',n:'いのちの党',s:5,note:'旧れいわ新選組'},
+  {k:'cdp',n:'立憲民主・無所属',s:39,note:'参院の野党第1会派'},
+  {k:'komei',n:'公明党',s:21,note:'野党'},
+  {k:'mirai',n:'チームみらい・無所属の会',s:2,note:'安野貴博さんら'},
+  {k:'sansei',n:'参政党',s:15,note:'野党'},
+  {k:'dpp',n:'国民民主党・新緑風会',s:25,note:'野党'},
+  {k:'hoshu',n:'日本保守党',s:2,note:'予算には賛成した'},
+  {k:'ind',n:'各派に属しない議員',s:7,note:'議長・副議長、無所属など'},
+  {k:'ishin',n:'日本維新の会',s:19,note:'与党'},
+  {k:'ldp',n:'自由民主党・無所属の会',s:101,note:'与党'},
+  {k:'vac',n:'欠員',s:1,note:''}
+];
+const ministers = [
+  ['首相','内閣総理大臣','高市早苗','衆・奈良',65,'自民','','内閣のリーダー。大臣を選ぶ・やめさせる'],
+  ['要','内閣官房長官','木原稔','衆・熊本',57,'自民','留任','内閣のまとめ役・スポークスマン（拉致問題も担当）'],
+  ['要','外務','茂木敏充','衆・栃木',70,'自民','留任','外交'],
+  ['要','財務・金融','片山さつき','参・比例',67,'自民','留任','国のお金・税金'],
+  ['要','防衛','小泉進次郎','衆・神奈川',45,'自民','留任','自衛隊・安全保障'],
+  ['くらし','総務','藤井比早之','衆・兵庫',55,'自民','初入閣','地方自治・選挙・通信'],
+  ['くらし','法務','山下貴司','衆・岡山',61,'自民','再入閣','法律・裁判・出入国'],
+  ['くらし','文部科学','関芳弘','衆・兵庫',61,'自民','初入閣','学校・科学・スポーツ・文化'],
+  ['くらし','厚生労働','上野賢一郎','衆・滋賀',61,'自民','留任','医療・年金・働き方'],
+  ['くらし','農林水産','武部新','衆・北海道',56,'自民','10月交代','農業・食料（簗和生さんの後任）'],
+  ['経済','経済産業','赤澤亮正','衆・鳥取',65,'自民','留任','産業・エネルギー・貿易'],
+  ['くらし','国土交通','井林辰憲','衆・静岡',50,'自民','初入閣','道路・鉄道・住宅・観光'],
+  ['くらし','環境','笹川博義','衆・群馬',60,'自民','初入閣','環境・気候変動'],
+  ['経済','デジタル','古川俊治','参・埼玉',63,'自民','初入閣','行政のデジタル化・マイナンバー'],
+  ['くらし','復興','細野豪志','衆・静岡',55,'自民','再入閣','東日本大震災などからの復興'],
+  ['くらし','国家公安委員長','葉梨康弘','衆・茨城',66,'自民','再入閣','警察'],
+  ['経済','規制改革','中司宏','衆・大阪',70,'維新','初入閣','ルールの見直し（維新から初の大臣）'],
+  ['経済','成長戦略','城内実','衆・静岡',61,'自民','留任','経済を伸ばす戦略'],
+  ['経済','経済安全保障','小野田紀美','参・岡山',43,'自民','留任','重要な技術や物資を守る']
+];
+const parties = [
+  {k:'ldp',n:'自由民主党（自民）',lead:'総裁 高市早苗',seat:'315／101',side:'与党',txt:'戦後ほとんどの期間、政権を担ってきた最大政党。高市さんは「責任ある積極財政」を掲げる。2026年2月の総選挙で1つの党として戦後最多の316議席。'},
+  {k:'ishin',n:'日本維新の会',lead:'代表 吉村洋文',seat:'36／19',side:'与党',txt:'大阪が地盤。「身を切る改革」として議員定数削減を強く主張。2025年10月から自民と連立し、2026年9月に初めて大臣を出した。'},
+  {k:'chudo',n:'中道（衆議院の会派）',lead:'会派代表 後藤祐一',seat:'47／—',side:'野党',txt:'民主改革の会（立憲民主党出身・代表 小川淳也）と公明党などが組む衆議院の統一会派。衆議院の野党で最大。'},
+  {k:'cdp',n:'立憲民主党',lead:'代表 水岡俊一',seat:'0／39',side:'野党',txt:'衆議院の議員は中道改革連合へ移ったため、いまは参議院が中心。参議院では野党第1会派。'},
+  {k:'komei',n:'公明党',lead:'代表 竹谷とし子',seat:'27（中道内）／21',side:'野党',txt:'1999年から長く自民と連立していたが2025年10月に離脱。いったん中道改革連合に合流した衆院議員も2026年9月に復党。衆参計49人。'},
+  {k:'dpp',n:'国民民主党',lead:'代表 玉木雄一郎',seat:'28／25',side:'野党',txt:'「手取りを増やす」を掲げ、所得税の「年収の壁」引き上げなどを実現させてきた。定数削減では自民・維新と合意。連立入りするかがよく話題になる。'},
+  {k:'sansei',n:'参政党',lead:'代表 神谷宗幣',seat:'15／15',side:'野党',txt:'「日本人ファースト」を掲げ、2025年参院選・2026年衆院選で大きく伸びた。'},
+  {k:'mirai',n:'チームみらい',lead:'党首 安野貴博',seat:'11／2',side:'野党',txt:'AIエンジニアの安野さんが2025年に立ち上げた新しい党。テクノロジーで政治を変えることや社会保険料の引き下げなどを掲げ、2026年の衆院選で比例11議席。'},
+  {k:'jcp',n:'日本共産党',lead:'委員長 田村智子',seat:'4／7',side:'野党',txt:'1922年結党の最も古い政党。2026年衆院選で8→4議席。定数削減に強く反対。'},
+  {k:'inochi',n:'いのちの党（旧れいわ新選組）',lead:'代表 山本譲司',seat:'1（無所属扱い）／5',side:'野党',txt:'山本太郎さんの引退後、2026年8月に党名を変更。消費税廃止などを掲げる。'},
+  {k:'hoshu',n:'日本保守党',lead:'代表 百田尚樹',seat:'0／2',side:'野党',txt:'2026年度予算には賛成した。衆院選では議席ゼロ。'},
+  {k:'shishi',n:'志士の会（衆議院の会派）',lead:'泉健太・緒方林太郎',seat:'2／—',side:'野党',txt:'元立憲民主党代表の泉さんらがつくった会派。'}
+];
+const timeline = [
+  ['2025年7月','参院選で自民・公明が過半数割れ','衆参どちらも与党が少数に。',''],
+  ['2025年9月','石破首相が辞任を表明','',''],
+  ['2025年10月4日','高市早苗さんが自民党総裁に','決選投票で小泉進次郎さんに勝利。',''],
+  ['2025年10月10日','公明党が連立を離脱','1999年から（野党時代をはさみ）続いた自公の協力関係が終わる。',''],
+  ['2025年10月21日','高市内閣が発足','日本初の女性首相（第104代）。日本維新の会と連立（維新は閣外協力）。','hot'],
+  ['2026年1月','立憲・公明が「中道改革連合」結成 → 1月23日 冒頭解散','通常国会の初日に衆議院を解散。',''],
+  ['2026年2月8日','衆議院選挙で自民が316議席','単独で3分の2超え。中道改革連合は49議席。','hot'],
+  ['2026年2月18日','第2次高市内閣が発足','首相に選ばれ直し（第105代）。大臣は全員そのまま。',''],
+  ['2026年4月7日','2026年度予算が成立','過去最大の約122兆円。参院では無所属や保守党の賛成で過半数。',''],
+  ['2026年7月','内閣支持率が下がり始める','強引な国会運営への批判などで、発足後最低を更新。',''],
+  ['2026年9月17日','第2次高市改造内閣','大臣10人を入れ替え。維新から初の入閣。','hot'],
+  ['2026年10月5日','臨時国会スタート（〜12月12日）','食料品の消費税減税、衆院定数削減が焦点。',''],
+  ['2026年10月14日','簗農水大臣が事実上の更迭','翌日、武部新さんが後任に。',''],
+  ['2026年10月29日','自民・維新・国民が「比例31減」で合意','成立すれば衆議院は434人に。',''],
+  ['NOW','','',''],
+  ['2026年12月12日','臨時国会の会期末','','future'],
+  ['2027年4月','統一地方選挙／食料品の消費税1%スタート予定','','future'],
+  ['2027年9月','自民党総裁の任期満了 → 総裁選','高市さんが続けるかどうかの大きな分かれ目。','future'],
+  ['2028年夏','参議院選挙（半分を改選）','ねじれが解消するかどうか。','future'],
+  ['2030年2月','衆議院の任期満了（最長でここまで）','解散があればもっと早くなる。','future']
+];
+const nextEv = [
+  ['2026-12-12','12月12日','臨時国会の会期末（消費税減税・定数削減の法案はここまでに成立するか）'],
+  ['2027-04-01','2027年4月','統一地方選挙。食料品の消費税1%が始まる予定'],
+  ['2027-09-30','2027年9月','自民党総裁の任期満了 → 総裁選'],
+  ['2028-07-25','2028年夏','参議院選挙（半分の124人を改選）'],
+  ['2030-02-07','2030年2月','衆議院の任期満了（解散すればその前に総選挙）']
+];
+
+/* ---------- タブ ---------- */
+const secs=[...document.querySelectorAll('main section')];
+const tabs=document.getElementById('tabs');
+secs.forEach(s=>{const b=document.createElement('button');b.className='tab';b.textContent=s.dataset.label;b.dataset.id=s.id;b.onclick=()=>{location.hash=s.id};tabs.appendChild(b)});
+function show(){const id=(location.hash||'#top').slice(1);const t=secs.find(s=>s.id===id)?id:'top';
+  secs.forEach(s=>s.classList.toggle('on',s.id===t));
+  [...tabs.children].forEach(b=>{b.classList.toggle('on',b.dataset.id===t); if(b.dataset.id===t) tabs.scrollLeft=b.offsetLeft-(tabs.clientWidth-b.offsetWidth)/2});
+  window.scrollTo({top:0});}
+window.addEventListener('hashchange',show);
+window.addEventListener('load',()=>setTimeout(()=>window.scrollTo(0,0),0));
+
+/* ---------- 半円グラフ ---------- */
+function hemi(svgId,data,total,rows){
+  const svg=document.getElementById(svgId);const cx=200,cy=205,R=190,r0=70;
+  const radii=[];for(let i=0;i<rows;i++)radii.push(r0+(R-r0)*i/(rows-1));
+  const sum=radii.reduce((a,b)=>a+b,0);
+  let counts=radii.map(r=>Math.round(total*r/sum));
+  let diff=total-counts.reduce((a,b)=>a+b,0);counts[rows-1]+=diff;
+  const pts=[];
+  radii.forEach((r,i)=>{const n=counts[i];for(let j=0;j<n;j++){const a=Math.PI*(1-(n===1?.5:j/(n-1)));pts.push({x:cx+r*Math.cos(a),y:cy-r*Math.sin(a),a})}});
+  pts.sort((p,q)=>q.a-p.a);
+  const seatR=Math.min(6.2,(R-r0)/(rows-1)*0.42);
+  let html='';let idx=0;
+  data.forEach(p=>{for(let i=0;i<p.s;i++){const pt=pts[idx++];html+=`<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="${seatR.toFixed(2)}" fill="${C[p.k]}"/>`}});
+  html+=`<text x="200" y="196" text-anchor="middle" font-size="30" font-weight="900" fill="#2b2a27" style="font-family:'Zen Maru Gothic',sans-serif">${total}</text>`;
+  svg.innerHTML=html;
+}
+function legend(id,data){document.getElementById(id).innerHTML=data.filter(p=>p.k!=='vac').map(p=>`<span><i style="background:${C[p.k]}"></i>${p.n.replace(/・無所属.*|・新緑風会/,'')} ${p.s}</span>`).join('')}
+function bar(id,data,total,marks){
+  const order=[...data].reverse();
+  let h=order.map(p=>`<div style="width:${p.s/total*100}%;background:${C[p.k]}"></div>`).join('');
+  marks.forEach((m,i)=>{h+=`<span class="mark${i%2?' up':''}" style="left:${m[0]/total*100}%"><b>${m[1]}</b></span>`});
+  document.getElementById(id).innerHTML=h;
+}
+function table(id,data){document.getElementById(id).innerHTML=[...data].reverse().filter(p=>p.k!=='vac').map(p=>`<tr><td><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${C[p.k]};margin-right:6px"></i>${p.n}</td><td class="r"><b>${p.s}</b></td><td class="muted">${p.note}</td></tr>`).join('')}
+hemi('hemiLower',lower,465,11);legend('legLower',lower);bar('barLower',lower,465,[[233,'過半数233'],[310,'3分の2 310']]);table('tblLower',lower);
+hemi('hemiUpper',upper,248,8);legend('legUpper',upper);bar('barUpper',upper,248,[[125,'過半数125']]);table('tblUpper',upper);
+
+/* ---------- 過半数シミュレーター ---------- */
+const simParties=[['dpp','国民民主',25],['cdp','立憲',39],['komei','公明',21],['sansei','参政',15],['hoshu','保守',2],['mirai','みらい',2],['ind','無所属の一部',3]];
+const sim=document.getElementById('sim');
+simParties.forEach(([k,n,s])=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" value="${s}"><i style="width:9px;height:9px;border-radius:50%;background:${C[k]};display:inline-block"></i>${n}+${s}`;sim.appendChild(l)});
+function simCalc(){let t=120;sim.querySelectorAll('input:checked').forEach(c=>t+=+c.value);
+  const ok=t>=125;document.getElementById('simres').innerHTML=`自民＋維新 120 → <span style="color:${ok?'var(--ok)':'var(--accent)'}">${t}人</span> ${ok?'🎉 過半数（125）に届いた！':'あと'+(125-t)+'人'}`}
+sim.addEventListener('change',simCalc);simCalc();
+
+/* ---------- 大臣 ---------- */
+const groups=['すべて','要','くらし','経済'];let g='すべて';
+const mf=document.getElementById('mfilter');
+groups.forEach(x=>{const b=document.createElement('button');b.textContent=x==='要'?'主要ポスト':x;b.onclick=()=>{g=x;drawM()};b.dataset.g=x;mf.appendChild(b)});
+function badge(s){if(!s)return'';const cls=s==='初入閣'?'red':s==='再入閣'?'blue':s==='10月交代'?'red':'';return`<span class="pill ${cls}">${s}</span>`}
+function drawM(){[...mf.children].forEach(b=>b.classList.toggle('on',b.dataset.g===g));
+  document.getElementById('mlist').innerHTML=ministers.filter(m=>g==='すべて'||m[0]===g||m[0]==='首相').map(m=>`<div class="minister"><div class="mrole">${m[1]}</div><div><div class="mname">${m[2]} <span class="muted" style="font-weight:500">${m[4]}歳</span></div><div><span class="pill ${m[5]==='維新'?'green':''}">${m[5]}</span><span class="pill">${m[3]}</span>${badge(m[6])}</div><div class="mwhat">${m[7]}</div></div></div>`).join('')}
+drawM();
+
+/* ---------- タイムライン ---------- */
+document.getElementById('timeline').innerHTML=timeline.map(t=>t[0]==='NOW'?`<div class="nowline">▶ いまここ（2026年11月）</div>`:`<div class="ev ${t[3]}"><div class="d">${t[0]}</div><div class="t">${t[1]}</div>${t[2]?`<div class="x">${t[2]}</div>`:''}</div>`).join('');
+
+/* ---------- 次の節目 ---------- */
+const today=new Date();
+document.getElementById('nextList').innerHTML=nextEv.map(([d,w,t])=>{const days=Math.ceil((new Date(d+'T00:00:00+09:00')-today)/864e5);
+  const cd=days>400?`約${(days/365).toFixed(1)}年後`:days>60?`約${Math.round(days/30)}か月後`:days>0?`あと${days}日`:'';
+  return`<div class="row"><div class="when">${w}</div><div class="what">${t}</div>${cd?`<div class="cd">${cd}</div>`:''}</div>`}).join('');
+
+/* ---------- 政党 ---------- */
+document.getElementById('plist').innerHTML=parties.map(p=>`<div class="card party"><div class="dot" style="background:${C[p.k]}"></div><div><div class="pn">${p.n} <span class="pill ${p.side==='与党'?'red':''}">${p.side}</span></div><div class="seats">${p.lead}　議席 ${p.seat}</div><div style="font-size:14.5px;margin-top:4px">${p.txt}</div></div></div>`).join('');
+
+show();
+</script>
+</body>
+</html>
