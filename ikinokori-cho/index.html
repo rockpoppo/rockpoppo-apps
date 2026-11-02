@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="いきのこり帳">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111318">
+<meta name="description" content="停電と物流停止が続いたら、何を・いつ・どうする？最初の72時間のチェックリスト、時期別・分野別のコツ、家族の人数から備蓄量を計算。">
+<meta property="og:title" content="いきのこり帳">
+<meta property="og:description" content="電気が消えて、物が届かない世界で生き延びる手帖">
+<title>いきのこり帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=DotGothic16&display=swap">
+<style>
+body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px)}
+/* 停電の夜に読む手帖：暗い画面（OLEDの電池節約）＋ランタンの琥珀色。下に固定タブ、親指で切り替え */
+:root{
+  color-scheme: dark;
+  --bg:#111318; --panel:#1a1d24; --panel2:#22262f; --line:#2c313c;
+  --fg:#ebe7dc; --muted:#9a9fa9; --accent:#f0b03c; --accent-ink:#1a1408;
+  --danger:#ff7a6b; --ok:#7bd49c;
+  --display:"DotGothic16","BIZ UDPGothic","Hiragino Sans",sans-serif;
+  --body:"BIZ UDPGothic","Hiragino Sans","Noto Sans JP",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px calc(96px + env(safe-area-inset-bottom,0px))}
+header.top{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.eyebrow{font-family:var(--display);color:var(--accent);font-size:13px;letter-spacing:.12em}
+h1{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.25;margin:0;text-wrap:balance}
+.lead{color:var(--muted);font-size:14px;margin:0}
+h2{font-family:var(--display);font-weight:400;font-size:21px;margin:0;text-wrap:balance}
+h3{font-size:16px;margin:0}
+.sec{display:flex;flex-direction:column;gap:14px}
+.sec[hidden]{display:none}
+
+/* progress */
+.progress{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.progress .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.progress b{font-family:var(--display);font-weight:400;font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+
+/* time block */
+.block{display:flex;flex-direction:column;gap:8px}
+.when{display:flex;align-items:center;gap:10px;margin-top:6px}
+.when .t{font-family:var(--display);background:var(--accent);color:var(--accent-ink);padding:2px 10px;border-radius:4px;font-size:15px;white-space:nowrap}
+.when .s{color:var(--muted);font-size:13px}
+label.item{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer}
+label.item input{appearance:none;-webkit-appearance:none;width:24px;height:24px;border:2px solid var(--muted);border-radius:6px;margin:2px 0 0;display:grid;place-items:center;background:transparent}
+label.item input:checked{background:var(--ok);border-color:var(--ok)}
+label.item input:checked::after{content:"";width:7px;height:12px;border:solid var(--bg);border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+label.item input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.item .txt{min-width:0;display:flex;flex-direction:column;gap:2px}
+label.item .d{color:var(--muted);font-size:14px;line-height:1.6}
+label.item:has(input:checked) h3{color:var(--muted);text-decoration:line-through}
+.warn{color:var(--danger)}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:var(--danger);border:1px solid var(--danger);border-radius:3px;padding:0 5px;margin-right:6px;vertical-align:2px;letter-spacing:.05em}
+
+/* phases */
+.phase{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.phase .hd{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.phase .day{font-family:var(--display);color:var(--accent);font-size:20px}
+.phase .k{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.phase ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.phase ul li{font-size:15px}
+.phase .happen li::marker{color:var(--danger)}
+.phase .todo li::marker{color:var(--ok)}
+.timeline{display:flex;gap:4px;font-size:11px;color:var(--muted);font-family:var(--display)}
+.timeline span{flex:1;border-top:3px solid var(--line);padding-top:4px;text-align:center}
+.timeline span.on{border-color:var(--accent);color:var(--accent)}
+
+/* fields */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.chip:focus-visible,.navbtn:focus-visible,.btn:focus-visible,.step button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.field{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.field .intro{color:var(--muted);font-size:14px;margin:0}
+.tip{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:10px}
+.tip p{margin:0;color:var(--muted);font-size:14px}
+.tip.danger h3{color:var(--danger)}
+
+/* calc */
+.inputs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.inputs{grid-template-columns:1fr}}
+.step{display:flex;flex-direction:column;gap:4px}
+.step .lab{font-size:13px;color:var(--muted)}
+.step .ctl{display:flex;align-items:center;gap:6px}
+.step button{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:20px;cursor:pointer}
+.step output{flex:1;text-align:center;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.results{display:flex;flex-direction:column;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.res{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:12px 14px;border-top:1px solid var(--line)}
+.res:first-child{border-top:0}
+.res .n{font-family:var(--display);font-size:24px;color:var(--accent);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.res .n small{font-size:14px;color:var(--fg);margin-left:2px}
+.res .how{grid-column:1/-1;color:var(--muted);font-size:13px;line-height:1.5}
+.note{color:var(--muted);font-size:13px;margin:0}
+.btn{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);padding:8px 14px;border-radius:8px;cursor:pointer}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+
+/* bottom nav: 親指で押せる位置に固定 */
+nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.bottom .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.navbtn{font:inherit;background:none;border:0;color:var(--muted);padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-size:12px}
+.navbtn .g{font-family:var(--display);font-size:18px;line-height:1}
+.navbtn[aria-current="page"]{color:var(--accent)}
+.navbtn[aria-current="page"] .g{text-shadow:0 0 12px color-mix(in srgb,var(--accent) 60%,transparent)}
+footer{color:var(--muted);font-size:12px;margin-top:24px;line-height:1.6}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.home{align-self:flex-start;display:inline-block;font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:2px 10px;margin-bottom:4px}
+.home:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="home" href="../">← アプリ一覧</a>
+    <div class="eyebrow">電気が消えて、物が届かない世界で</div>
+    <h1>いきのこり帳</h1>
+    <p class="lead">停電と物流停止が続いたときの「何を・いつ・どうする」をまとめた手帖。画面は暗めにして電池を節約しています。</p>
+  </header>
+
+  <section class="sec" id="v-now" aria-label="最初の72時間">
+    <div class="progress">
+      <div class="row"><h2>最初の72時間</h2><b id="pct">0 / 0</b></div>
+      <div class="bar"><i id="barfill"></i></div>
+      <div class="note">やったことにチェック。この端末に保存されます。</div>
+    </div>
+    <div id="nowList" class="sec"></div>
+    <div class="confirm" id="resetArea">
+      <button class="btn" id="resetBtn" type="button">チェックをすべて外す</button>
+    </div>
+  </section>
+
+  <section class="sec" id="v-phase" aria-label="時期別" hidden>
+    <h2>時間がたつと、こう変わる</h2>
+    <p class="note">停電と物流停止が長引くほど、困りごとは「電気」から「物」へ、そして「人と心」へ移っていきます。</p>
+    <div id="phaseList" class="sec"></div>
+  </section>
+
+  <section class="sec" id="v-field" aria-label="分野別" hidden>
+    <h2>分野別のコツ</h2>
+    <div class="chips" id="fieldChips" role="group" aria-label="分野を選ぶ"></div>
+    <div id="fieldBody"></div>
+  </section>
+
+  <section class="sec" id="v-calc" aria-label="備蓄計算" hidden>
+    <h2>うちに要る量</h2>
+    <div class="inputs">
+      <div class="step"><span class="lab">大人</span><div class="ctl"><button type="button" data-k="adult" data-d="-1" aria-label="大人を減らす">−</button><output id="o-adult">2</output><button type="button" data-k="adult" data-d="1" aria-label="大人を増やす">＋</button></div></div>
+      <div class="step"><span class="lab">子ども</span><div class="ctl"><button type="button" data-k="child" data-d="-1" aria-label="子どもを減らす">−</button><output id="o-child">2</output><button type="button" data-k="child" data-d="1" aria-label="子どもを増やす">＋</button></div></div>
+      <div class="step"><span class="lab">スマホの台数</span><div class="ctl"><button type="button" data-k="phone" data-d="-1" aria-label="スマホを減らす">−</button><output id="o-phone">2</output><button type="button" data-k="phone" data-d="1" aria-label="スマホを増やす">＋</button></div></div>
+      <div class="step"><span class="lab">何日分</span><div class="days" id="dayChips"></div></div>
+    </div>
+    <div class="results" id="results"></div>
+    <p class="note">入力した人数は、この端末の中だけに保存されます。数字は一般的な防災の目安から出したざっくり計算です。食物アレルギー、乳幼児のミルク、持病の薬などは別に用意してください。</p>
+  </section>
+
+  <footer>
+    一般的な防災情報をもとにした目安です。実際の避難所・給水所・給電場所は、自治体の発表を優先してください。<br>
+    このページはネットがないと開けないことがあります。電波があるうちに、大事な画面をスクリーンショットしておくと安心です。
+  </footer>
+</div>
+
+<nav class="bottom" aria-label="画面の切り替え">
+  <div class="in">
+    <button class="navbtn" data-v="now" type="button"><span class="g">72h</span>最初の72時間</button>
+    <button class="navbtn" data-v="phase" type="button"><span class="g">→</span>時期別</button>
+    <button class="navbtn" data-v="field" type="button"><span class="g">◇</span>分野別</button>
+    <button class="navbtn" data-v="calc" type="button"><span class="g">＋</span>備蓄計算</button>
+  </div>
+</nav>
+
+<script>
+const NOW = [
+  {t:"直後〜1時間", s:"まず身の安全と、残っている資源を守る", items:[
+    ["n1","けが人と火の元を確かめる","ガスの元栓、ストーブ、アイロンなど熱が出るものを確認。電熱器具はプラグを抜いておく（電気が戻ったときの通電火災を防ぐ）。"],
+    ["n2","冷蔵庫・冷凍庫を開けない","閉めたままなら冷蔵室は約4時間、満杯の冷凍庫は約2日もつと言われます。開けるたびに寿命が縮みます。"],
+    ["n3","スマホを低電力モードに","画面の明るさを最低、使わないアプリを閉じる。電波が弱い場所では電池の減りが早いので、必要なとき以外は機内モードも検討。"],
+    ["n4","水をためる","浴槽・鍋・空きペットボトルに。マンションはポンプが止まると断水しやすいので、出ているうちに。浴槽の水はトイレや掃除用。"],
+    ["n5","家族の居場所を確かめる","電話はつながりにくくなります。災害用伝言ダイヤル171やSNSのメッセージを使い、決めておいた集合場所を確認。"],
+  ]},
+  {t:"〜6時間", s:"情報と、お金と、移動手段", items:[
+    ["n6","電池式・手回しラジオをつける","スマホの電池を使わずに、自治体や放送局の公式情報を得られます。"],
+    ["n7","明かりはLEDに","ろうそくは倒れたり、子どもやペットが触れたりして火事のもとに。LEDランタン・懐中電灯を使う。"],
+    ["n8","現金を手元に集める","停電中はキャッシュレス決済もATMも止まります。小銭と千円札があると買い物しやすい。"],
+    ["n9","エレベーターを使わない","停電で閉じ込められるおそれ。階段を使い、重い物の運び上げは早めに。"],
+    ["n10","車があるならガソリンを確認","スタンドは停電で給油できないことがあります。車は移動、充電、暖を取る場所にもなります。"],
+  ]},
+  {t:"〜24時間", s:"食べる順番と、トイレの準備", items:[
+    ["n11","冷蔵→冷凍→常温備蓄の順で食べる","傷みやすいものから。肉・魚・乳製品は、常温に長く置かれたものは食べない。"],
+    ["n12","簡易トイレをセットする","断水時や下水が心配なときは流さない。便器にポリ袋を2重にかけ、凝固剤か新聞紙で。"],
+    ["n13","夜の明かりを部屋ごとに置く","暗くなってから探すと危険。トイレ・寝室・玄関に1つずつ。"],
+    ["n14","暑さ・寒さの対策をする","夏は熱中症、冬は低体温に注意。家族で1部屋に集まると冷暖房なしでも過ごしやすい。"],
+  ]},
+  {t:"〜72時間", s:"長引く前提で、配分を決める", items:[
+    ["n15","備蓄を数えて1日の配分を決める","水・食料・電池・ボンベ。「あと何日もつか」を家族で共有。"],
+    ["n16","給水所・避難所の場所と時間を確認","自治体の発表、掲示板、ラジオで。給水用のポリタンクや袋を用意。"],
+    ["n17","近所と声をかけ合う","高齢の方、小さい子のいる家、一人暮らしの人。情報や物を分け合えると長くもちます。"],
+    ["n18","体を動かし、水を飲む","じっとしていると血栓（エコノミークラス症候群）のおそれ。トイレを我慢して水を控えるのは逆効果。"],
+  ]},
+];
+
+const PHASES = [
+  {day:"1〜3日", name:"電気が止まる", happen:["信号・電車・エレベーターが止まる","店はレジが動かず休業か現金のみ","携帯の基地局は予備電源が切れると圏外に","冷蔵庫の中身が傷みはじめる"], todo:["冷蔵品から食べ、冷凍庫は開けない","スマホは節電し、情報はラジオ中心に","水をため、トイレは簡易トイレに","家族の集合場所と連絡方法を確認"]},
+  {day:"4日〜2週間", name:"物が届かない", happen:["店頭から水・食品・電池・ボンベが消える","ガソリンが手に入りにくくなる","ゴミ収集が止まり、においと虫が出る","病院は救急中心になり、薬の補充が難しい"], todo:["備蓄を1日あたりの量に分けて使う","生ゴミは水を切って密閉、置き場所を決める","持病の薬の残りを数え、早めに相談先を探す","給水所・炊き出し・充電スポットの情報を集める"]},
+  {day:"2週間〜1か月", name:"足りない物が出てくる", happen:["薬・粉ミルク・おむつ・生理用品が不足","衛生が悪くなり、おなかの風邪などが広がりやすい","デマや不安な情報が増える","子どもも大人も疲れが出る"], todo:["手指の消毒と、食器にラップを敷く工夫を徹底","起きる・食べる・遊ぶ時間を決めて日課をつくる","情報は公式の発表で確かめてから動く","足りない物は近所で分け合い、交換する"]},
+  {day:"1か月〜", name:"暮らしを組み直す", happen:["元に戻るまで長くかかる前提になる","地域ごとに助け合いの形ができてくる","体力と気力の消耗が大きくなる"], todo:["地域で役割を分担（水くみ、見回り、子どもの見守り）","ソーラー充電、雨水の生活用水利用など電気と水を自分でつくる","豆苗の再生栽培やもやしなど、短期間で育つ食べ物","大人も交代で休む。一人で抱えない"]},
+];
+
+const FIELDS = [
+  {k:"水", intro:"人は食べなくても数週間もちますが、水がないと数日で危険です。", tips:[
+    ["飲み水は1人1日3リットル","飲む分と調理の分を合わせた目安。夏や体を動かす日は多めに。"],
+    ["生活用水は浴槽で","トイレ、手洗い、掃除用。飲み水とは容器を分けておく。"],
+    ["水を飲めるようにするなら煮沸","濁りは布やコーヒーフィルターでこしてから、ぐらぐら沸騰させて1分以上。"],
+    ["雨水・川の水は飲み水にしない","煮沸しても薬品などの汚れは取れません。トイレや洗濯に回す。",true],
+    ["洗い物を減らす","お皿にラップやポリ袋をかぶせて使えば、洗う水がいりません。"],
+  ]},
+  {k:"食べ物", intro:"火を使わずに食べられる物と、少ない燃料で温める工夫の両方を。", tips:[
+    ["食べる順番は 冷蔵→冷凍→常温","傷みやすい物から先に。缶詰やレトルトは最後まで取っておく。"],
+    ["ポリ袋調理","耐熱のポリ袋にお米と水を入れ、鍋で湯せん。1つの鍋で何品も同時に作れて、湯は洗い物や湯たんぽに使える。"],
+    ["火を使わない食事も用意","缶詰、ナッツ、栄養補助食品、ドライフルーツ、シリアル。"],
+    ["お菓子は心の支え","子どもが好きなお菓子は、空腹以上に気持ちを支えてくれます。"],
+    ["夏の常温放置に注意","肉・魚・乳製品・調理済みの物は、暑い部屋に長く置いた物は食べない。",true],
+  ]},
+  {k:"明かり・電気", intro:"電気は「使う量を減らす」と「自分でつくる」の両方で考えます。", tips:[
+    ["ランタンで部屋全体を照らす","懐中電灯に水を入れたペットボトルや白いレジ袋をかぶせると、光が広がります。"],
+    ["電池はサイズをそろえる","単3に統一して、単1・単2はスペーサーで代用すると管理が楽。"],
+    ["車でスマホを充電","エンジンをかけるときは屋外で。車庫や雪の中ではマフラーまわりの換気を確保。"],
+    ["ソーラー充電器・ポータブル電源","晴れた日の昼にためて、夜に使う。日中に充電の当番を決めると無駄がない。"],
+    ["発電機は屋外で使う","室内・車庫・窓の近くで使うと一酸化炭素中毒の危険。においがしないので気づけません。",true],
+  ]},
+  {k:"トイレ・衛生", intro:"トイレが使えないと、水や食べ物よりも先に困ります。", tips:[
+    ["簡易トイレの作り方","便器にポリ袋を2重にかけ、凝固剤か細かくちぎった新聞紙を入れる。1回ごとに外側の袋を残して内側を交換。"],
+    ["1人1日5回が目安","家族の人数×日数×5回分の袋と凝固剤を。"],
+    ["手は少ない水で洗う","ペットボトルのふたに小さい穴を開けると、少しずつ出せる簡易蛇口に。アルコール消毒と組み合わせる。"],
+    ["ゴミはにおい対策","生ゴミは水を切って新聞紙で包み、袋を二重にして密閉。ベランダの日の当たらない場所に。"],
+    ["体はぬれタオルで拭く","お風呂に入れなくても、拭くだけでかゆみや肌荒れを防げます。"],
+  ]},
+  {k:"暑さ・寒さ", intro:"冷暖房が止まった家では、温度が命に関わります。", tips:[
+    ["夏：日差しを外で止める","すだれや段ボールを窓の外側に。ぬれタオルとうちわで体を冷やす。首・わき・足のつけ根。"],
+    ["夏：涼しい場所へ移る","自家発電のある公共施設や避難所が開放されることがあります。"],
+    ["冬：家族で1部屋に集まる","段ボールやアルミシートを床と窓に。重ね着は首・手首・足首を温める。"],
+    ["冬：湯たんぽ","カセットコンロで沸かしたお湯をペットボトル（耐熱）に入れ、タオルで包む。"],
+    ["室内で炭・練炭・屋外用ストーブを使わない","一酸化炭素中毒の危険。換気していても起こります。",true],
+    ["カセットコンロに大きな鍋をのせない","ボンベが熱くなり破裂するおそれ。ボンベの部分まで覆う鍋や鉄板はNG。",true],
+  ]},
+  {k:"情報・連絡", intro:"正しい情報を、電池を使わずに得る。", tips:[
+    ["ラジオを主役に","電池式・手回し式。AMは遠くまで届き、地域のFMは細かい生活情報が多い。"],
+    ["災害用伝言ダイヤル171","声で伝言を残せます。ネットが使えるならweb171も。家族で使い方を一度試しておく。"],
+    ["集合場所を決めておく","「家がだめなら○○小学校」のように、2か所決めて紙にも書いておく。"],
+    ["紙に書いておく","家族や親せきの電話番号、近所の地図。スマホが切れると何もわからなくなります。"],
+    ["うわさは確かめてから","「○○で配っている」などの話は、自治体の発表で確認してから動く。"],
+  ]},
+  {k:"体と薬", intro:"病院が混む中で、自分たちで体を守る。", tips:[
+    ["持病の薬は1週間分以上","お薬手帳はスマホで写真も撮っておく。薬の名前がわかれば相談しやすい。"],
+    ["水分をしっかり","トイレを気にして水を控えると、脱水や血栓の原因に。"],
+    ["1日に何度か歩く・伸ばす","狭い場所で同じ姿勢が続くと、足に血のかたまりができやすい。"],
+    ["小さなけがも清潔に","きれいな水で洗い、清潔なガーゼで覆う。赤く腫れて熱を持ったら早めに相談。"],
+    ["子どもの様子を見る","食欲、眠り、おしっこの回数。いつもと違うサインに早めに気づく。"],
+  ]},
+  {k:"安全・防犯", intro:"暗くて人の目が少ない時期は、事故と犯罪の両方に注意。", tips:[
+    ["夜はなるべく出歩かない","出るときは複数で、明かりを持って。信号が止まった交差点に注意。"],
+    ["戸締まりを忘れない","避難で家を空けるときも。貴重品は身につける。"],
+    ["点検・修理をうたう訪問に注意","「無料で点検します」などの訪問は、身分を確かめてから。"],
+    ["火の扱いは大人が見守る","カセットコンロの周りに燃える物を置かない。子どもだけで使わせない。"],
+  ]},
+  {k:"心・子ども", intro:"長い非常時を乗り切るのは、毎日のリズムと人とのつながりです。", tips:[
+    ["日課をつくる","起きる・食べる・勉強・遊ぶ・寝る時間を決める。先が見えると安心します。"],
+    ["子どもにわかる言葉で説明","「電気が止まっていて、直すのに時間がかかる。家族で協力しよう」。役割をあげると落ち着きます。"],
+    ["電気のいらない遊び","トランプ、しりとり、折り紙、本の読み聞かせ、絵日記。"],
+    ["大人も交代で休む","眠れないとイライラや判断ミスが増えます。一人で抱え込まない。"],
+    ["不安は口に出していい","怖い・つらいは自然なこと。話を聞くだけでも気持ちは軽くなります。"],
+  ]},
+];
+
+// ---------- storage ----------
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let checked = store.get("ikinokori-checked",{});
+
+// ---------- 72h ----------
+function renderNow(){
+  const el=document.getElementById("nowList");
+  el.innerHTML=NOW.map(b=>`
+    <div class="block">
+      <div class="when"><span class="t">${b.t}</span><span class="s">${b.s}</span></div>
+      ${b.items.map(([id,h,d])=>`
+        <label class="item" for="${id}">
+          <input type="checkbox" id="${id}" ${checked[id]?"checked":""}>
+          <span class="txt"><h3>${h}</h3><span class="d">${d}</span></span>
+        </label>`).join("")}
+    </div>`).join("");
+  el.querySelectorAll("input").forEach(i=>i.addEventListener("change",()=>{
+    checked[i.id]=i.checked; store.set("ikinokori-checked",checked); updatePct();
+  }));
+  updatePct();
+}
+function updatePct(){
+  const all=NOW.flatMap(b=>b.items.map(x=>x[0]));
+  const n=all.filter(id=>checked[id]).length;
+  document.getElementById("pct").textContent=`${n} / ${all.length}`;
+  document.getElementById("barfill").style.width=(n/all.length*100)+"%";
+}
+const resetArea=document.getElementById("resetArea");
+function resetIdle(){
+  resetArea.innerHTML=`<button class="btn" id="resetBtn" type="button">チェックをすべて外す</button>`;
+  document.getElementById("resetBtn").onclick=()=>{
+    resetArea.innerHTML=`<span>本当に外しますか？</span><button class="btn danger" id="yes" type="button">外す</button><button class="btn" id="no" type="button">やめる</button>`;
+    document.getElementById("yes").onclick=()=>{checked={};store.set("ikinokori-checked",checked);renderNow();resetIdle();};
+    document.getElementById("no").onclick=resetIdle;
+  };
+}
+
+// ---------- phases ----------
+function renderPhases(){
+  document.getElementById("phaseList").innerHTML=PHASES.map((p,i)=>`
+    <article class="phase">
+      <div class="timeline" aria-hidden="true">${PHASES.map((_,j)=>`<span class="${j<=i?"on":""}">${PHASES[j].day}</span>`).join("")}</div>
+      <div class="hd"><span class="day">${p.day}</span><h3>${p.name}</h3></div>
+      <div class="k">起きること</div>
+      <ul class="happen">${p.happen.map(x=>`<li>${x}</li>`).join("")}</ul>
+      <div class="k">やること</div>
+      <ul class="todo">${p.todo.map(x=>`<li>${x}</li>`).join("")}</ul>
+    </article>`).join("");
+}
+
+// ---------- fields ----------
+let fieldIdx=store.get("ikinokori-field",0);
+function renderFields(){
+  const chips=document.getElementById("fieldChips");
+  chips.innerHTML=FIELDS.map((f,i)=>`<button class="chip" type="button" data-i="${i}" aria-pressed="${i===fieldIdx}">${f.k}</button>`).join("");
+  chips.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{fieldIdx=+c.dataset.i;store.set("ikinokori-field",fieldIdx);renderFields();});
+  const f=FIELDS[fieldIdx]||FIELDS[0];
+  document.getElementById("fieldBody").innerHTML=`
+    <div class="field">
+      <h2>${f.k}</h2>
+      <p class="intro">${f.intro}</p>
+      ${f.tips.map(([h,d,danger])=>`
+        <div class="tip ${danger?"danger":""}"><h3>${danger?'<span class="tag">危険</span>':""}${h}</h3><p>${d}</p></div>`).join("")}
+    </div>`;
+}
+
+// ---------- calc ----------
+let calc=Object.assign({adult:2,child:2,phone:2,days:7},store.get("ikinokori-calc",{}));
+const DAYS=[3,7,14,30];
+function renderCalc(){
+  ["adult","child","phone"].forEach(k=>document.getElementById("o-"+k).textContent=calc[k]);
+  const dc=document.getElementById("dayChips");
+  dc.innerHTML=DAYS.map(d=>`<button class="chip" type="button" data-d="${d}" aria-pressed="${calc.days===d}">${d}日</button>`).join("");
+  dc.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{calc.days=+c.dataset.d;saveCalc();});
+  const p=calc.adult+calc.child, d=calc.days;
+  const water=p*3*d;
+  const meals=p*3*d;
+  const toilet=p*5*d;
+  const gas=Math.ceil(p*15*d/60);
+  const charges=Math.ceil(calc.phone*d/2);
+  const batt=Math.ceil(charges/2);
+  const rows=[
+    ["飲み水", water,"L",`2Lペットボトル ${Math.ceil(water/2)}本。1人1日3L（飲む＋調理）× ${p}人 × ${d}日。生活用水は別に浴槽などで。`],
+    ["食事", meals,"食",`${p}人 × 1日3食 × ${d}日。主食（パックご飯・麺・パン）と、たんぱく質（缶詰など）を組み合わせて。`],
+    ["簡易トイレ", toilet,"回分",`${p}人 × 1日5回 × ${d}日。袋と凝固剤のセット数。`],
+    ["カセットボンベ", gas,"本",`1本で強火約60分として、1人1日15分ほど温める計算。湯せん中心なら少なめで足ります。`],
+    ["スマホの充電", charges,"回",`${calc.phone}台を節電して2日に1回充電する計算。10000mAhのモバイルバッテリーなら約${batt}個（1個でスマホ約2回）。`],
+  ];
+  document.getElementById("results").innerHTML=rows.map(([h,n,u,how])=>`
+    <div class="res"><h3>${h}</h3><div class="n">${n.toLocaleString()}<small>${u}</small></div><div class="how">${how}</div></div>`).join("");
+}
+function saveCalc(){store.set("ikinokori-calc",calc);renderCalc();}
+document.querySelectorAll(".step button[data-k]").forEach(b=>b.onclick=()=>{
+  const k=b.dataset.k, min=k==="adult"?1:0;
+  calc[k]=Math.max(min,Math.min(20,calc[k]+(+b.dataset.d))); saveCalc();
+});
+
+// ---------- nav ----------
+const VIEWS=["now","phase","field","calc"];
+function show(v){
+  if(!VIEWS.includes(v)) v="now";
+  VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=(x!==v));
+  document.querySelectorAll(".navbtn").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v?"page":"false"));
+}
+document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>{
+  if(location.hash!=="#"+b.dataset.v) location.hash=b.dataset.v; else show(b.dataset.v);
+  window.scrollTo(0,0);
+});
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+
+renderNow(); resetIdle(); renderPhases(); renderFields(); renderCalc();
+show(location.hash.slice(1));
+</script>
+</body>
+</html>
