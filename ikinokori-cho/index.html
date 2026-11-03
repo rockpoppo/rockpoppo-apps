@@ -80,9 +80,9 @@ label.item:has(input:checked) h3{color:var(--muted);text-decoration:line-through
 
 /* fields */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 12px;border-radius:999px;cursor:pointer}
+.chip{font:inherit;font-size:14px;white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 12px;border-radius:999px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
-.chip:focus-visible,.navbtn:focus-visible,.btn:focus-visible,.step button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chip:focus-visible,.navbtn:focus-visible,.btn:focus-visible,.step .ctl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .field{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
 .field .intro{color:var(--muted);font-size:14px;margin:0}
 .tip{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding-top:10px}
@@ -95,7 +95,7 @@ label.item:has(input:checked) h3{color:var(--muted);text-decoration:line-through
 .step{display:flex;flex-direction:column;gap:4px}
 .step .lab{font-size:13px;color:var(--muted)}
 .step .ctl{display:flex;align-items:center;gap:6px}
-.step button{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:20px;cursor:pointer}
+.step .ctl button{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-size:20px;cursor:pointer}
 .step output{flex:1;text-align:center;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
 .days{display:flex;gap:6px;flex-wrap:wrap}
 .results{display:flex;flex-direction:column;gap:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -381,7 +381,7 @@ function renderCalc(){
     <div class="res"><h3>${h}</h3><div class="n">${n.toLocaleString()}<small>${u}</small></div><div class="how">${how}</div></div>`).join("");
 }
 function saveCalc(){store.set("ikinokori-calc",calc);renderCalc();}
-document.querySelectorAll(".step button[data-k]").forEach(b=>b.onclick=()=>{
+document.querySelectorAll(".step .ctl button[data-k]").forEach(b=>b.onclick=()=>{
   const k=b.dataset.k, min=k==="adult"?1:0;
   calc[k]=Math.max(min,Math.min(20,calc[k]+(+b.dataset.d))); saveCalc();
 });
