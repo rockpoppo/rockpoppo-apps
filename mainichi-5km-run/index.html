@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="毎日5km">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f5f6fa">
+<meta name="description" content="毎日5km走り続けたときの体と気分の変化を、1週間から1年以上まで時期ごとにまとめたページ。消費カロリーの計算つき。">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>毎日5kmランの効果</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: 夜明けのトラック。タブが経過時間、色は夜明けから日の出へ移る。上部にタブを固定して、スクロールせず切り替えられる */
+:root {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --fg: #1b1f2e;
+  --muted: #59607a;
+  --line: #dde0ea;
+  --t1: #3d4896;
+  --t2: #7a4a9c;
+  --t3: #b8446f;
+  --t4: #c75a1f;
+  --t5: #8f6700;
+  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  --font-num: "Barlow Condensed", "Arial Narrow", "Hiragino Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11131c; --surface: #191c29; --fg: #eceef6; --muted: #9ba2ba; --line: #2b3044;
+    --t1: #9aa5ff; --t2: #c8a2f0; --t3: #ff93b5; --t4: #ff9d63; --t5: #f0c24f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11131c; --surface: #191c29; --fg: #eceef6; --muted: #9ba2ba; --line: #2b3044;
+  --t1: #9aa5ff; --t2: #c8a2f0; --t3: #ff93b5; --t4: #ff9d63; --t5: #f0c24f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 4px 40px;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  background: var(--bg); z-index: 30;
+}
+.wrap { max-width: 640px; margin: 0 auto; }
+
+.topbar { display: flex; justify-content: flex-end; padding-top: 10px; margin-bottom: 10px; }
+.home { font-size: 12.5px; color: var(--fg); text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; white-space: nowrap; }
+.home:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.head { padding: 0 0 6px; }
+h1 { font-size: 26px; line-height: 1.25; margin: 0 0 4px; font-weight: 700; letter-spacing: .02em; text-wrap: balance; }
+.lede { margin: 0; font-size: 13.5px; color: var(--muted); text-wrap: pretty; }
+
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--bg); padding: 8px 0 12px;
+}
+.tabs { display: grid; grid-template-columns: repeat(5, 1fr) 1px repeat(2, 1fr); gap: 2px; align-items: stretch; }
+.sep { background: var(--line); margin: 8px 2px; }
+.tab {
+  appearance: none; -webkit-appearance: none; font: inherit; cursor: pointer;
+  border: 1px solid transparent; background: transparent; color: var(--muted);
+  min-height: 50px; min-width: 0; padding: 4px 0; border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab .n { font-family: var(--font-num); font-weight: 600; font-size: 23px; }
+.tab .u { font-size: 10.5px; }
+.tab .w { font-size: 13.5px; font-weight: 700; }
+.tab[aria-selected="true"] { background: var(--surface); border-color: var(--line); color: var(--fg); }
+.tab[aria-selected="true"] .n { color: var(--c); }
+.tab:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+.track {
+  grid-column: 1 / 6; grid-row: 2; position: relative; height: 4px; border-radius: 2px; margin-top: 9px;
+  background: linear-gradient(90deg, var(--t1), var(--t2), var(--t3), var(--t4), var(--t5));
+}
+.track.off { opacity: .35; }
+.mark {
+  position: absolute; top: -5px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%;
+  background: var(--c, var(--t1)); border: 3px solid var(--bg);
+  transition: left .35s ease, opacity .2s ease;
+}
+
+.panel { padding-top: 6px; }
+.phead { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 6px; }
+.big { display: flex; align-items: baseline; gap: 4px; color: var(--c); }
+.big .n { font-family: var(--font-num); font-weight: 700; font-size: 80px; line-height: .85; letter-spacing: -.01em; }
+.big .u { font-size: 20px; font-weight: 700; color: var(--fg); }
+.big .w { font-size: 40px; font-weight: 700; line-height: 1.1; color: var(--fg); }
+.cum { text-align: right; font-size: 12px; color: var(--muted); line-height: 1.2; padding-bottom: 4px; }
+.cum b { display: block; font-family: var(--font-num); font-weight: 600; font-size: 30px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.sum { font-size: 16px; font-weight: 500; margin: 12px 0 4px; text-wrap: pretty; }
+
+.items { list-style: none; margin: 0; padding: 0; }
+.item { padding: 14px 0 15px; border-top: 1px solid var(--line); }
+.item:last-child { border-bottom: 1px solid var(--line); }
+.item .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cat { font-size: 11.5px; letter-spacing: .08em; color: var(--muted); }
+.ev { font-size: 11px; line-height: 1.5; padding: 0 9px; border-radius: 99px; border: 1px solid var(--muted); color: var(--muted); white-space: nowrap; }
+.ev-r { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.ev-g { border-style: solid; }
+.ev-m { border-style: dashed; }
+h3 { font-size: 16.5px; line-height: 1.45; margin: 3px 0 4px; font-weight: 700; text-wrap: balance; }
+.item p { margin: 0; font-size: 14.5px; text-wrap: pretty; }
+
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 6px; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 12.5px; color: var(--muted); }
+.field input, .field select {
+  font: inherit; font-size: 16px; height: 46px; padding: 0 12px; border-radius: 10px; width: 100%;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.field input:focus-visible, .field select:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; }
+.tablewrap { overflow-x: auto; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
+th { font-size: 12px; font-weight: 500; color: var(--muted); text-align: right; padding: 10px 8px 6px; white-space: nowrap; }
+td { text-align: right; padding: 9px 8px; border-top: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; font-weight: 700; }
+th:last-child, td:last-child { padding-right: 0; }
+.out { margin: 16px 0 0; display: grid; gap: 10px; }
+.out p { margin: 0; font-size: 14.5px; text-wrap: pretty; }
+.out b { font-family: var(--font-num); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; padding: 0 2px; }
+.out small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+
+.foot { margin-top: 26px; font-size: 12.5px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin: 0 0 14px; }
+.foot h2 { font-size: 12.5px; font-weight: 700; margin: 16px 0 4px; color: var(--fg); letter-spacing: .06em; }
+.foot ul { margin: 0; padding-left: 1.2em; }
+.foot li { margin: 2px 0; }
+.foot a { color: var(--fg); text-underline-offset: 3px; }
+.foot p { margin: 8px 0 0; text-wrap: pretty; }
+
+@media (prefers-reduced-motion: reduce) { .mark { transition: none; } }
+@media (max-width: 360px) { .big .n { font-size: 68px; } h1 { font-size: 23px; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="topbar"><a class="home" href="../">← アプリ一覧</a></div>
+    <h1>毎日5kmランの効果</h1>
+    <p class="lede">毎日5km走り続けると、時期ごとに何が起きやすいかをまとめました。</p>
+  </header>
+
+  <div class="bar">
+    <div class="tabs" id="tabs" role="tablist" aria-label="時期を選ぶ">
+      <div class="track" id="track" aria-hidden="true"><i class="mark" id="mark"></i></div>
+    </div>
+  </div>
+
+  <main class="panel" id="panel" role="tabpanel" tabindex="-1"></main>
+
+  <footer class="foot">
+    <div class="legend" aria-label="ラベルの意味">
+      <span><span class="ev ev-r">研究</span> 論文・大規模調査</span>
+      <span><span class="ev ev-g">指針</span> 医療機関などの推奨</span>
+      <span><span class="ev ev-m">目安</span> 一般的な傾向。個人差が大きい</span>
+    </div>
+    <h2>参考にした情報</h2>
+    <ul>
+      <li><a href="https://www.acc.org/about-acc/press-releases/2014/07/29/09/32/leisure-running-jacc-pr" target="_blank" rel="noopener">米国心臓病学会 ランニングと死亡リスク(JACC, 2014)</a></li>
+      <li><a href="https://www.health.harvard.edu/mind-and-mood/more-evidence-that-exercise-can-boost-mood" target="_blank" rel="noopener">Harvard Health 運動と気分(JAMA Psychiatry)</a></li>
+      <li><a href="https://www.uclahealth.org/news/article/how-prevent-running-injuries-marathon" target="_blank" rel="noopener">UCLA Health ランニング障害の予防</a></li>
+      <li><a href="https://runnersworldonline.com.au/how-many-days-a-week-should-i-run/" target="_blank" rel="noopener">Runner's World 週に何日走るか</a></li>
+    </ul>
+    <p>体力・心拍・体重・睡眠・健診値についての記述は、一般的な傾向をまとめた目安です。医療上の助言ではありません。持病がある人や不安がある人は、医師に相談してください。</p>
+  </footer>
+</div>
+
+<script>
+const PERIODS = [
+  { id: 'week', n: '1', u: '週間', unit: '週間', km: 35,
+    sum: '体はまだ慣れる途中です。変化は体力よりも、気分と疲れ方に先に出ます。',
+    items: [
+      { c: '気分', t: '走った後の爽快感', b: '走った直後は気分が上がりやすくなります。毎朝続けると、朝の気分を整える習慣として働きやすくなります。', ev: 'm' },
+      { c: '体', t: '脚の張りと筋肉痛', b: 'ふくらはぎ、太もも、すねに張りが出ます。数日から2週間ほどで慣れる人が多いです。', ev: 'm' },
+      { c: '生活', t: '起きる時間が決まり始める', b: '毎朝同じ時間に動くと、起床と就寝のリズムがそろいやすくなります。夜の眠気が早く来る人もいます。', ev: 'm' },
+      { c: 'リスク', t: '痛みが出やすい時期', b: 'ランニング障害の主な原因は、増やしすぎと休養不足による使いすぎです。すねや膝に痛みが出たら、その日は休みます。', ev: 'g' }
+    ] },
+  { id: 'month', n: '1', u: 'か月', unit: 'か月', km: 150,
+    sum: '心肺が慣れて、同じペースが楽に感じられる時期です。',
+    items: [
+      { c: '体力', t: '同じペースでも息が上がりにくい', b: '同じ速さで走ったときの心拍数が低めになり、5kmが短く感じられます。安静時の心拍数が少し下がる人もいます。', ev: 'm' },
+      { c: '体', t: '体重はあまり動かないことがあります', b: '走ると食欲も増えます。体重より先に、ウエストや服のゆるさに変化が出る人もいます。', ev: 'm' },
+      { c: '生活', t: '朝食と水分の取り方が決まる', b: '空腹で走るか、軽く食べてから走るかを試す時期です。気持ちよく続けられるほうを選びます。', ev: 'm' },
+      { c: 'リスク', t: '毎日5kmは、始めたばかりの人には多めです', b: 'ランニング指南では、週32km未満なら週3日、初心者は週3〜4日が目安とされています。毎朝5kmは週35kmにあたります。最初の数週間は、距離を半分にする日や歩く日を入れると続けやすくなります。', ev: 'g' }
+    ] },
+  { id: 'quarter', n: '3', u: 'か月', unit: 'か月', km: 450,
+    sum: '数字に出始める時期です。体力、体型、健診の値に変化を感じやすくなります。',
+    items: [
+      { c: '体力', t: '体力の指標が上がる', b: '最大酸素摂取量(体力の指標)は、運動習慣がなかった人ほど伸びやすく、数%から1割以上上がることがあります。伸び幅は元の体力で大きく変わります。', ev: 'm' },
+      { c: '健診', t: '血圧・中性脂肪・善玉コレステロール', b: '継続した有酸素運動で改善が期待される項目です。変化の大きさは人によって違うため、健診の数値で確かめるのが確実です。', ev: 'm' },
+      { c: '体型', t: '体脂肪が減る可能性', b: '5kmで約300kcal(体重60kgの目安)を使います。3か月で450kmなので、食事が変わらなければ、理論上は約3.7kg分の脂肪に相当します。実際は食欲や日中の動きが変わり、これより小さくなりがちです。', ev: 'm' },
+      { c: '習慣', t: '走ることが自動になる', b: '新しい習慣が自動的になるまで2か月前後かかる、という研究があります。ばらつきは大きく、3か月で定着する人も、もっとかかる人もいます。', ev: 'm' }
+    ] },
+  { id: 'half', n: '6', u: 'か月', unit: 'か月', km: 900,
+    sum: '体が走りに適応して、伸びが緩やかになる時期です。',
+    items: [
+      { c: '体力', t: 'タイムの伸びがゆるやかになる', b: '最初の数か月ほど急には伸びません。伸びが止まっても、体力が落ちたわけではありません。同じ5kmを、より少ない負担でこなせている状態です。', ev: 'm' },
+      { c: '体', t: '骨・筋肉・腱が走る衝撃に慣れる', b: '骨や腱は、心肺や筋肉より適応に時間がかかります。半年ほどで走る刺激に耐えやすくなりますが、距離やペースを急に上げると痛みが出ます。', ev: 'm' },
+      { c: '睡眠', t: '睡眠は人によって差があります', b: '寝つきや深さが良くなる人がいる一方、研究では結果が分かれています。朝に外の光を浴びると、体内時計が整いやすくなります。', ev: 'm' },
+      { c: '体重', t: '体重は落ち着いてくる', b: '食事が変わらなければ、体重はあるところで安定します。さらに減らしたいときは、走る量だけでなく食事も見直すと動かしやすくなります。', ev: 'm' }
+    ] },
+  { id: 'year', n: '1', u: '年〜', unit: '年以上', km: 1825,
+    sum: '長く走り続けた人の統計に、はっきりした差が出ています。',
+    items: [
+      { c: '寿命', t: '死亡リスクが低い傾向', b: '5万5千人を約15年追った米国の研究で、走る人は走らない人より、全死因の死亡リスクが30%、心臓病・脳卒中による死亡リスクが45%低くなっていました。平均で約3年長生きする計算です。走る人と走らない人の比較なので、走ることだけが原因とは断定できません。', ev: 'r' },
+      { c: '続けた年数', t: '約6年続けた人で差が最大', b: '6年ほど走り続けた人は、全死因で29%、心臓病・脳卒中で50%、死亡リスクが低くなっていました。', ev: 'r' },
+      { c: '量', t: '量はたくさん必要ではない', b: '週1時間未満の人でも、週3時間以上の人と同程度の差が出ていました。毎朝5kmはこの研究の中では多いほうの量なので、続けやすさとケガの少なさを基準に量を決められます。', ev: 'r' },
+      { c: '心', t: 'うつ病になりにくい傾向', b: '遺伝情報を使った大規模研究で、身体活動が大きく増えるごとに、うつ病になる確率が26%低いと示されました。例として、座っている15分を走る15分に置き換える程度の増加です。', ev: 'r' },
+      { c: '距離', t: '累計1,825km', b: '東京から大阪(約500km)まで、約3.6回走れる距離です。' }
+    ] }
+];
+
+const NOTES = [
+  { c: '休養', t: '週1日は完全に休む', b: '週に1日は運動なしの日を作ることが、ランニング指南で勧められています。毎朝走りたいときは、休む代わりに歩く日や、距離を半分にする日を入れる方法があります。', ev: 'g' },
+  { c: '距離', t: '増やすなら少しずつ', b: '週の合計距離を増やすときは、前の週の10%以内が目安とされています。', ev: 'g' },
+  { c: '痛み', t: '走るのをやめる目安', b: '走っている間に痛みが強くなる、数日休んでも残る、足を引きずる、腫れる。このどれかがあれば、走るのをやめて受診します。', ev: 'g' },
+  { c: '準備', t: '最初の5〜10分はゆっくり', b: '起きてすぐは体が固いので、5〜10分の軽い動きから始めます。走り終わった後も5〜10分、歩くか軽く走って整えます。', ev: 'g' },
+  { c: '筋力', t: '週2回の筋トレ', b: '体幹と下半身の筋トレを、間を48時間以上あけて週2回行うことが勧められています。', ev: 'g' },
+  { c: '靴', t: '靴は3〜5か月で交換', b: '交換の目安は約480〜800km(300〜500マイル)です。毎朝5kmなら3〜5か月にあたります。', ev: 'g' },
+  { c: '体調', t: '胸の痛み・息苦しさ・めまい', b: '運動中にこれらが出たら中止して、医療機関に相談します。持病がある人や、長く運動していない人は、始める前に医師へ相談してください。', ev: 'm' }
+];
+
+const EV = { r: ['ev-r', '研究'], g: ['ev-g', '指針'], m: ['ev-m', '目安'] };
+const ORDER = ['week', 'month', 'quarter', 'half', 'year', 'calc', 'notes'];
+const $ = (s) => document.querySelector(s);
+const tabsEl = $('#tabs'), panel = $('#panel'), mark = $('#mark'), track = $('#track');
+
+let S = { tab: 'week', calc: { w: 60, d: 5, p: 6, n: 7 } };
+try {
+  const saved = JSON.parse(localStorage.getItem('asa5km-v1') || 'null');
+  if (saved && typeof saved === 'object') {
+    if (ORDER.includes(saved.tab)) S.tab = saved.tab;
+    if (saved.calc) S.calc = Object.assign(S.calc, saved.calc);
+  }
+} catch (e) {}
+function save() { try { localStorage.setItem('asa5km-v1', JSON.stringify(S)); } catch (e) {} }
+
+/* tabs */
+const tabHTML = PERIODS.map((p, i) =>
+  `<button class="tab" role="tab" id="tab-${p.id}" data-id="${p.id}" aria-controls="panel" style="--c:var(--t${i + 1})"><span class="n">${p.n}</span><span class="u">${p.u}</span></button>`
+).join('') +
+  '<span class="sep" aria-hidden="true"></span>' +
+  '<button class="tab" role="tab" id="tab-calc" data-id="calc" aria-controls="panel" style="--c:var(--fg)"><span class="w">計算</span></button>' +
+  '<button class="tab" role="tab" id="tab-notes" data-id="notes" aria-controls="panel" style="--c:var(--fg)"><span class="w">注意</span></button>';
+tabsEl.insertAdjacentHTML('afterbegin', tabHTML);
+const tabBtns = [...tabsEl.querySelectorAll('.tab')];
+
+function itemHTML(i) {
+  const e = i.ev ? `<span class="ev ${EV[i.ev][0]}">${EV[i.ev][1]}</span>` : '';
+  return `<li class="item"><div class="top"><span class="cat">${i.c}</span>${e}</div><h3>${i.t}</h3><p>${i.b}</p></li>`;
+}
+function periodHTML(p) {
+  return `<div class="phead"><div class="big"><span class="n">${p.n === '1' && p.id === 'year' ? '1' : p.n}</span><span class="u">${p.unit}</span></div>` +
+    `<div class="cum">毎日5kmで累計<b>${p.km.toLocaleString('ja-JP')} km</b></div></div>` +
+    `<p class="sum">${p.sum}</p><ul class="items">${p.items.map(itemHTML).join('')}</ul>`;
+}
+function notesHTML() {
+  return `<div class="phead"><div class="big"><span class="w">注意</span></div></div>` +
+    `<p class="sum">毎朝走り続けるために、先に知っておきたいことです。</p><ul class="items">${NOTES.map(itemHTML).join('')}</ul>`;
+}
+
+/* calculator */
+const fmt = (x) => Math.round(x).toLocaleString('ja-JP');
+function fmtMin(m) {
+  m = Math.round(m);
+  if (m < 60) return m + '分';
+  const h = Math.floor(m / 60), r = m % 60;
+  if (h >= 100) return h.toLocaleString('ja-JP') + '時間';
+  return r ? `${h}時間${r}分` : `${h}時間`;
+}
+function paceLabel(v) { const m = Math.floor(v), s = Math.round((v - m) * 60); return `${m}:${String(s).padStart(2, '0')} /km`; }
+function calcHTML() {
+  const c = S.calc;
+  let paceOpts = '';
+  for (let v = 4; v <= 10.001; v += 0.5) paceOpts += `<option value="${v}"${Math.abs(v - c.p) < 0.01 ? ' selected' : ''}>${paceLabel(v)}</option>`;
+  let dayOpts = '';
+  for (let d = 1; d <= 7; d++) dayOpts += `<option value="${d}"${d === +c.n ? ' selected' : ''}>週${d}日</option>`;
+  return `<div class="phead"><div class="big"><span class="w">計算</span></div></div>` +
+    `<p class="sum">体重とペースを入れると、走った距離と消費の目安が出ます。</p>` +
+    `<form class="fields" id="f" autocomplete="off">` +
+    `<div class="field"><label for="f-w">体重 (kg)</label><input id="f-w" type="number" inputmode="decimal" min="20" max="200" step="0.1" value="${c.w}"></div>` +
+    `<div class="field"><label for="f-d">1回の距離 (km)</label><input id="f-d" type="number" inputmode="decimal" min="0.5" max="100" step="0.5" value="${c.d}"></div>` +
+    `<div class="field"><label for="f-p">1kmのペース</label><select id="f-p">${paceOpts}</select></div>` +
+    `<div class="field"><label for="f-n">走る日数</label><select id="f-n">${dayOpts}</select></div>` +
+    `</form><p class="hint">体重は例の値です。自分の体重に変えてください。</p>` +
+    `<div class="tablewrap"><table><thead><tr><th>期間</th><th>距離</th><th>時間</th><th>消費の目安</th></tr></thead><tbody id="rows"></tbody></table></div>` +
+    `<div class="out" id="out"></div>`;
+}
+function bindCalc() {
+  const ids = { w: 'f-w', d: 'f-d', p: 'f-p', n: 'f-n' };
+  const run = () => {
+    const w = parseFloat($('#f-w').value), d = parseFloat($('#f-d').value);
+    const p = parseFloat($('#f-p').value), n = parseInt($('#f-n').value, 10);
+    const rows = $('#rows'), out = $('#out');
+    if (!(w >= 20 && w <= 200 && d >= 0.5 && d <= 100)) {
+      rows.innerHTML = '<tr><td colspan="4" style="text-align:left;padding-left:0">体重は20〜200kg、距離は0.5〜100kmで入れてください。</td></tr>';
+      out.innerHTML = '';
+      return;
+    }
+    S.calc = { w, d, p, n }; save();
+    const per = { km: d, min: d * p, kcal: w * d };
+    const spans = [['1回', 1], ['1週間', n], ['30日', 30 * n / 7], ['1年', 365 * n / 7]];
+    rows.innerHTML = spans.map(([label, runs]) =>
+      `<tr><td>${label}</td><td>${fmt(runs * per.km)} km</td><td>${fmtMin(runs * per.min)}</td><td>${fmt(runs * per.kcal)} kcal</td></tr>`).join('');
+    const yearKcal = 365 * n / 7 * per.kcal, monthKcal = 30 * n / 7 * per.kcal;
+    out.innerHTML =
+      `<p>1回の消費は、ごはん茶碗(約250kcal)で<b>${(per.kcal / 250).toFixed(1)}</b>杯分です。</p>` +
+      `<p>脂肪に換算すると、30日で約<b>${(monthKcal / 7200).toFixed(1)}</b>kg、1年で約<b>${(yearKcal / 7200).toFixed(1)}</b>kg分です。` +
+      `<small>脂肪1kgを約7,200kcalとした理論値です。消費は体重×距離×約1kcalで見積もっています。実際は食欲や日中の動きが変わるため、これより小さくなるのが普通です。</small></p>`;
+  };
+  Object.values(ids).forEach((id) => { $('#' + id).addEventListener('input', run); $('#' + id).addEventListener('change', run); });
+  $('#f').addEventListener('submit', (e) => e.preventDefault());
+  run();
+}
+
+/* select */
+function select(id, fromUser) {
+  S.tab = id;
+  const idx = PERIODS.findIndex((p) => p.id === id);
+  tabBtns.forEach((b) => { const on = b.dataset.id === id; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1; });
+  const color = idx >= 0 ? `var(--t${idx + 1})` : 'var(--fg)';
+  panel.style.setProperty('--c', color);
+  mark.style.setProperty('--c', color);
+  track.classList.toggle('off', idx < 0);
+  mark.style.opacity = idx >= 0 ? 1 : 0;
+  if (idx >= 0) mark.style.left = ((idx + 0.5) / 5 * 100) + '%';
+  panel.setAttribute('aria-labelledby', 'tab-' + id);
+  panel.innerHTML = id === 'calc' ? calcHTML() : id === 'notes' ? notesHTML() : periodHTML(PERIODS[idx]);
+  if (id === 'calc') bindCalc();
+  save();
+  if (fromUser) {
+    const bar = $('.bar');
+    const top = panel.getBoundingClientRect().top + window.scrollY - bar.offsetHeight - 4;
+    if (window.scrollY > top) window.scrollTo(0, Math.max(0, top));
+  }
+}
+tabBtns.forEach((b) => b.addEventListener('click', () => select(b.dataset.id, true)));
+tabsEl.addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const i = ORDER.indexOf(S.tab), j = (i + (e.key === 'ArrowRight' ? 1 : ORDER.length - 1)) % ORDER.length;
+  select(ORDER[j], false);
+  $('#tab-' + ORDER[j]).focus();
+  e.preventDefault();
+});
+
+const h = (location.hash || '').replace('#', '');
+select(ORDER.includes(h) ? h : S.tab, false);
+</script>
+
+</body>
+</html>
