@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>関西そらレーダー</title>
+<meta name="description" content="関西の空を飛んでいる飛行機を、3Dホログラムの地球の上でリアルタイムに見られるWebアプリ">
+<meta name="theme-color" content="#01040b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="そらレーダー">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cy:#5ff3ff; --cy2:#2bb8e0; --ink:#e8fbff; --dim:#8fb8c8; --bg:#01040b;
+  --panel:rgba(4,22,38,.72); --line:rgba(95,243,255,.28);
+  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  --mono:'Share Tech Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Zen Kaku Gothic New',system-ui,sans-serif;overflow:hidden;overscroll-behavior:none}
+#c{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:block;touch-action:none}
+/* ホログラムっぽい走査線と周辺減光 */
+.fx{position:fixed;inset:0;pointer-events:none;z-index:2;
+  background:
+   repeating-linear-gradient(0deg,rgba(120,240,255,.035) 0 1px,transparent 1px 3px),
+   radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.65) 100%)}
+.fx::after{content:"";position:absolute;left:0;right:0;height:22vh;top:-25vh;background:linear-gradient(180deg,transparent,rgba(95,243,255,.05),transparent);animation:scan 7s linear infinite}
+@keyframes scan{to{top:110vh}}
+button{font:inherit;color:inherit}
+
+header{position:fixed;left:0;right:0;top:0;z-index:5;padding:calc(var(--st) + 8px) 12px 6px;display:flex;align-items:flex-start;gap:8px;
+  background:linear-gradient(180deg,rgba(1,4,11,.85),rgba(1,4,11,0))}
+.back{flex:none;font-size:12px;color:var(--dim);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:rgba(4,22,38,.55);margin-top:2px}
+.ttl{flex:1;min-width:0}
+.ttl h1{margin:0;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:900;letter-spacing:.06em;line-height:1.1;text-shadow:0 0 12px rgba(95,243,255,.7)}
+.ttl .en{font-family:var(--mono);font-size:10px;letter-spacing:.2em;white-space:nowrap;color:var(--cy2)}
+.pill{flex:none;font-family:var(--mono);font-size:11px;letter-spacing:.06em;border:1px solid var(--line);border-radius:999px;padding:5px 9px;background:rgba(4,22,38,.6);color:var(--dim);display:flex;align-items:center;gap:6px;margin-top:2px}
+.pill i{width:7px;height:7px;border-radius:50%;background:#7a8fa6;display:block}
+.pill.live{color:#bfffe0;border-color:rgba(92,255,176,.45)} .pill.live i{background:#5cffb0;box-shadow:0 0 8px #5cffb0;animation:blink 1.6s infinite}
+.pill.live.stale i{background:#ffe066;box-shadow:0 0 8px #ffe066}
+.pill.err{color:#ffb4a8;border-color:rgba(255,120,100,.5)} .pill.err i{background:#ff6b5b}
+.pill.demo{color:#ffe7a0;border-color:rgba(255,224,102,.5)} .pill.demo i{background:#ffe066}
+.pill b{font-weight:400;color:var(--ink)}
+@keyframes blink{50%{opacity:.35}}
+
+.hud{position:fixed;z-index:4;left:12px;top:calc(var(--st) + 62px);pointer-events:none}
+.big{display:flex;align-items:baseline;gap:6px;text-shadow:0 0 14px rgba(95,243,255,.6)}
+.big b{font-family:var(--mono);font-size:44px;line-height:1;font-weight:400;color:#fff}
+.big span{font-size:13px;color:var(--dim)}
+.sub{font-size:11px;color:var(--dim);margin-top:2px}
+.sub .mono{font-family:var(--mono)}
+#tops{display:flex;flex-direction:column;gap:5px;margin-top:9px;pointer-events:auto;align-items:flex-start}
+#tops button{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:5px 9px;text-align:left;font-size:12px;color:var(--ink);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#tops button span{display:block;font-size:9.5px;color:var(--dim);letter-spacing:.08em}
+#tops button b{font-family:var(--mono);font-weight:400;font-size:13px;color:var(--cy)}
+.legend{position:fixed;z-index:4;right:12px;top:calc(var(--st) + 62px);font-family:var(--mono);font-size:9.5px;color:var(--dim);text-align:right;pointer-events:none}
+.legend .bar{width:10px;height:120px;margin:4px 0 4px auto;border-radius:6px;background:linear-gradient(0deg,#ff9a3c,#ffe066 20%,#5cffb0 48%,#3cf0ff 72%,#b08cff);box-shadow:0 0 10px rgba(95,243,255,.35)}
+.legend .note{font-family:'Zen Kaku Gothic New';font-size:9px;margin-top:6px;line-height:1.4}
+
+#labels{position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;white-space:nowrap;font-size:11px;color:#bdf7ff;text-shadow:0 0 6px #000,0 0 10px rgba(0,180,255,.6);transition:opacity .25s;margin:-7px 0 0 6px;will-change:transform}
+.lbl.city{font-size:10.5px;color:#9fd8e6;opacity:.85}
+.lbl.ap{font-size:10px;color:#7fe9ff}
+.lbl.ap.main{font-size:12px;font-weight:700;color:#d9fdff}
+.lbl.sel{font-family:var(--mono);font-size:13px;color:#fff;background:rgba(0,30,50,.75);border:1px solid var(--cy);border-radius:5px;padding:1px 6px;margin:-30px 0 0 10px;box-shadow:0 0 12px rgba(95,243,255,.5)}
+
+/* 下のボタン */
+nav{position:fixed;z-index:6;left:0;right:0;bottom:0;padding:8px 10px calc(var(--sb) + 10px);display:grid;grid-template-columns:repeat(6,1fr);gap:6px;
+  background:linear-gradient(0deg,rgba(1,4,11,.92) 60%,rgba(1,4,11,0))}
+nav button{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+nav button svg{width:20px;height:20px;stroke:var(--cy);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{background:rgba(40,160,200,.35);border-color:var(--cy);box-shadow:0 0 12px rgba(95,243,255,.35) inset}
+nav button:active{transform:scale(.96)}
+.credit{position:fixed;z-index:6;right:12px;bottom:calc(var(--sb) + 76px);font-size:9.5px;color:#6f93a3;text-align:right}
+.credit a{color:#8fc6d8}
+body.has-card .credit,body.has-card #demoNote{display:none}
+
+/* 選んだ飛行機 */
+#card{position:fixed;z-index:7;left:10px;right:10px;bottom:calc(var(--sb) + 76px);max-width:520px;margin:0 auto;background:rgba(3,18,32,.86);border:1px solid rgba(95,243,255,.45);border-radius:16px;padding:12px 14px 12px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 0 24px rgba(95,243,255,.18);animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(16px);opacity:0}}
+.c-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.c-cs{font-family:var(--mono);font-size:26px;line-height:1;color:#fff;text-shadow:0 0 10px rgba(95,243,255,.6)}
+.c-al{font-size:12.5px;color:var(--dim);margin-top:3px}
+.c-btns{display:flex;gap:6px}
+.c-btns button{height:36px;border-radius:10px;border:1px solid var(--line);background:rgba(10,40,60,.7);padding:0 12px;font-size:12.5px}
+.c-btns button.on{background:var(--cy);color:#012;border-color:var(--cy);font-weight:700}
+#closeBtn{width:36px;padding:0;font-size:18px}
+.c-phase{display:inline-block;margin-top:8px;font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink)}
+.c-phase.arr{border-color:#ffb36b;color:#ffd2a6;background:rgba(255,150,60,.12)}
+.c-phase.dep{border-color:#5cffb0;color:#c4ffe3;background:rgba(92,255,176,.1)}
+.c-phase.gnd{color:#b7c6d4}
+.c-route{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px;font-size:15px}
+.c-route span{color:var(--cy)} .c-route em{font-style:normal;font-size:9.5px;color:#6f93a3}
+.c-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.c-grid div{background:rgba(8,34,52,.6);border:1px solid rgba(95,243,255,.14);border-radius:9px;padding:6px 7px;min-width:0}
+.c-grid span{display:block;font-size:9.5px;color:var(--dim)}
+.c-grid b{display:block;font-family:var(--mono);font-weight:400;font-size:17px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-grid b.sm{font-family:'Zen Kaku Gothic New';font-size:11.5px;font-weight:700;white-space:normal;line-height:1.25}
+.c-grid small{font-size:10px;color:var(--dim);margin-left:1px}
+.c-grid em{display:block;font-style:normal;font-family:var(--mono);font-size:10px;color:#7aa5b6;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 一覧シート */
+#sheet{position:fixed;z-index:8;left:0;right:0;bottom:0;top:28vh;background:rgba(2,14,26,.95);border-top:1px solid rgba(95,243,255,.45);border-radius:18px 18px 0 0;display:flex;flex-direction:column;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:up .25s ease-out}
+.sh-head{display:flex;align-items:center;gap:8px;padding:12px 12px 8px}
+.sh-head h2{margin:0;font-size:16px;flex:1}
+#sheetClose{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:rgba(10,40,60,.7);font-size:18px}
+#sorts{display:flex;gap:6px;padding:0 12px 8px;overflow-x:auto}
+#sorts button{flex:none;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:12.5px}
+#sorts button.on{background:var(--cy);color:#012;border-color:var(--cy);font-weight:700}
+#list{flex:1;overflow-y:auto;padding:0 10px calc(var(--sb) + 12px);-webkit-overflow-scrolling:touch}
+#list button{width:100%;display:grid;grid-template-columns:10px 1fr auto;grid-template-rows:auto auto;column-gap:9px;row-gap:1px;align-items:center;text-align:left;background:transparent;border:0;border-bottom:1px solid rgba(95,243,255,.1);padding:9px 4px}
+#list i{grid-row:1/3;width:9px;height:9px;border-radius:50%;box-shadow:0 0 8px currentColor}
+#list b{font-family:var(--mono);font-weight:400;font-size:16px}
+#list .al{grid-column:2;font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#list .v{grid-column:3;grid-row:1;font-family:var(--mono);font-size:14px;text-align:right}
+#list .ph{grid-column:3;grid-row:2;font-size:10.5px;color:var(--dim);text-align:right}
+#list .ph.arr{color:#ffc58a} #list .ph.dep{color:#8dffcb}
+.empty{color:var(--dim);font-size:13px;text-align:center;padding:30px 0}
+
+/* エラー・デモ */
+#errbox{position:fixed;z-index:9;left:16px;right:16px;top:32%;max-width:440px;margin:0 auto;background:rgba(3,18,32,.94);border:1px solid rgba(255,140,110,.55);border-radius:16px;padding:16px;text-align:center}
+#errbox p{margin:0 0 12px;font-size:13.5px;line-height:1.6}
+#errbox .row{display:flex;gap:8px;justify-content:center}
+#errbox button{height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:rgba(10,40,60,.8);font-size:14px}
+#errbox button.pri{background:var(--cy);color:#012;font-weight:700;border-color:var(--cy)}
+#demoNote{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:calc(var(--sb) + 112px);font-size:11px;color:#ffe7a0;background:rgba(60,45,0,.6);border:1px solid rgba(255,224,102,.45);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.splash{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:var(--bg);transition:opacity .8s;pointer-events:none}
+.splash b{font-size:22px;font-weight:900;letter-spacing:.1em;text-shadow:0 0 16px rgba(95,243,255,.8)}
+.splash span{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--cy2)}
+body.ready .splash{opacity:0}
+[hidden]{display:none!important}
+@media (min-width:760px){ nav{left:50%;right:auto;transform:translateX(-50%);width:600px;border-radius:16px 16px 0 0} }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="fx"></div>
+<div id="labels"></div>
+
+<header>
+  <a class="back" href="../">← アプリ一覧</a>
+  <div class="ttl"><h1>関西そらレーダー</h1><div class="en">KANSAI SKY HOLOGRAM</div></div>
+  <div id="status" class="pill"><i></i>接続中…</div>
+</header>
+<div id="demoNote" hidden>デモ表示中：本物の飛行機ではありません</div>
+
+<div class="hud">
+  <div class="big"><b id="count">--</b><span>機が飛行中</span></div>
+  <div class="sub">関西まわり 半径<span class="mono">460</span>km ・ 地上 <span class="mono" id="gndCount">0</span>機</div>
+  <div id="tops"></div>
+</div>
+<div class="legend">12000m<div class="bar"></div>0m<div class="note">高さは<br>8倍に強調</div></div>
+
+<div id="card" hidden></div>
+
+<div id="sheet" hidden>
+  <div class="sh-head"><h2>いま飛んでいる飛行機</h2><button id="sheetClose" aria-label="閉じる">×</button></div>
+  <div id="sorts">
+    <button data-s="alt">高い順</button><button data-s="gs">速い順</button><button data-s="arr">空港まわり</button><button data-s="cs">便名順</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<div id="errbox" hidden>
+  <p>飛行機のライブデータを取りに行けませんでした。<br>電波の状態か、データ提供元の混雑かもしれません。</p>
+  <div class="row"><button id="retryBtn">もう一度</button><button id="demoBtn" class="pri">デモで動きを見る</button></div>
+</div>
+
+<div class="credit" id="credit">データ：<span id="src">—</span><br>地図：Natural Earth</div>
+
+<nav>
+  <button id="vKansai"><svg viewBox="0 0 24 24"><path d="M3 17l6-9 4 5 3-3 5 7z"/><circle cx="17" cy="6" r="2"/></svg>関西</button>
+  <button id="vTop"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>真上</button>
+  <button id="vEarth"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>地球</button>
+  <button id="vSpin"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg>回転</button>
+  <button id="vTrail" class="on"><svg viewBox="0 0 24 24"><path d="M3 19c4-1 5-6 9-7s5-5 9-7"/><circle cx="21" cy="5" r="1.5"/></svg>航跡</button>
+  <button id="vList"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>一覧</button>
+</nav>
+
+<div class="splash"><b>関西そらレーダー</b><span>LOADING SKY…</span></div>
+<script src="app.js"></script>
+</body>
+</html>
