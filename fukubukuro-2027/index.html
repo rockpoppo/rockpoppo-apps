@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="福袋カレンダー">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#c8322f">
+<title>福袋2027 予約カレンダー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6ef; --card:#ffffff; --ink:#2b2420; --sub:#7a6d63; --line:#eadfd3;
+  --red:#c8322f; --red-soft:#fde8e6; --gold:#b8862b; --gold-soft:#fbf1dc;
+  --green:#2f7d4f; --green-soft:#e3f3e8; --blue:#2c5d9b; --blue-soft:#e4edf8;
+  --gray-soft:#f1ece6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN",system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+header{background:var(--red);color:#fff;padding:18px 16px 14px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.08)}
+.home{position:absolute;top:12px;right:12px;z-index:2;color:#fff;font-size:12px;font-weight:700;text-decoration:none;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 10px}
+h1{margin:0;padding-right:96px;font-size:19px;font-weight:800;letter-spacing:.02em}
+.today{margin-top:4px;font-size:13px;opacity:.9}
+.summary{display:flex;gap:8px;margin-top:12px}
+.summary div{flex:1;background:rgba(255,255,255,.16);border-radius:12px;padding:8px 6px;text-align:center}
+.summary b{display:block;font-size:20px;font-weight:800}
+.summary span{font-size:11px;opacity:.95}
+.chips{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--line);scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 13px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{padding:12px 12px 40px;max-width:640px;margin:0 auto}
+.sec{font-size:13px;font-weight:800;color:var(--sub);margin:18px 4px 8px;display:flex;align-items:center;gap:6px}
+.sec:first-child{margin-top:4px}
+.card{background:var(--card);border-radius:16px;margin-bottom:10px;box-shadow:0 1px 0 var(--line),0 2px 10px rgba(80,50,20,.05);overflow:hidden}
+.top{display:flex;gap:10px;padding:13px 13px 10px;align-items:flex-start;cursor:pointer}
+.icon{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px}
+.meta{flex:1;min-width:0}
+.brand{font-size:12px;color:var(--sub);font-weight:700}
+.name{font-size:16px;font-weight:800;line-height:1.35;margin-top:1px}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tag{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--gray-soft);color:var(--sub)}
+.tag.lot{background:var(--blue-soft);color:var(--blue)}
+.tag.first{background:var(--gold-soft);color:var(--gold)}
+.tag.price{background:var(--red-soft);color:var(--red)}
+.star{flex:none;border:none;background:none;font-size:22px;line-height:1;padding:2px;cursor:pointer;color:#d8cbbd}
+.star.on{color:#e8a317}
+.status{margin:0 13px;border-radius:10px;padding:8px 11px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.status .big{font-size:15px;font-weight:800;white-space:nowrap}
+.s-open{background:var(--green-soft);color:var(--green)}
+.s-soon{background:var(--gold-soft);color:var(--gold)}
+.s-tba{background:var(--gray-soft);color:var(--sub)}
+.s-done{background:var(--gray-soft);color:#9c9088}
+.periods{padding:10px 13px 4px}
+.p{display:flex;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.p:last-child{border-bottom:none}
+.p .l{flex:none;width:7.2em;color:var(--sub);font-weight:700}
+.p .v{flex:1}
+.p.now .l{color:var(--green)}
+.p.now .v{font-weight:700}
+.p.past .v,.p.past .l{color:#b0a59c;text-decoration:line-through;text-decoration-color:rgba(0,0,0,.2)}
+.more{border:none;background:none;width:100%;text-align:left;padding:8px 13px 12px;font:inherit;font-size:13px;font-weight:700;color:var(--red);cursor:pointer}
+.body{display:none;padding:0 13px 14px}
+.card.open .body{display:block}
+.body h4{margin:6px 0 4px;font-size:13px}
+.body ul{margin:0 0 8px;padding-left:1.2em;font-size:13.5px}
+.body li{margin:2px 0}
+.note{font-size:12.5px;color:var(--sub);background:var(--bg);border-radius:10px;padding:8px 10px;margin-top:6px}
+.src{display:inline-block;margin-top:8px;font-size:12.5px;color:var(--blue);font-weight:700}
+.empty{text-align:center;color:var(--sub);padding:30px 0}
+footer{font-size:11.5px;color:var(--sub);text-align:center;padding:0 16px 30px;line-height:1.7}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="../">← アプリ一覧</a>
+  <h1>🎍 福袋2027 予約カレンダー</h1>
+  <div class="today" id="today"></div>
+  <div class="summary">
+    <div><b id="nOpen">0</b><span>いま受付中</span></div>
+    <div><b id="nSoon">0</b><span>これから</span></div>
+    <div><b id="nTba">0</b><span>まだ未発表</span></div>
+  </div>
+</header>
+<nav class="chips" id="chips"></nav>
+<main id="list"></main>
+<footer>2026年11月4日時点で調べた情報です。数量限定・先着は早く終わることがあります。<br>申し込む前に各社の公式ページで最新情報を確認してください。</footer>
+
+<script>
+// 日付はすべて日本時間
+const D = s => new Date(s + "+09:00");
+const DATA = [
+ {id:"starbucks", brand:"スターバックス", name:"スターバックス福袋 2027", icon:"☕", bg:"#e3f0e8", cat:"cafe",
+  price:"9,500円（送料無料）", method:"lot", methodLabel:"抽選・オンラインのみ",
+  periods:[
+   {l:"抽選エントリー", s:"2026-11-04T10:00", e:"2026-11-15T23:59", main:true},
+   {l:"当選発表", s:"2026-11-25T11:00", e:"2026-11-25T17:00"},
+   {l:"お支払い期限", s:"2026-11-25T11:00", e:"2026-12-02T23:59"},
+   {l:"お届け", s:"2027-01-01T00:00", e:"2027-01-07T23:59"}],
+  items:["口を絞れるトートバッグ（グレー、A4やPCも入る）","福袋限定ステンレスボトル","グッズ3点（袋ごとに違う）","コーヒー豆2種（パイクプレイス ロースト／ライトノート ブレンド）","ドリンクチケット・フードトライアルチケットなど"],
+  note:"店舗販売なし。My Starbucks会員のみ（アプリ仮会員は本登録が必要）。締切時点でゴールド会員だと2口分で抽選。",
+  src:"https://premium.gamepedia.jp/shopping/archives/69286"},
+ {id:"doutor", brand:"ドトール", name:"福袋2027（シナモロールコラボ）", icon:"🐶", bg:"#e8f1fb", cat:"cafe",
+  price:"2,400〜12,000円（全9種）", method:"first", methodLabel:"店頭予約・先払い",
+  periods:[
+   {l:"店頭予約", s:"2026-10-30T00:00", e:"2026-12-25T23:59", main:true},
+   {l:"オンライン限定1種", s:"2026-10-30T10:00", e:"2026-11-30T23:59", main:true},
+   {l:"受け取り・店頭販売", s:"2026-12-26T00:00", e:"2027-01-11T23:59"}],
+  items:["12,000円：ドトールの制服を着たシナモロールのぬいぐるみ・トートバッグ・ポーチ","7,500円：マスコットチャーム・コーデュロイバッグ","ドリップカフェセット（2,900／5,300／7,700／9,900円）","コーヒー豆セット（2,400／4,400／6,400円）","全セットにコーヒーチケットと限定キーホルダー"],
+  note:"予約時に代金を払う方式。店舗によって予約できるセットが違う。ドリップカフェ100パックのセット（9,900円）が最大約32%お得。",
+  src:"https://tinpanblog.com/?p=76770"},
+ {id:"gongcha", brand:"ゴンチャ", name:"HAPPINESS BAG 2027", icon:"🧋", bg:"#fde8e6", cat:"cafe",
+  price:"7,500円（送料込）", method:"first", methodLabel:"先着・オンラインのみ",
+  periods:[
+   {l:"会員先行", s:"2026-11-10T12:00", e:"2026-11-11T23:59", main:true},
+   {l:"一般販売", s:"2026-11-13T12:00", e:"2026-11-26T23:59", main:true},
+   {l:"お届け", s:"2027-01-01T00:00", e:"2027-01-10T23:59"}],
+  items:["景徳鎮産の茶こし付きマグカップ","ティーバッグアソート（限定「ライチ香るジャスミン」含む）","阿里山ウーロンティー 茶葉","A4が入るトートバッグ","ゴンチャム めじるしチャーム（ランダム）","デジタルドリンクチケット6枚（約6,000円相当）"],
+  note:"My Gong chaへの入会が必要。先行はLEGEND／AMBASSADOR会員向け。1人最大3個。数量限定のため早めの完売もあり。",
+  src:"https://bestcalendar.jp/press/161985"},
+ {id:"nanas", brand:"nana's green tea", name:"2027年福袋（抹茶）", icon:"🍵", bg:"#e6f2e2", cat:"cafe",
+  price:"8,900円（ネットは送料込9,400円）", method:"first", methodLabel:"先着・Web/店頭予約",
+  periods:[
+   {l:"アプリ会員先行", s:"2026-11-09T12:00", e:"2026-12-13T23:59"},
+   {l:"店舗受取の予約", s:"2026-11-10T12:00", e:"2026-12-13T23:59", main:true},
+   {l:"オンライン予約", s:"2026-11-11T12:00", e:"2026-11-30T23:59", main:true},
+   {l:"店舗受取", s:"2026-12-22T00:00", e:"2026-12-28T23:59"}],
+  items:["抹茶ラテ缶（約100g）","抹茶フィナンシェ3個","リユーザブルトートバッグ","オリジナルマグカップ","抹茶ロールケーキポーチ","パフェチケット4枚・ドリンクチケット4枚・フード1,000円OFF券など（最大11,680円相当）"],
+  note:"価格の約2.2倍相当。店舗受取は1人4個まで。チケットは2027年1月1日から使える。関空・福岡の一部店舗では販売なし。",
+  src:"https://tinpanblog.com/?p=77082"},
+ {id:"coffeekan", brand:"珈琲館", name:"すみっコぐらし ハッピーバッグ2027", icon:"🥞", bg:"#fbf1dc", cat:"cafe",
+  price:"4,980円", method:"first", methodLabel:"店頭予約（受取時払い）",
+  periods:[
+   {l:"店頭予約", s:"2026-10-27T00:00", e:"2026-12-02T23:59", main:true},
+   {l:"予約分の受け取り", s:"2026-12-03T00:00", e:"2026-12-11T23:59"},
+   {l:"店頭販売", s:"2026-12-03T00:00", e:"2027-02-28T23:59"},
+   {l:"オンライン発売", s:"2026-12-03T20:00", e:"2026-12-31T23:59"}],
+  items:["すみっコが隠れた伸びるトートバッグ（緑か黄色）","ホットケーキクッション","レザーキーホルダー","珈琲館ブレンドのドリップバッグ5袋","店頭分のみ：ホットケーキとハウスサンドの引換券"],
+  note:"予約するとアクリルマグネットクリップ（全6種・シークレットあり）がもらえる。一部対象外の店舗あり。",
+  src:"https://digitalpr.jp/r/146835"},
+ {id:"dean", brand:"DEAN & DELUCA", name:"冬の福袋 2027 スイーツタイムアソートメント", icon:"🎁", bg:"#fde8e6", cat:"food",
+  price:"8,640円", method:"lot", methodLabel:"先行は抽選→店頭は初売り",
+  periods:[
+   {l:"先行抽選エントリー", s:"2026-10-08T00:00", e:"2026-10-13T11:00"},
+   {l:"当選者の先行販売", s:"2026-10-15T09:00", e:"2026-10-31T23:59"},
+   {l:"店頭販売", s:"2027-01-01T00:00", e:"2027-01-10T23:59", main:true, text:"2027年の各店初売りから"}],
+  items:["簡易保冷のショッピングトート（レッド）","ステンレスボトル 260ml","干支「未」のクッキー缶（抹茶メレンゲ入り）","ニューイヤーブレンドコーヒー・ティー","バーチ・ディ・ダーマ、トリュフチョコレート"],
+  note:"ネットの先行抽選は終了。店舗では初売りで販売予定（1人1点）。",
+  src:"https://gourmet.watch.impress.co.jp/docs/news/2146700.html"},
+ {id:"seijo", brand:"成城石井", name:"オンラインショップ限定福袋 2027", icon:"🛒", bg:"#e4edf8", cat:"food",
+  price:"セットにより異なる（送料込）", method:"first", methodLabel:"先着・オンライン",
+  periods:[
+   {l:"注文受付", s:"2026-11-01T10:00", e:"2026-12-25T23:59", main:true},
+   {l:"出荷", s:"2026-11-04T00:00", e:"2026-12-31T23:59", text:"11/4〜（セットにより違う）"}],
+  items:["4テーマ・20種類以上（パーティー／バイヤーセレクト／ベストヒット／まとめ買い）","自家製惣菜やdesicaの焼き菓子などのセット","全セットに福袋限定カラー（紺）のショッピングバッグ"],
+  note:"限定数に達したら期間中でも終了。成城石井.com・楽天・Yahoo!などで販売。",
+  src:"https://premium.gamepedia.jp/shopping/archives/69341"},
+
+ // ---- 未発表（前年の実績） ----
+ {id:"kaldi", brand:"カルディ", name:"カルディの福袋 2027", icon:"🫘", bg:"#f3e6d6", cat:"food", tba:true,
+  price:"前年：食品福袋5,500円／コーヒー福袋3,000〜8,000円", method:"lot", methodLabel:"食品福袋は抽選（前年）",
+  expect:"11月中旬〜下旬に抽選開始の見込み",
+  periods:[
+   {l:"前年の食品福袋（アプリ）", text:"2025/11/19 0:00〜12/3"},
+   {l:"前年の食品福袋（ネット）", text:"2025/11/19 10:00〜11/30"},
+   {l:"前年のコーヒー福袋", text:"初売りから店頭（抽選なし）"}],
+  items:["前年の食品福袋：限定品や人気商品・もへじの干支商品など約21点＋バッグ","プレミアムコーヒー福袋（ネット限定・抽選）：豆3種、ドリップ6種、2WAYバッグ","コーヒー福袋3種：店頭・ネットで抽選なし"],
+  note:"毎年11月19〜22日ごろに抽選が始まっている。公式アプリとオンラインストアの会員登録を先に済ませておくと安心。アプリ（店舗受取）とネット（配送）の両方に応募できた。",
+  src:"https://coffee-labo.co.jp/cardis-goodie-bag/"},
+ {id:"tullys", brand:"タリーズ", name:"HAPPY BAG 2027", icon:"🧸", bg:"#e3f0e8", cat:"cafe", tba:true,
+  price:"前年：5,500円／10,000円", method:"first", methodLabel:"予約（前年）",
+  expect:"前年どおりなら11月中旬に予約開始",
+  periods:[
+   {l:"前年の予約", text:"2025/11/12 11:00〜12/11"},
+   {l:"前年の受け取り", text:"2025/12/12〜12/18"}],
+  items:["前年の5,500円：クリアトート、干支ミニテディ、カフェオレ／ロイヤルミルクティーベース、シングルサーブ5種、ドリンクチケット6枚","10,000円：コーヒー豆4種、ドリンクチケット15枚など"],
+  note:"干支ミニテディが毎年人気。2027年は未年。1人5個まで（前年）。",
+  src:"https://gourmet.watch.impress.co.jp/docs/news/fukubukuro/2067239.html"},
+ {id:"komeda", brand:"コメダ珈琲店", name:"2027年コメダの福袋", icon:"🛋️", bg:"#fbf1dc", cat:"cafe", tba:true,
+  price:"前年：寿8,000〜8,900円／慶6,000〜6,900円", method:"first", methodLabel:"店頭予約（前年）",
+  expect:"前年どおりなら11月中旬に店頭予約開始",
+  periods:[
+   {l:"前年の予約開始", text:"2025/11/12〜（なくなり次第終了）"}],
+  items:["前年：ドムドムハンバーガーとのコラボ。ソファー柄バッグ、プレート、ドリップコーヒー、コーヒーチケット、コメ宝くじ付きスナックチケットなど"],
+  note:"価格は店舗によって違う。前年のコラボ福袋はすぐ完売した。",
+  src:"https://www.ryutsuu.biz/commodity/r111216.html"},
+ {id:"misdo", brand:"ミスタードーナツ", name:"ミスド福袋 2027", icon:"🍩", bg:"#fbe9d8", cat:"food", tba:true,
+  price:"前年：3,800円／6,500円", method:"first", methodLabel:"ネットオーダー・店頭予約（前年）",
+  expect:"前年どおりなら12月上旬に予約開始",
+  periods:[
+   {l:"前年の予約開始", text:"2025/12/10〜（ネットオーダー・店頭）"},
+   {l:"前年の発売", text:"2025/12/26〜順次"}],
+  items:["前年3,800円：ポン・デ・ライオンミニトート、デコレーションキット、ドーナツ引換カード20個分","前年6,500円：原田治トートバッグ、ポン・デ・リング型ぬいぐるみ、ドーナツ引換カード35個分"],
+  note:"ドーナツ引換カードがメイン。",
+  src:"https://gourmet.watch.impress.co.jp/docs/news/fukubukuro/2066697.html"},
+ {id:"mac", brand:"マクドナルド", name:"マクドナルドの福袋 2027", icon:"🍔", bg:"#fff3c4", cat:"food", tba:true,
+  price:"前年：3,900円", method:"lot", methodLabel:"アプリ抽選（前年）",
+  expect:"前年どおりなら12月上旬に抽選",
+  periods:[
+   {l:"前年の抽選", text:"2025/12/1 14:00〜12/9（公式アプリ）"},
+   {l:"前年の当選者販売", text:"2026/1/1〜1/9"}],
+  items:["前年：Francfrancコラボのグッズ3点（ビッグマックスープジャーなど）＋商品無料券（最大3,910円相当）"],
+  note:"前年はアプリ会員で「My マクドナルド リワード」50ポイント保有が応募条件だった。",
+  src:"https://game.watch.impress.co.jp/docs/news/2065598.html"},
+ {id:"muji", brand:"無印良品", name:"福缶 2027", icon:"🎎", bg:"#f1ece6", cat:"goods", tba:true,
+  price:"前年：2,026円（同額のギフトカード入り）", method:"lot", methodLabel:"ネット抽選（前年）",
+  expect:"前年どおりなら11月20日ごろ抽選開始",
+  periods:[
+   {l:"前年の抽選", text:"2025/11/20 10:00〜12/1 10:00"},
+   {l:"前年の受け取り", text:"2026/1/1〜1/10（店舗）"}],
+  items:["日本各地の手づくりの縁起物1個（約40種から何が入るかはお楽しみ）","価格と同じ額のMUJI GIFT CARD"],
+  note:"受け取り店舗を1つ選んで応募。配送はなし。",
+  src:"https://macaro-ni.jp/173346"}
+];
+
+const NOW = new Date();
+const CATS = [["all","すべて"],["star","★ 気になる"],["open","受付中"],["soon","これから"],["tba","未発表"],["cafe","カフェ"],["food","食品・スーパー"]];
+let filter = "all";
+let stars = {};
+try{ stars = JSON.parse(localStorage.getItem("fuku27-stars")||"{}"); }catch(e){}
+const saveStars = ()=>{ try{ localStorage.setItem("fuku27-stars", JSON.stringify(stars)); }catch(e){} };
+
+const wd = ["日","月","火","水","木","金","土"];
+const fmt = d => `${d.getMonth()+1}/${d.getDate()}(${wd[d.getDay()]})`;
+const fmtT = d => { const h=d.getHours(), m=d.getMinutes(); return (h===0&&m===0)||(h===23&&m===59) ? "" : ` ${h}:${String(m).padStart(2,"0")}`; };
+const dayDiff = d => { const a=new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate()); const b=new Date(d.getFullYear(),d.getMonth(),d.getDate()); return Math.round((b-a)/86400000); };
+
+function statusOf(x){
+  if(x.tba) return {k:"tba", label:"まだ未発表", big:x.expect};
+  const mains = x.periods.filter(p=>p.main);
+  const open = mains.filter(p=>D(p.s)<=NOW && NOW<=D(p.e)).sort((a,b)=>D(a.e)-D(b.e))[0];
+  if(open){ const n=dayDiff(D(open.e)); return {k:"open", label:`${open.l} 受付中`, big: n<=0?"今日まで！":`あと${n}日`, sort:D(open.e)}; }
+  const fut = mains.filter(p=>D(p.s)>NOW).sort((a,b)=>D(a.s)-D(b.s))[0];
+  if(fut){ const n=dayDiff(D(fut.s)); return {k:"soon", label:`${fut.l} ${fmt(D(fut.s))}${fmtT(D(fut.s))}から`, big: n<=0?"今日から":`あと${n}日`, sort:D(fut.s)}; }
+  return {k:"done", label:"予約・受付は終了", big:""};
+}
+
+function render(){
+  document.getElementById("today").textContent = `今日は ${NOW.getFullYear()}年${fmt(NOW)}　タップで中身が見られます`;
+  const rows = DATA.map(x=>({x, st:statusOf(x)}));
+  document.getElementById("nOpen").textContent = rows.filter(r=>r.st.k==="open").length;
+  document.getElementById("nSoon").textContent = rows.filter(r=>r.st.k==="soon").length;
+  document.getElementById("nTba").textContent = rows.filter(r=>r.st.k==="tba").length;
+
+  document.getElementById("chips").innerHTML = CATS.map(([k,l])=>`<button class="chip ${filter===k?"on":""}" data-f="${k}">${l}</button>`).join("");
+
+  let list = rows.filter(({x,st})=>{
+    if(filter==="all") return true;
+    if(filter==="star") return stars[x.id];
+    if(["open","soon","tba"].includes(filter)) return st.k===filter;
+    return x.cat===filter;
+  });
+  const groups = [["open","🟢 いま受付中（締切が近い順）"],["soon","🟡 もうすぐ始まる"],["tba","⚪ まだ未発表（去年の日程を参考に）"],["done","予約は終わったもの"]];
+  let html = "";
+  for(const [k,title] of groups){
+    const g = list.filter(r=>r.st.k===k).sort((a,b)=>(a.st.sort||0)-(b.st.sort||0));
+    if(!g.length) continue;
+    html += `<div class="sec">${title}</div>` + g.map(card).join("");
+  }
+  document.getElementById("list").innerHTML = html || `<div class="empty">該当する福袋はありません</div>`;
+}
+
+function card({x,st}){
+  const cls = {open:"s-open",soon:"s-soon",tba:"s-tba",done:"s-done"}[st.k];
+  const per = x.periods.map(p=>{
+    let v, c="";
+    if(p.text && !p.s){ v=p.text; }
+    else{
+      const s=D(p.s), e=D(p.e);
+      v = p.text || (s.toDateString()===e.toDateString() ? `${fmt(s)}${fmtT(s)}〜${fmtT(e).trim()}` : `${fmt(s)}${fmtT(s)} 〜 ${fmt(e)}${fmtT(e)}`);
+      if(s<=NOW && NOW<=e) c="now"; else if(e<NOW) c="past";
+    }
+    return `<div class="p ${c}"><div class="l">${p.l}</div><div class="v">${v}</div></div>`;
+  }).join("");
+  const mtag = x.method==="lot" ? "lot" : "first";
+  return `<article class="card" id="c-${x.id}">
+    <div class="top" data-toggle="${x.id}">
+      <div class="icon" style="background:${x.bg}">${x.icon}</div>
+      <div class="meta">
+        <div class="brand">${x.brand}</div>
+        <div class="name">${x.name}</div>
+        <div class="tags"><span class="tag price">${x.price}</span><span class="tag ${mtag}">${x.methodLabel}</span></div>
+      </div>
+      <button class="star ${stars[x.id]?"on":""}" data-star="${x.id}" aria-label="気になる">★</button>
+    </div>
+    <div class="status ${cls}"><span>${st.label}</span><span class="big">${st.big||""}</span></div>
+    <div class="periods">${per}</div>
+    <button class="more" data-toggle="${x.id}">▼ ${x.tba?"去年の中身":"中身"}を見る</button>
+    <div class="body">
+      <h4>${x.tba?"去年の中身":"中身"}</h4>
+      <ul>${x.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      <div class="note">💡 ${x.note}</div>
+      <a class="src" href="${x.src}" target="_blank" rel="noopener">くわしい記事を見る ↗</a>
+    </div>
+  </article>`;
+}
+
+document.addEventListener("click", e=>{
+  const f = e.target.closest("[data-f]");
+  if(f){ filter=f.dataset.f; render(); window.scrollTo({top:document.getElementById("chips").offsetTop}); return; }
+  const s = e.target.closest("[data-star]");
+  if(s){ e.stopPropagation(); const id=s.dataset.star; stars[id]=!stars[id]; if(!stars[id]) delete stars[id]; saveStars(); render(); return; }
+  const t = e.target.closest("[data-toggle]");
+  if(t){ const c=document.getElementById("c-"+t.dataset.toggle); c.classList.toggle("open");
+    const b=c.querySelector(".more"); b.textContent = (c.classList.contains("open")?"▲ 閉じる":`▼ ${b.textContent.includes("去年")||c.querySelector("h4").textContent.includes("去年")?"去年の中身":"中身"}を見る`); }
+});
+render();
+</script>
+</body>
+</html>
