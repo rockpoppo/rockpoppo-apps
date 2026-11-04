@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="On図鑑">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f4f3ef">
+<title>はじめてのOn図鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Inter:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f3ef; --card:#ffffff; --ink:#111111; --sub:#5d5d5a; --line:#e3e1da;
+  --sky:#dfe9f2; --sky2:#b9cfe3; --accent:#1f5f9e; --soft:#ecebe5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Zen Kaku Gothic New",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;font-size:15.5px}
+.en{font-family:Inter,system-ui,sans-serif;letter-spacing:-.01em}
+a{color:var(--accent)}
+header.top{position:sticky;top:0;z-index:20;background:rgba(244,243,239,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:8px;padding:10px 16px 4px;max-width:760px;margin:0 auto}
+.brand b{font-size:16px;font-weight:900}
+.brand span{font-size:11px;color:var(--sub)}
+.home{margin-left:auto;flex:0 0 auto;font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.brand b{white-space:nowrap}
+@media(max-width:480px){.brand span{display:none}}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:6px 12px 10px;max-width:760px;margin:0 auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+nav.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{max-width:760px;margin:0 auto;padding:16px 16px 40px}
+section.view{display:none;animation:fade .25s ease}
+section.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:22px;font-weight:900;margin:6px 0 10px;line-height:1.4}
+h3{font-size:17px;font-weight:900;margin:0 0 6px;line-height:1.45}
+.lead{color:var(--sub);margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.hero{background:linear-gradient(160deg,#fff 0%,var(--sky) 100%);border:1px solid var(--line);border-radius:22px;padding:20px 18px 14px;margin-bottom:14px;overflow:hidden;position:relative}
+.hero h1{font-size:27px;font-weight:900;line-height:1.35;margin-bottom:6px}
+.hero p{color:#333;font-size:15px}
+.hero svg{display:block;width:100%;height:auto;margin-top:6px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.fact{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.fact small{display:block;color:var(--sub);font-size:11.5px}
+.fact b{font-size:17px;font-weight:900}
+.people{display:grid;gap:10px}
+.person{display:flex;gap:12px;align-items:flex-start}
+.avatar{flex:0 0 46px;height:46px;border-radius:50%;background:var(--sky);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:var(--accent)}
+.person p{font-size:14.5px;color:#333}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;background:var(--soft);border-radius:6px;padding:1px 7px;margin:0 4px 4px 0;color:#333}
+.tag.blue{background:var(--sky);color:var(--accent)}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--sky2)}
+.ev{position:relative;margin-bottom:12px}
+.ev::before{content:"";position:absolute;left:-20px;top:9px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
+.ev.big::before{background:var(--accent)}
+.ev .yr{font-family:Inter;font-weight:900;font-size:15px;color:var(--accent)}
+.ev .box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 13px;margin-top:2px}
+.ev .box b{display:block;font-size:15.5px}
+.ev .box p{font-size:14px;color:#444}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;color:var(--ink)}
+.chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.model{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;cursor:pointer;transition:transform .15s}
+.model:active{transform:scale(.99)}
+.mtop{display:flex;gap:12px;align-items:center}
+.mtop svg{flex:0 0 86px;height:auto}
+.mname{font-family:Inter;font-weight:900;font-size:18px;line-height:1.2}
+.mkana{font-size:12px;color:var(--sub)}
+.mone{font-size:14px;margin-top:4px}
+.meters{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;align-items:center;margin-top:10px;font-size:12.5px;color:var(--sub)}
+.bar{display:flex;gap:3px}
+.bar i{width:100%;height:7px;border-radius:4px;background:var(--soft)}
+.bar i.f{background:var(--accent)}
+.more{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:14.5px}
+.model.open .more{display:block}
+.more dt{font-weight:900;font-size:13px;color:var(--accent);margin-top:6px}
+.more dd{color:#333}
+.badge{display:inline-block;background:#111;color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+.quiz .q{font-weight:900;font-size:17px;margin-bottom:10px}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;color:var(--ink);display:flex;gap:10px;align-items:center}
+.opts button span.e{font-size:22px}
+.opts button:active{background:var(--sky)}
+.step{font-size:12px;color:var(--sub);margin-bottom:4px}
+.result{background:linear-gradient(160deg,#fff,var(--sky));border:1px solid var(--line);border-radius:20px;padding:18px}
+.result .mname{font-size:24px}
+.btn{display:inline-block;border:none;background:var(--ink);color:#fff;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;text-decoration:none;margin-top:10px}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.tech{display:grid;gap:10px}
+.tech .card{display:flex;gap:12px;align-items:flex-start}
+.tech svg{flex:0 0 54px}
+.store h3{display:flex;align-items:center;gap:6px}
+.store dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:14px;margin-top:6px}
+.store dt{color:var(--sub)}
+.note{font-size:12.5px;color:var(--sub);background:var(--soft);border-radius:12px;padding:10px 12px;margin:10px 0}
+.tips li{margin:0 0 6px 18px;font-size:14.5px}
+footer{max-width:760px;margin:0 auto;padding:10px 16px 30px;font-size:11.5px;color:var(--sub);line-height:1.7}
+footer .credit{margin-top:8px;opacity:.75}
+.big-link{display:flex;justify-content:space-between;align-items:center;background:var(--ink);color:#fff;text-decoration:none;border-radius:16px;padding:14px 16px;margin:10px 0;font-weight:700}
+.big-link small{display:block;font-weight:400;opacity:.75;font-size:12px}
+.qa summary{font-weight:900;cursor:pointer;list-style:none;padding:2px 0}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::before{content:"Q. ";color:var(--accent)}
+.qa p{font-size:14.5px;color:#333;margin-top:6px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>はじめてのOn図鑑</b><span>スイス生まれのランニングシューズ入門</span><a class="home" href="../">← アプリ一覧</a></div>
+  <nav class="tabs" id="tabs">
+    <button data-v="home" class="on">はじめに</button>
+    <button data-v="history">歴史</button>
+    <button data-v="models">モデル</button>
+    <button data-v="quiz">1足診断</button>
+    <button data-v="tech">しくみ</button>
+    <button data-v="shop">買える場所</button>
+  </nav>
+</header>
+
+<main>
+<!-- ========== はじめに ========== -->
+<section class="view on" id="v-home">
+  <div class="hero">
+    <h1>「雲の上を走る」<br>靴のブランド、On。</h1>
+    <p>On（オン）は2010年にスイス・チューリッヒで生まれたスポーツブランド。靴底の“穴あきの雲”のようなパーツが目印です。</p>
+    <svg viewBox="0 0 340 120" aria-hidden="true">
+      <g fill="#fff" stroke="#b9cfe3" stroke-width="2">
+        <ellipse cx="60" cy="40" rx="34" ry="16"/><ellipse cx="85" cy="32" rx="26" ry="16"/>
+        <ellipse cx="270" cy="30" rx="30" ry="13"/><ellipse cx="292" cy="24" rx="20" ry="12"/>
+      </g>
+      <path d="M70 88 C70 66 98 60 122 60 L170 60 C190 60 205 46 226 44 C252 42 272 58 276 74 L278 88 Z" fill="#111"/>
+      <path d="M118 62 C140 52 168 56 186 60" stroke="#fff" stroke-width="2" fill="none" opacity=".5"/>
+      <g fill="#fff" stroke="#111" stroke-width="2.5">
+        <rect x="70" y="88" width="208" height="12" rx="6"/>
+      </g>
+      <g fill="#dfe9f2" stroke="#111" stroke-width="2.5">
+        <path d="M76 100 h26 v8 a5 5 0 0 1 -5 5 h-16 a5 5 0 0 1 -5 -5z"/>
+        <path d="M110 100 h26 v8 a5 5 0 0 1 -5 5 h-16 a5 5 0 0 1 -5 -5z"/>
+        <path d="M144 100 h26 v8 a5 5 0 0 1 -5 5 h-16 a5 5 0 0 1 -5 -5z"/>
+        <path d="M178 100 h26 v8 a5 5 0 0 1 -5 5 h-16 a5 5 0 0 1 -5 -5z"/>
+        <path d="M212 100 h26 v8 a5 5 0 0 1 -5 5 h-16 a5 5 0 0 1 -5 -5z"/>
+        <path d="M246 100 h26 v8 a5 5 0 0 1 -5 5 h-16 a5 5 0 0 1 -5 -5z"/>
+      </g>
+      <text x="170" y="118" font-size="0">靴のイラスト</text>
+    </svg>
+  </div>
+
+  <div class="facts">
+    <div class="fact"><small>生まれた年</small><b class="en">2010年</b></div>
+    <div class="fact"><small>本社</small><b>スイス・チューリッヒ</b></div>
+    <div class="fact"><small>上場</small><b class="en">NYSE: ONON</b></div>
+    <div class="fact"><small>2025年の売上</small><b>約30億スイスフラン</b></div>
+  </div>
+
+  <div class="card">
+    <h3>3行でわかるOn</h3>
+    <ul class="tips">
+      <li>元プロ選手が「もっと気持ちよく走れる靴を」と考えて、友人2人と作った会社。</li>
+      <li>靴底の<b>CloudTec®（クラウドテック）</b>が、着地はやわらかく、蹴り出しは力強くを目指すしくみ。</li>
+      <li>テニスのロジャー・フェデラーも出資。いまは走る人だけでなく普段履きでも大人気。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>作った3人</h3>
+    <div class="people">
+      <div class="person"><div class="avatar en">O</div><div><b>オリヴィエ・ベルンハルト</b><br><span class="tag blue">元プロアスリート</span><span class="tag">商品・技術担当</span><p>デュアスロンで世界王者に3回、アイアンマンでも優勝したスイスの選手。引退後、理想の走り心地を求めて試作を重ねた「Onの生みの親」。</p></div></div>
+      <div class="person"><div class="avatar en">D</div><div><b>デイヴィッド・アレマン</b><br><span class="tag">共同会長</span><p>ベルンハルトの友人。ブランドづくりや会社経営をリード。</p></div></div>
+      <div class="person"><div class="avatar en">C</div><div><b>キャスパー・コペッティ</b><br><span class="tag">共同会長</span><p>ベルンハルトの元エージェント（マネージャー）。試作品を履いてみて、一緒に起業することに。</p></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>どんな会社？</h3>
+    <p style="font-size:14.5px">正式名は <b>On Holding AG</b>。シューズを中心に、ウェアやバッグも手がけるスイスの総合スポーツブランドです。2021年にニューヨーク証券取引所に上場し、2025年には年間売上が初めて30億スイスフランを超えました。アジアの伸びが特に大きく、日本はOnが<b>アジアで最初に進出した国</b>です（アジア最初のオフィスは横浜）。</p>
+    <p style="font-size:14.5px;margin-top:6px">ランニングのほか、テニス、トレイル（山道）、アウトドア、キッズ、ジム用と、ジャンルを広げています。</p>
+  </div>
+
+  <div class="card qa">
+    <details><summary>「オン」って読むの？</summary><p>はい、日本では「オン」。表記は「On」です。</p></details>
+    <hr style="border:none;border-top:1px solid var(--line);margin:10px 0">
+    <details><summary>走らない人が履いてもいい？</summary><p>もちろん。Cloud 6などは「一日中履く普段履き」として作られています。むしろ街で見かけるOnの多くはこのタイプです。</p></details>
+    <hr style="border:none;border-top:1px solid var(--line);margin:10px 0">
+    <details><summary>どれを買えばいいかわからない…</summary><p>「1足診断」タブで、使い道を選ぶだけでおすすめが出ます。最後はお店で試し履きするのがいちばん確実です。</p></details>
+  </div>
+</section>
+
+<!-- ========== 歴史 ========== -->
+<section class="view" id="v-history">
+  <h2>Onの歴史</h2>
+  <p class="lead">庭のホースから始まった、15年ちょっとの物語。</p>
+  <div class="tl" id="timeline"></div>
+</section>
+
+<!-- ========== モデル ========== -->
+<section class="view" id="v-models">
+  <h2>主なモデル</h2>
+  <p class="lead">名前に「Cloud（クラウド）」がつくのがOn流。タップすると詳しく見られます。</p>
+  <div class="chips" id="filters"></div>
+  <div id="modelList"></div>
+  <div class="note">価格は<b>ざっくりした価格帯</b>だけ載せています。実際の値段は、世代・色・時期・お店で変わるので、<b>お店や公式オンラインストアで確認してください</b>。</div>
+</section>
+
+<!-- ========== 診断 ========== -->
+<section class="view" id="v-quiz">
+  <h2>はじめての1足診断</h2>
+  <p class="lead">2つの質問に答えるだけ。</p>
+  <div class="card quiz" id="quizBox"></div>
+</section>
+
+<!-- ========== しくみ ========== -->
+<section class="view" id="v-tech">
+  <h2>Onのしくみ・用語</h2>
+  <p class="lead">商品ページに出てくるカタカナを、ざっくり解説。</p>
+  <div class="tech" id="techList"></div>
+  <div class="card">
+    <h3>ランニングシューズの基本用語</h3>
+    <div id="glossary"></div>
+  </div>
+</section>
+
+<!-- ========== 買える場所 ========== -->
+<section class="view" id="v-shop">
+  <h2>どこで買える？</h2>
+  <p class="lead">日本の公式オンラインストアと、直営店です。</p>
+
+  <a class="big-link" href="https://www.on.com/ja-jp" target="_blank" rel="noopener">
+    <div>On 公式オンラインストア（日本）<small>on.com/ja-jp</small></div><span>↗</span>
+  </a>
+
+  <div class="card store">
+    <h3>📍 On Store Tokyo Cat Street</h3>
+    <span class="tag blue">2022年4月オープン</span><span class="tag">日本＆アジア初の直営店</span>
+    <dl>
+      <dt>場所</dt><dd>東京都渋谷区神宮前5-17-27（原宿・キャットストリート）</dd>
+      <dt>時間</dt><dd>11:00〜20:00</dd>
+      <dt>見どころ</dt><dd>歩くだけで走り方を分析しておすすめを出す「マジック・ウォール」。創業者たちが歩いたスイスの谷の岩を3Dプリントで再現した、222kgの岩のオブジェも。</dd>
+    </dl>
+  </div>
+
+  <div class="card store">
+    <h3>📍 On Flagship Store Tokyo Ginza</h3>
+    <span class="tag blue">2025年9月12日オープン</span><span class="tag">世界で2番目に大きい直営店</span>
+    <dl>
+      <dt>場所</dt><dd>東京都中央区銀座4-3-1 並木館ビル B1〜2F（並木通り）</dd>
+      <dt>時間</dt><dd>11:00〜20:00（不定休）</dd>
+      <dt>見どころ</dt><dd>約1000㎡の3フロア。1Fがランニング・アウトドア、2Fがライフスタイル・テニス・キッズ、地下にラン仲間が集まるランクラブのスペース。</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <h3>直営店以外でも買える</h3>
+    <p style="font-size:14.5px">スポーツ用品店やランニング専門店、百貨店などでも取り扱いがあります。近くのお店は公式サイトの店舗検索で探せます。</p>
+    <a class="btn ghost" href="https://www.on.com/ja-jp/explore/stores" target="_blank" rel="noopener">公式の店舗ページを見る ↗</a>
+  </div>
+
+  <div class="card">
+    <h3>はじめて買うときのコツ</h3>
+    <ul class="tips">
+      <li><b>走る用の靴下</b>を履いて試し履きする。</li>
+      <li>夕方（足が少しむくむ時間）に試すとサイズ選びの失敗が少ない。</li>
+      <li>つま先に指1本弱のゆとりがあるか確認。</li>
+      <li>同じモデルでも世代（2、3…）で履き心地が変わることがある。</li>
+      <li>直営店ならマジック・ウォールで走り方をチェックしてもらえる。</li>
+    </ul>
+  </div>
+  <div class="note">店舗情報は2026年11月時点の調べです。営業時間などは変わることがあるので、行く前に公式サイトで確認してください。</div>
+</section>
+</main>
+
+<footer>
+  このページは、Onについて調べた内容を初心者向けにまとめた<b>非公式のファンメイド</b>ページです。On Holding AGとは関係ありません。名称は各社の商標です。内容は2026年11月時点の公開情報をもとにしています。
+  <div class="credit">Claudeで作ってみた ／ ロックポッポ @rockpoppocom</div>
+</footer>
+
+<script>
+/* ---------- 共通：靴のミニイラスト ---------- */
+function shoeSVG(kind){
+  const c = {
+    life:["#f2efe8","#111"], run:["#111","#dfe9f2"], long:["#2b2b2b","#b9cfe3"],
+    fast:["#1f5f9e","#fff"], race:["#e9ff5a","#111"], trail:["#5a6b4a","#e6dcc5"], gym:["#888","#fff"], tennis:["#fff","#1f5f9e"]
+  }[kind] || ["#111","#dfe9f2"];
+  const thick = {long:16, race:14, run:11, fast:10, trail:11, life:9, gym:7, tennis:8}[kind]||10;
+  const y = 44, pods = [];
+  for(let i=0;i<5;i++){ const x=10+i*14; pods.push(`<rect x="${x}" y="${y+thick-4}" width="11" height="6" rx="3" fill="${c[1]}" stroke="#111" stroke-width="1.5"/>`); }
+  return `<svg viewBox="0 0 90 ${y+thick+6}" aria-hidden="true">
+    <path d="M8 ${y} C8 30 22 27 34 27 L52 27 C60 27 66 18 74 18 C83 18 86 28 86 36 L86 ${y} Z" fill="${c[0]}" stroke="#111" stroke-width="1.5"/>
+    <rect x="8" y="${y}" width="78" height="${thick-4}" rx="4" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    ${pods.join("")}
+    ${kind==="trail"?`<path d="M10 ${y+thick+2} l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3 l4 3 l4 -3" stroke="#111" stroke-width="1.5" fill="none"/>`:""}
+  </svg>`;
+}
+
+/* ---------- 歴史 ---------- */
+const HISTORY = [
+  {y:"〜2000年代", t:"トップ選手オリヴィエ・ベルンハルト", d:"デュアスロンで世界王者に3回、アイアンマンでも優勝。約20年間、世界のトップで戦いました。"},
+  {y:"引退後", t:"庭のホースで試作", d:"切ったゴムホースを靴底に並べて貼りつけ、着地のやわらかさを試したのが始まり。いまの“雲のパーツ”の原型です。", big:true},
+  {y:"2010年1月", t:"チューリッヒで3人が創業", d:"ベルンハルトと友人のアレマン、コペッティの3人で、正式に会社を立ち上げました。", big:true},
+  {y:"2010年", t:"最初のモデル「Cloudsurfer」", d:"同年7月には最初のランニングショップに並びました。スイス連邦工科大学（ETH）の研究で、心拍数などが低くなったと紹介されたことも話題に。"},
+  {y:"2010年代", t:"世界へ、そして日本へ", d:"アメリカ・ポートランドに拠点、アジア最初のオフィスは横浜に。日本はOnがアジアで最初に進出した国です。"},
+  {y:"2019年", t:"ロジャー・フェデラーが参加", d:"テニス界のレジェンドが、出資者であり開発パートナーとして加わりました。"},
+  {y:"2020年7月", t:"「THE ROGER」発売", d:"フェデラーと作ったテニス由来の街履きシューズ。人気シリーズになりました。"},
+  {y:"2021年9月15日", t:"ニューヨーク証券取引所に上場", d:"ティッカーは「ONON」。約7億4600万ドルを調達し、初日に株価が大きく上がりました。", big:true},
+  {y:"2022年4月", t:"原宿に日本初の直営店", d:"キャットストリートに「On Tokyo」。ニューヨークに次ぐ世界2店舗目で、アジア初の直営店でした。"},
+  {y:"2024年", t:"売上23億スイスフラン超え", d:"前年より約3割増。利益も大きく伸びました。"},
+  {y:"2025年9月12日", t:"銀座に旗艦店オープン", d:"約1000㎡、世界で2番目に大きい直営店。東京での世界陸上の時期に合わせ、新しい作り方「LightSpray」も日本でお披露目。", big:true},
+  {y:"2025年", t:"売上が初めて30億スイスフラン超え", d:"前年比30%増の約30.1億スイスフラン。アジア太平洋の売上は5億スイスフランを超え、倍以上に。"},
+  {y:"2026年", t:"さらに成長中", d:"会社は2026年の売上を34.4億スイスフラン以上と見込んでいます（3月発表時点）。"}
+];
+document.getElementById("timeline").innerHTML = HISTORY.map(h=>`
+  <div class="ev ${h.big?'big':''}"><div class="yr">${h.y}</div><div class="box"><b>${h.t}</b><p>${h.d}</p></div></div>`).join("");
+
+/* ---------- モデル ---------- */
+const CATS = [
+  {k:"all",n:"すべて"},{k:"begin",n:"🔰 初心者向け"},{k:"life",n:"普段履き"},{k:"run",n:"毎日のラン"},
+  {k:"fast",n:"速く・レース"},{k:"trail",n:"山道"},{k:"other",n:"ジム・テニス"}
+];
+const MODELS = [
+  {id:"cloud6", name:"Cloud 6", kana:"クラウド 6", kind:"life", cats:["life","begin"], one:"Onの顔。一日中履ける軽い普段履き。", cush:3, speed:2, price:"2万円前後",
+   who:"通勤・通学、旅行、ウォーキング。まず1足ほしい人。", point:"軽くて脱ぎ履きしやすい。防水タイプ（Waterproof）や旅行向け（Coast）など仲間も多い。", note:"本格的に長く走るなら、ランニング用のモデルがおすすめ。", hot:true},
+  {id:"cloudtilt", name:"Cloudtilt", kana:"クラウドティルト", kind:"life", cats:["life"], one:"ふわっとやわらかい街履き。", cush:4, speed:1, price:"2万円台前半",
+   who:"立ち仕事や、たくさん歩く日にふかふか感がほしい人。", point:"街履き向けに作られたクッション重視のモデル。", note:"ランニング用ではありません。"},
+  {id:"roger", name:"THE ROGER", kana:"ザ・ロジャー", kind:"tennis", cats:["life","other"], one:"フェデラーと作った、テニス由来のスニーカー。", cush:2, speed:1, price:"2万円前後〜",
+   who:"きれいめの服にも合わせたい人。", point:"白を基調にしたシンプルな見た目。シリーズにはテニス競技用もある。", note:""},
+  {id:"surfer", name:"Cloudsurfer 2", kana:"クラウドサーファー 2", kind:"run", cats:["run","begin"], one:"走り始めの1足にぴったりの、なめらかな毎日用。", cush:3, speed:3, price:"2万円前後",
+   who:"ジョギングを始めたい人、5〜10kmを気持ちよく走りたい人。", point:"CloudTec Phase™で、着地から蹴り出しまでころがるように進む。", note:"Cloudsurferは2010年の最初のモデルの名前でもある。", hot:true},
+  {id:"monster", name:"Cloudmonster 3", kana:"クラウドモンスター 3", kind:"long", cats:["run","begin"], one:"大きな“雲”で、ぽよんと弾む厚底。", cush:5, speed:3, price:"2万円台前半",
+   who:"ゆっくり長く走りたい人、ふかふかが好きな人。", point:"大きなCloudTec®＋Helion™スーパーフォーム。弾む感じが楽しい人気者。", note:"厚底なので、最初は少しグラつく感じがするかも。"},
+  {id:"hyper", name:"Cloudmonster 3 Hyper", kana:"クラウドモンスター 3 ハイパー", kind:"long", cats:["run"], one:"モンスターをもっと軽く、もっと弾むように。", cush:5, speed:4, price:"2万円台後半",
+   who:"長い距離もペースアップも1足でこなしたい中級者。", point:"いわゆる「スーパートレーナー」。LightSpray™版もある。", note:"慣れてから選ぶと良さがわかりやすい。"},
+  {id:"runner", name:"Cloudrunner シリーズ", kana:"クラウドランナー", kind:"run", cats:["run","begin"], one:"ぐらつきにくい、安定感重視。", cush:4, speed:2, price:"2万円前後",
+   who:"足首が内側に倒れやすい人、安心感がほしい初心者。", point:"着地を支える作りで、走り慣れていない人にもやさしい。防水タイプも。", note:""},
+  {id:"flow", name:"Cloudflow 5", kana:"クラウドフロー 5", kind:"fast", cats:["fast","run"], one:"軽くてテンポよく走れる、スピード寄り。", cush:3, speed:4, price:"2万円前後",
+   who:"少し速いペースで走りたい人、短〜中距離が好きな人。", point:"軽さと反発のバランス型。練習にも大会にも。", note:""},
+  {id:"boom", name:"Cloudboom Strike", kana:"クラウドブーム ストライク", kind:"race", cats:["fast"], one:"マラソン大会で記録を狙う、勝負靴。", cush:4, speed:5, price:"3万円台後半〜",
+   who:"フルマラソンで自己ベストを狙う人。", point:"カーボン入りのプレートで強く前に進む。LightSpray™で作られた版も。", note:"初心者のふだんの練習には硬すぎることも。"},
+  {id:"boommax", name:"Cloudboom Max", kana:"クラウドブーム マックス", kind:"race", cats:["fast"], one:"厚めのクッションで、長い距離を速く。", cush:5, speed:4, price:"3万円前後",
+   who:"マラソンを楽に、でも速く走りたい人。", point:"レース向けの中でもクッション多め。", note:""},
+  {id:"trail", name:"Cloudsurfer Trail 2", kana:"クラウドサーファー トレイル 2", kind:"trail", cats:["trail","begin"], one:"土の道や砂利道デビューに。", cush:3, speed:3, price:"2万円前後",
+   who:"公園の土の道、軽い山道を走ってみたい人。", point:"すべりにくい靴底で、舗装路から山道まで。", note:""},
+  {id:"ultra", name:"Cloudultra 3 / Pro", kana:"クラウドウルトラ", kind:"trail", cats:["trail"], one:"長い山道を走るための本格派。", cush:4, speed:3, price:"3万円前後",
+   who:"トレイルランの大会に出る人。", point:"Missiongrip™のグリップで、ぬかるみや岩場もしっかり。", note:""},
+  {id:"x", name:"Cloud X 4", kana:"クラウド X 4", kind:"gym", cats:["other"], one:"ジム・筋トレ・HIITに。", cush:2, speed:3, price:"2万円前後",
+   who:"ジムで色々な運動をする人。", point:"横の動きにも対応する、オールラウンド型。", note:""}
+];
+let curCat="all";
+function bars(n){return `<span class="bar">${[1,2,3,4,5].map(i=>`<i class="${i<=n?'f':''}"></i>`).join("")}</span>`}
+function modelCard(m, open){
+  return `<div class="model ${open?'open':''}" data-id="${m.id}">
+    <div class="mtop">${shoeSVG(m.kind)}<div><div class="mname">${m.name}${m.hot?'<span class="badge">定番</span>':''}</div><div class="mkana">${m.kana}</div><div class="mone">${m.one}</div></div></div>
+    <div class="meters"><span>ふかふか度</span>${bars(m.cush)}<span>スピード感</span>${bars(m.speed)}</div>
+    <dl class="more">
+      <dt>こんな人に</dt><dd>${m.who}</dd>
+      <dt>ここがポイント</dt><dd>${m.point}</dd>
+      ${m.note?`<dt>ひとこと</dt><dd>${m.note}</dd>`:""}
+      <dt>価格帯（目安）</dt><dd>${m.price}</dd>
+    </dl>
+  </div>`;
+}
+function renderFilters(){
+  document.getElementById("filters").innerHTML = CATS.map(c=>`<button data-c="${c.k}" class="${c.k===curCat?'on':''}">${c.n}</button>`).join("");
+}
+function renderModels(){
+  const list = MODELS.filter(m=>curCat==="all"||m.cats.includes(curCat));
+  document.getElementById("modelList").innerHTML = list.map(m=>modelCard(m,false)).join("");
+}
+document.getElementById("filters").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return; curCat=b.dataset.c; renderFilters(); renderModels();
+});
+document.getElementById("modelList").addEventListener("click",e=>{
+  const c=e.target.closest(".model"); if(c) c.classList.toggle("open");
+});
+renderFilters(); renderModels();
+
+/* ---------- 診断 ---------- */
+const Q1 = [
+  {k:"walk", e:"🚶", t:"普段履き・ウォーキング・旅行"},
+  {k:"start", e:"🌱", t:"これから走り始めたい"},
+  {k:"long", e:"🐢", t:"ゆっくり長く走りたい"},
+  {k:"fast", e:"⚡", t:"速く走りたい・大会に出たい"},
+  {k:"trail", e:"⛰️", t:"土の道・山道を走りたい"},
+  {k:"gym", e:"🏋️", t:"ジムで運動したい"}
+];
+const Q2 = {
+  walk:{q:"どんな履き心地が好き？", o:[{k:"light",e:"🪶",t:"軽くてすっきり"},{k:"soft",e:"☁️",t:"とにかくふかふか"},{k:"style",e:"👔",t:"きれいめの服にも合わせたい"}]},
+  start:{q:"気になることは？", o:[{k:"smooth",e:"🌀",t:"なめらかに気持ちよく走りたい"},{k:"stable",e:"🛡️",t:"ぐらつかない安心感がほしい"}]},
+  long:{q:"どれくらい走る？", o:[{k:"easy",e:"🙂",t:"のんびり楽しく"},{k:"more",e:"💪",t:"たまにペースも上げたい"}]},
+  fast:{q:"目標は？", o:[{k:"tempo",e:"🏃",t:"練習でテンポよく走りたい"},{k:"pb",e:"🏅",t:"マラソンで自己ベスト"},{k:"comfy",e:"🛋️",t:"大会を速く、でも楽に"}]},
+  trail:{q:"どんな道？", o:[{k:"park",e:"🌳",t:"公園の土の道・軽い山道"},{k:"mount",e:"🏔️",t:"本格的な山・長い距離"}]},
+  gym:null
+};
+const MAP = {
+  "walk-light":"cloud6","walk-soft":"cloudtilt","walk-style":"roger",
+  "start-smooth":"surfer","start-stable":"runner",
+  "long-easy":"monster","long-more":"hyper",
+  "fast-tempo":"flow","fast-pb":"boom","fast-comfy":"boommax",
+  "trail-park":"trail","trail-mount":"ultra","gym":"x"
+};
+const quizBox=document.getElementById("quizBox");
+let a1=null;
+function quizStart(){
+  a1=null;
+  quizBox.innerHTML=`<div class="step">質問 1 / 2</div><div class="q">何に使いたい？</div><div class="opts">${Q1.map(o=>`<button data-a="${o.k}"><span class="e">${o.e}</span>${o.t}</button>`).join("")}</div>`;
+}
+function quizStep2(){
+  const s=Q2[a1]; if(!s){ showResult(MAP[a1]); return; }
+  quizBox.innerHTML=`<div class="step">質問 2 / 2</div><div class="q">${s.q}</div><div class="opts">${s.o.map(o=>`<button data-b="${o.k}"><span class="e">${o.e}</span>${o.t}</button>`).join("")}</div><button class="btn ghost" data-back="1">← 戻る</button>`;
+}
+function showResult(id){
+  const m=MODELS.find(x=>x.id===id);
+  quizBox.innerHTML=`<div class="result">
+    <div class="step">あなたへのおすすめ</div>
+    <div class="mtop" style="margin:6px 0">${shoeSVG(m.kind)}<div><div class="mname">${m.name}</div><div class="mkana">${m.kana}</div></div></div>
+    <p style="font-weight:700">${m.one}</p>
+    <p style="font-size:14px;margin-top:6px"><b>こんな人に：</b>${m.who}</p>
+    <p style="font-size:14px"><b>ポイント：</b>${m.point}</p>
+    <p style="font-size:14px"><b>価格帯（目安）：</b>${m.price}（くわしくはお店で）</p>
+  </div>
+  <p class="note">これは入門用のざっくり診断です。足の形や好みで合う靴は変わるので、お店で試し履きしてみてください。</p>
+  <button class="btn" data-restart="1">もう一度やる</button>
+  <button class="btn ghost" data-go="models">モデル一覧を見る</button>`;
+}
+quizBox.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.a){ a1=b.dataset.a; quizStep2(); }
+  else if(b.dataset.b){ showResult(MAP[a1+"-"+b.dataset.b]); }
+  else if(b.dataset.back||b.dataset.restart){ quizStart(); }
+  else if(b.dataset.go){ show(b.dataset.go); }
+});
+quizStart();
+
+/* ---------- しくみ ---------- */
+const TECH = [
+  {n:"CloudTec®", k:"クラウドテック", d:"靴底に並ぶ“穴あきの雲”のようなパーツ。着地でつぶれて衝撃をやわらげ、蹴り出しでは固まって力を逃がしにくくする、Onのいちばんの特徴。",
+   svg:`<svg viewBox="0 0 54 40"><rect x="2" y="6" width="50" height="10" rx="5" fill="#fff" stroke="#111" stroke-width="2"/><g fill="#dfe9f2" stroke="#111" stroke-width="2"><rect x="4" y="18" width="13" height="14" rx="6"/><rect x="20" y="18" width="13" height="14" rx="6"/><rect x="36" y="18" width="13" height="14" rx="6"/></g><g fill="#fff"><circle cx="10.5" cy="25" r="3"/><circle cx="26.5" cy="25" r="3"/><circle cx="42.5" cy="25" r="3"/></g></svg>`},
+  {n:"CloudTec Phase™", k:"クラウドテック フェーズ", d:"雲のパーツが、かかとからつま先へ順番につぶれていくしくみ。ドミノのように、ころがるようななめらかな走りに。",
+   svg:`<svg viewBox="0 0 54 40"><g fill="#dfe9f2" stroke="#111" stroke-width="2"><rect x="3" y="22" width="10" height="10" rx="4"/><rect x="15" y="19" width="10" height="13" rx="4"/><rect x="27" y="16" width="10" height="16" rx="4"/><rect x="39" y="13" width="10" height="19" rx="4"/></g><path d="M5 8 H46 l-5 -4 M46 8 l-5 4" stroke="#1f5f9e" stroke-width="2.5" fill="none"/></svg>`},
+  {n:"Helion™", k:"ヒリオン", d:"Onオリジナルのスーパーフォーム（クッション素材）。軽くて、よく弾むのが特徴。",
+   svg:`<svg viewBox="0 0 54 40"><rect x="4" y="14" width="46" height="18" rx="9" fill="#fff" stroke="#111" stroke-width="2"/><g fill="#b9cfe3"><circle cx="14" cy="23" r="3"/><circle cx="24" cy="20" r="2"/><circle cx="31" cy="26" r="3"/><circle cx="40" cy="21" r="2.5"/></g><path d="M27 10 v-6 M22 8 l5 -4 l5 4" stroke="#1f5f9e" stroke-width="2.5" fill="none"/></svg>`},
+  {n:"Speedboard®", k:"スピードボード", d:"靴底の中に入っている薄い板。たわんで戻る力で、前へ進むのを助けます。レース用はカーボン製のものも。",
+   svg:`<svg viewBox="0 0 54 40"><path d="M3 26 Q27 12 51 22" stroke="#111" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M3 30 Q27 20 51 28" stroke="#b9cfe3" stroke-width="2" fill="none"/></svg>`},
+  {n:"LightSpray™", k:"ライトスプレー", d:"ロボットアームが糸状の素材を吹きつけて、靴の上の部分（アッパー）を一気に作る新しい作り方。ひもや縫い目が少なく、とても軽い。",
+   svg:`<svg viewBox="0 0 54 40"><path d="M6 30 C6 18 18 14 28 14 C38 14 48 20 48 30 Z" fill="none" stroke="#111" stroke-width="2"/><path d="M10 28 C16 20 30 18 44 26 M12 24 C20 18 34 18 42 22" stroke="#1f5f9e" stroke-width="1.5" fill="none"/><path d="M40 4 l-8 8" stroke="#111" stroke-width="3"/></svg>`},
+  {n:"Missiongrip™", k:"ミッショングリップ", d:"トレイル（山道）用の靴底。ぬれた岩や土の上でもすべりにくくする工夫。",
+   svg:`<svg viewBox="0 0 54 40"><rect x="4" y="12" width="46" height="12" rx="6" fill="#fff" stroke="#111" stroke-width="2"/><path d="M6 24 l4 6 l4 -6 l4 6 l4 -6 l4 6 l4 -6 l4 6 l4 -6 l4 6 l4 -6" stroke="#111" stroke-width="2" fill="#e6dcc5"/></svg>`}
+];
+document.getElementById("techList").innerHTML = TECH.map(t=>`<div class="card">${t.svg}<div><h3 class="en">${t.n}</h3><div class="mkana">${t.k}</div><p style="font-size:14.5px;margin-top:4px">${t.d}</p></div></div>`).join("");
+const GLOSS = [
+  ["ドロップ","かかととつま先の厚みの差（mm）。大きいほど前に転がりやすく、小さいほど自然な感覚に。"],
+  ["スタックハイト","靴底の厚さ。厚いほどクッションが多い“厚底”。"],
+  ["デイリートレーナー","毎日の練習用の靴。まず1足ならこのタイプ。"],
+  ["スーパートレーナー","練習用だけどレース靴に近い弾みがある、ぜいたくな練習靴。"],
+  ["カーボンプレート","炭素繊維の板。反発が強く、レースで記録を狙う靴に入っている。"],
+  ["トレイル","舗装されていない土や山の道。専用の靴はすべりにくい。"]
+];
+document.getElementById("glossary").innerHTML = GLOSS.map(g=>`<p style="font-size:14.5px;margin-bottom:8px"><b>${g[0]}</b>：${g[1]}</p>`).join("");
+
+/* ---------- タブ ---------- */
+const VIEWS=["home","history","models","quiz","tech","shop"];
+function show(v){
+  if(!VIEWS.includes(v)) v="home";
+  document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on", s.id==="v-"+v));
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on", b.dataset.v===v));
+  const tb=document.querySelector(`#tabs button[data-v="${v}"]`); if(tb) tb.scrollIntoView({inline:"center",block:"nearest"});
+  if(location.hash.slice(1)!==v){ try{history.replaceState(null,"","#"+v)}catch(e){location.hash=v} }
+  window.scrollTo({top:0});
+}
+document.getElementById("tabs").addEventListener("click",e=>{const b=e.target.closest("button"); if(b) show(b.dataset.v);});
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+show(location.hash.slice(1)||"home");
+</script>
+</body>
+</html>
