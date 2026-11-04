@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AIまなび帳">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6f3ee">
+<title>AIまなび帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ee; --card:#fffdf9; --ink:#24262b; --sub:#6b6f78; --line:#e4ded3;
+  --ai:#3b82c4; --agi:#8b5cc4; --asi:#d0573d; --ok:#2f9e6a; --accent:#e8a33d;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",system-ui,sans-serif;line-height:1.75}
+header{padding:calc(env(safe-area-inset-top) + 18px) 18px 6px;position:relative}
+.home{position:absolute;right:16px;top:calc(env(safe-area-inset-top) + 14px);font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px;white-space:nowrap}
+header h1{margin:0;font-size:24px;font-weight:900;letter-spacing:.04em}
+header p{margin:2px 0 0;color:var(--sub);font-size:13px}
+main{padding:8px 14px calc(96px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+section.view{display:none;animation:fade .25s ease}
+section.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-size:19px;margin:18px 4px 10px;font-weight:900}
+h3{font-size:16px;margin:0 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:0 0 12px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.muted{color:var(--sub);font-size:13.5px}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 9px;border-radius:999px;background:#efe9df;color:#5c5446;margin-right:4px}
+
+/* bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,253,249,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:11px;color:var(--sub);padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer}
+nav button .ic{font-size:20px;line-height:1.2}
+nav button.on{color:var(--ink);background:#f1ebe1;font-weight:700}
+
+/* level stairs */
+.stairs{position:relative;display:flex;align-items:flex-end;gap:8px;height:210px;margin:6px 0 4px}
+.step{flex:1;border-radius:14px 14px 6px 6px;color:#fff;padding:10px 8px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;border:3px solid transparent;transition:.2s}
+.step b{font-size:22px;line-height:1}
+.step span{font-size:11.5px;opacity:.95}
+.step.sel{border-color:var(--ink);transform:translateY(-4px)}
+.s1{background:var(--ai);height:42%}.s2{background:var(--agi);height:70%}.s3{background:var(--asi);height:100%}
+.human-line{position:absolute;left:0;right:0;bottom:70%;height:0;border-top:2px dashed #888;pointer-events:none;z-index:1}
+.human-line span{position:absolute;left:0;top:-22px;font-size:11px;color:#666;padding:0 4px}
+.levelbox{border-left:6px solid var(--ai);padding-left:12px}
+.levelbox ul{margin:6px 0 0;padding-left:20px}
+.levelbox li{margin:2px 0}
+table.cmp{width:100%;border-collapse:collapse;font-size:13px}
+table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:7px 5px;text-align:left;vertical-align:top}
+table.cmp th{font-size:12px;color:var(--sub);font-weight:700}
+.tag-ai{color:var(--ai);font-weight:900}.tag-agi{color:var(--agi);font-weight:900}.tag-asi{color:var(--asi);font-weight:900}
+
+/* accordion */
+details.acc{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:0 0 10px;overflow:hidden}
+details.acc summary{list-style:none;padding:14px 16px;font-weight:700;cursor:pointer;display:flex;gap:10px;align-items:center}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:13px}
+details.acc summary::after{content:"＋";margin-left:auto;color:var(--sub)}
+details.acc[open] summary::after{content:"－"}
+details.acc .body{padding:0 16px 16px}
+
+/* nesting circles */
+.nest{position:relative;width:100%;max-width:340px;aspect-ratio:1;margin:6px auto}
+.nest div{position:absolute;border-radius:50%;display:flex;justify-content:center;font-weight:700;font-size:12.5px;color:#fff;padding-top:8px}
+.n1{inset:0;background:#7aa6cf}.n2{inset:13%;background:#5b8fc2}.n3{inset:27%;background:#3f78b2}.n4{inset:41%;background:#24598f;align-items:center;padding:0!important;text-align:center}
+
+/* neuron demo */
+.slider{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13.5px}
+.slider label{width:110px;flex:none}
+.slider input{flex:1;accent-color:var(--ai)}
+.slider output{width:38px;text-align:right;font-variant-numeric:tabular-nums}
+.meter{height:16px;background:#eee7dc;border-radius:999px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--ai),var(--agi));width:50%;transition:width .2s}
+
+/* next word */
+.prompt-btns{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{flex:none;white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sentence{font-size:18px;font-weight:700;background:#f3eee5;border-radius:12px;padding:10px 12px;min-height:50px}
+.sentence em{font-style:normal;color:var(--asi);border-bottom:3px solid var(--asi)}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px;cursor:pointer}
+.bar .w{width:76px;flex:none;font-weight:700}
+.bar .t{flex:1;height:22px;background:#eee7dc;border-radius:7px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--ai);border-radius:7px;transition:width .35s}
+.bar .p{width:42px;text-align:right;font-variant-numeric:tabular-nums;color:var(--sub)}
+.temp{display:flex;gap:6px;margin-top:8px}
+
+/* timeline */
+.filters{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.era-head{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 4px 6px;font-weight:900;font-size:15px;display:flex;align-items:center;gap:8px}
+.era-head .dot{width:12px;height:12px;border-radius:50%}
+.tl{position:relative;margin-left:14px;border-left:3px solid var(--line);padding-left:16px}
+.ev{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin:0 0 10px}
+.ev::before{content:"";position:absolute;left:-25px;top:16px;width:13px;height:13px;border-radius:50%;background:var(--c,#999);border:3px solid var(--bg)}
+.ev .y{font-weight:900;font-size:13px;color:var(--c,#555)}
+.ev h4{margin:0;font-size:15px}
+.ev p{margin:4px 0 0;font-size:13.5px;color:#43464d}
+.ev.star{border-color:var(--c)}
+.winter{background:repeating-linear-gradient(45deg,#e9eef4,#e9eef4 8px,#f2f5f9 8px,#f2f5f9 16px);border:1px dashed #a9b9cc;border-radius:14px;padding:10px 13px;margin:0 0 10px;font-size:13.5px}
+
+/* glossary */
+.search{width:100%;font:inherit;font-size:16px;padding:11px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;margin-bottom:10px}
+.term{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px;margin-bottom:8px}
+.term b{font-size:15px}
+.term .kana{font-size:11.5px;color:var(--sub);margin-left:6px}
+.term p{margin:3px 0 0;font-size:13.5px}
+
+/* quiz */
+.qopt{display:block;width:100%;text-align:left;font:inherit;font-size:15px;padding:12px 14px;margin:7px 0;border-radius:14px;border:1.5px solid var(--line);background:#fff;cursor:pointer}
+.qopt.right{border-color:var(--ok);background:#e7f6ee}
+.qopt.wrong{border-color:var(--asi);background:#fbe9e4}
+.qopt:disabled{cursor:default;color:var(--ink)}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;background:var(--ink);color:#fff;cursor:pointer;font-size:15px}
+.qprog{height:6px;background:#eee7dc;border-radius:999px;overflow:hidden;margin:4px 0 12px}
+.qprog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.expl{background:#f3eee5;border-radius:12px;padding:10px 12px;font-size:13.5px;margin:8px 0 12px}
+
+.big-q{font-size:16.5px;font-weight:700}
+.note{font-size:12px;color:var(--sub);margin:16px 4px}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="../">← アプリ一覧</a>
+  <h1>🤖 AIまなび帳</h1>
+  <p>AI・AGI・ASIの違い、しくみ、歴史をざっくり知る</p>
+</header>
+
+<main>
+<!-- ============ 1. AI/AGI/ASI ============ -->
+<section class="view on" id="v-levels">
+  <h2>AI・AGI・ASIってなにがちがうの？</h2>
+  <div class="card">
+    <p class="muted" style="margin-top:0">階段をタップしてみてください。高さは「できることの広さ・賢さ」のイメージです。</p>
+    <div class="stairs">
+      <div class="step s1 sel" data-l="ai"><b>AI</b><span>特化型AI<br>いまここ</span></div>
+      <div class="step s2" data-l="agi"><b>AGI</b><span>汎用人工知能<br>人間なみ</span></div>
+      <div class="step s3" data-l="asi"><b>ASI</b><span>人工超知能<br>人間をこえる</span></div>
+      <div class="human-line"><span>人間のレベル</span></div>
+    </div>
+    <div class="levelbox" id="levelbox"></div>
+  </div>
+
+  <div class="card">
+    <h3>ひと目でくらべる</h3>
+    <table class="cmp">
+      <tr><th></th><th class="tag-ai">AI</th><th class="tag-agi">AGI</th><th class="tag-asi">ASI</th></tr>
+      <tr><th>得意なこと</th><td>決まった仕事（翻訳・画像認識・文章作成など）</td><td>人間ができる知的な仕事ならだいたい何でも</td><td>あらゆる分野で人間の最高レベルをこえる</td></tr>
+      <tr><th>新しい仕事</th><td>学習していない仕事は苦手</td><td>初めての仕事も自分で覚える</td><td>人間が思いつかない解き方を見つける</td></tr>
+      <tr><th>実在する？</th><td>✅ 実在</td><td>🤔 まだ。いつ来るか議論中</td><td>❓ 仮説・未来の話</td></tr>
+      <tr><th>たとえ</th><td>将棋だけ強い名人</td><td>何でもこなす新入社員〜ベテラン</td><td>全分野のノーベル賞級が束になった存在</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>💡 いまのChatGPTやClaudeはどれ？</h3>
+    <p style="margin:0">文章・コード・画像・音声などを幅広くこなすので、昔の「特化型AI」よりずっと汎用的です。ただ、長い仕事を自分だけで最後までやりきる力や、体を使う仕事、確実さにはまだ弱点があり、<b>「AGIに近づいている途中」</b>と見る人が多い段階です。「もうAGIだ」と言う人、「まだ遠い」と言う人がいて、そもそもAGIの定義も人によってちがいます。</p>
+  </div>
+
+  <div class="card">
+    <h3>🧭 よく聞く言葉の関係</h3>
+    <div class="nest">
+      <div class="n1">人工知能（AI）</div>
+      <div class="n2">機械学習</div>
+      <div class="n3">ディープラーニング</div>
+      <div class="n4">生成AI<br>・LLM</div>
+    </div>
+    <p class="muted">外側ほど広い意味。「生成AI」はディープラーニングの一種で、ChatGPTやClaudeのような大規模言語モデル（LLM）もここに入ります。</p>
+  </div>
+</section>
+
+<!-- ============ 2. しくみ ============ -->
+<section class="view" id="v-how">
+  <h2>人工知能のしくみ</h2>
+  <p class="muted" style="margin:0 4px 12px">上から順に読むと、いまの生成AIまでつながります。</p>
+
+  <details class="acc" open>
+    <summary><span class="n">1</span>ルールを人が書く時代</summary>
+    <div class="body">
+      <p>昔のAIは「もし〇〇なら△△する」というルールを、人間が一つずつ書きこんでいました（エキスパートシステム）。決まった範囲では賢く見えますが、ルールにない状況には弱く、世の中のすべてを書きつくすのは無理でした。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">2</span>機械学習：データから自分で覚える</summary>
+    <div class="body">
+      <p>ルールを書くかわりに、<b>たくさんの例（データ）を見せて、パターンを自分で見つけさせる</b>のが機械学習です。「これは猫」「これは犬」という写真を何万枚も見せると、見分け方を自分で身につけます。</p>
+      <p class="muted">主な学び方：<br>・<b>教師あり学習</b>…正解つきの例で学ぶ<br>・<b>教師なし学習</b>…正解なしでグループ分けなどを見つける<br>・<b>強化学習</b>…やってみて、ほめられた（報酬）行動を増やす</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">3</span>ニューラルネットワーク：脳をまねた計算</summary>
+    <div class="body">
+      <p>脳の神経細胞（ニューロン）をまねた小さな計算のかたまりを、たくさんつないだものです。1個のニューロンは「入力 × 重み」を足し合わせて、ある程度大きければ反応します。</p>
+      <div class="card" style="background:#faf7f1">
+        <b>🔬 ニューロンを動かしてみよう</b>
+        <p class="muted" style="margin:2px 0 6px">「散歩に行く？」を決める1個のニューロン</p>
+        <div class="slider"><label>☀️ 晴れ度</label><input type="range" id="x1" min="0" max="10" value="7"><output id="o1">7</output></div>
+        <div class="slider"><label>🌡 暑さ</label><input type="range" id="x2" min="0" max="10" value="4"><output id="o2">4</output></div>
+        <div class="slider"><label>⏰ ひま度</label><input type="range" id="x3" min="0" max="10" value="5"><output id="o3">5</output></div>
+        <p class="muted" style="margin:8px 0 0">重み（大事さ）：晴れ <b>+0.6</b>、暑さ <b>−0.5</b>、ひま <b>+0.8</b></p>
+        <div class="meter"><i id="nm"></i></div>
+        <p id="nres" style="margin:6px 0 0;font-weight:700"></p>
+      </div>
+      <p><b>学習</b>とは、答えがずれたときにこの「重み」を少しずつ直していくこと。今の大きなAIは、この重みが<b>数千億〜数兆個</b>もあると言われます。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">4</span>ディープラーニング：層を深く重ねる</summary>
+    <div class="body">
+      <p>ニューロンの層を何十〜何百段も重ねたのがディープラーニング。画像なら、最初の層は「線」、次は「目や耳の形」、もっと奥で「猫の顔」…と、だんだん複雑な特徴をとらえます。</p>
+      <p>2012年ごろ、<b>大量のデータ</b>（インターネット）と<b>速い計算機</b>（GPU）がそろったことで一気に実用的になりました。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">5</span>トランスフォーマー：文のどこに注目するか</summary>
+    <div class="body">
+      <p>2017年にGoogleの研究者が発表した仕組みで、いまの生成AIのほぼすべての土台です。カギは<b>「注意（アテンション）」</b>。文の中で、どの言葉とどの言葉が関係しているかを一度に計算します。</p>
+      <div class="sentence" style="font-size:15px">「<em>お母さん</em>は子どもに本を読んだ。<em>彼女</em>はとても上手だった。」</div>
+      <p class="muted">「彼女」が誰かを決めるとき、AIは「お母さん」に強く注目します。こうした関係を文全体で同時に見られるので、長い文章も上手に扱えます。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">6</span>LLM：次の言葉を当て続ける</summary>
+    <div class="body">
+      <p>ChatGPTやClaudeなどの大規模言語モデル（LLM）がやっていることは、根っこでは<b>「次に来る言葉を確率で予想する」</b>ことのくり返しです。</p>
+      <div class="card" style="background:#faf7f1">
+        <b>🎲 次の言葉予想を体験</b>
+        <div class="prompt-btns" id="ppick"></div>
+        <div class="sentence" id="nwSent"></div>
+        <div id="nwBars" style="margin-top:8px"></div>
+        <p class="muted" style="margin:6px 0 0">バーをタップするとその言葉を選びます。</p>
+        <div class="temp">
+          <button class="chip on" data-t="low">🧊 まじめ（温度低）</button>
+          <button class="chip" data-t="high">🔥 冒険（温度高）</button>
+        </div>
+        <p class="muted" style="margin:6px 0 0">「温度」を上げると、確率の低い言葉も選ばれやすくなり、文章が個性的（ときにヘン）になります。</p>
+      </div>
+      <p>インターネット上の膨大な文章で練習した結果、文法だけでなく、知識や推論のようなものまで身についたのが驚きのポイントです。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">7</span>AIが育つ3ステップ</summary>
+    <div class="body">
+      <p><span class="pill">①事前学習</span>大量の文章で「次の言葉当て」を練習。物知りになる。</p>
+      <p><span class="pill">②微調整</span>質問と良い答えのお手本で、会話のしかたを覚える。</p>
+      <p><span class="pill">③人の評価で調整</span>人間（やAI）が「こっちの答えが良い」と評価し、役に立ち、安全な答え方に近づける（RLHFなど）。</p>
+      <p class="muted">最近は、答える前にじっくり考える「推論（リーズニング）モデル」も広まりました。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">8</span>エージェント：AIが自分で動く</summary>
+    <div class="body">
+      <p>質問に答えるだけでなく、<b>道具（検索・プログラム実行・ファイル操作など）を使って、目標に向かって何手も自分で進める</b>AIをエージェントと呼びます。「調べて、まとめて、表にして」を一気にやってくれるイメージです。2025〜2026年に急速に広まりました。</p>
+    </div>
+  </details>
+
+  <details class="acc">
+    <summary><span class="n">9</span>苦手なこと・気をつけること</summary>
+    <div class="body">
+      <p>・<b>ハルシネーション</b>：もっともらしいウソを言うことがある<br>
+      ・<b>知識の締め切り</b>：学習した時点より後のことは、検索しないと知らない<br>
+      ・<b>かたより</b>：学んだデータのかたよりを引きつぐ<br>
+      ・<b>安全性</b>：悪用やAIの暴走をどう防ぐか（アラインメント研究）</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============ 3. 歴史 ============ -->
+<section class="view" id="v-hist">
+  <h2>AIの歴史</h2>
+  <div class="filters" id="eraFilter"></div>
+  <div id="timeline"></div>
+</section>
+
+<!-- ============ 4. 用語 ============ -->
+<section class="view" id="v-words">
+  <h2>用語ミニ辞典</h2>
+  <input class="search" id="q" type="search" placeholder="🔍 言葉をさがす（例：LLM、学習）">
+  <div id="terms"></div>
+</section>
+
+<!-- ============ 5. クイズ ============ -->
+<section class="view" id="v-quiz">
+  <h2>確認クイズ</h2>
+  <div class="card" id="quiz"></div>
+</section>
+
+<p class="note">※ AGI・ASIの定義や到来時期は専門家の間でも意見が分かれています。内容は2026年11月時点の一般的な説明です。</p>
+</main>
+
+<nav id="nav">
+  <button class="on" data-v="v-levels"><span class="ic">🪜</span>AI/AGI/ASI</button>
+  <button data-v="v-how"><span class="ic">⚙️</span>しくみ</button>
+  <button data-v="v-hist"><span class="ic">📜</span>れきし</button>
+  <button data-v="v-words"><span class="ic">📖</span>ことば</button>
+  <button data-v="v-quiz"><span class="ic">❓</span>クイズ</button>
+</nav>
+
+<script>
+/* ---------- nav ---------- */
+const nav=document.getElementById('nav');
+nav.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  nav.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===b.dataset.v));
+  window.scrollTo({top:0,behavior:'instant'});
+  try{localStorage.setItem('aimanabi-tab',b.dataset.v)}catch(_){}
+});
+try{const t=localStorage.getItem('aimanabi-tab'); if(t){const b=nav.querySelector(`[data-v="${t}"]`); b&&b.click();}}catch(_){}
+
+/* ---------- levels ---------- */
+const LV={
+  ai:{c:'var(--ai)',t:'AI（特化型AI / ANI）',d:'特定の仕事に強いAI。いま世の中にあるAIはすべてここに入ります。',l:['スマホの顔認証、迷惑メールの振り分け','翻訳、音声アシスタント、おすすめ表示','将棋・囲碁AI、自動運転の一部','ChatGPTやClaudeも分類上はここ（ただしかなり汎用的）']},
+  agi:{c:'var(--agi)',t:'AGI（汎用人工知能）',d:'人間ができる知的な仕事を、ほぼ何でも同じくらいこなせるAI。初めての仕事も自分で学んで対応できます。',l:['まだ実現していない（とされる）','「いつ来るか」は数年後〜数十年後まで意見がバラバラ','定義も「ほとんどの仕事で人間なみ」「経済的に価値のある仕事の大半」など人によってちがう','OpenAI・Anthropic・Google DeepMindなどが目標や研究対象に掲げている']},
+  asi:{c:'var(--asi)',t:'ASI（人工超知能）',d:'あらゆる分野で、最も賢い人間をはるかにこえる知能。AGIが自分を改良し続けると生まれる、と考える人もいます。',l:['純粋に未来の仮説','病気の解明や科学の大発見を一気に進める、という期待','人間がコントロールできなくなる、という心配','だからこそ「AIの安全性」の研究が重視されている']}
+};
+function showLevel(k){
+  const v=LV[k],box=document.getElementById('levelbox');
+  box.style.borderColor=v.c;
+  box.innerHTML=`<h3 style="color:${v.c}">${v.t}</h3><p style="margin:0">${v.d}</p><ul>${v.l.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  document.querySelectorAll('.step').forEach(s=>s.classList.toggle('sel',s.dataset.l===k));
+}
+document.querySelectorAll('.step').forEach(s=>s.onclick=()=>showLevel(s.dataset.l));
+showLevel('ai');
+
+/* ---------- neuron ---------- */
+function neuron(){
+  const a=+x1.value,b=+x2.value,c=+x3.value;
+  o1.value=a;o2.value=b;o3.value=c;
+  const z=0.6*a-0.5*b+0.8*c-4;
+  const p=1/(1+Math.exp(-z*0.6));
+  nm.style.width=(p*100).toFixed(0)+'%';
+  nres.textContent=`合計 ${z.toFixed(1)} → 出力 ${(p*100).toFixed(0)}% … ${p>0.5?'🚶 散歩に行く！':'🏠 家にいる'}`;
+}
+['x1','x2','x3'].forEach(id=>document.getElementById(id).oninput=neuron);neuron();
+
+/* ---------- next word ---------- */
+const NW={
+  '今日の天気は':{low:[['晴れ',52],['雨',24],['くもり',16],['最高',5],['カレー',1]],high:[['晴れ',30],['雨',20],['くもり',18],['最高',16],['カレー',8]],next:{'晴れ':'です。','雨':'の予報です。','くもり':'ときどき晴れ。','最高':'！ 散歩日和。','カレー':'…？ AIが暴走しました🍛'}},
+  '猫が好きな食べ物は':{low:[['魚',48],['かつお節',27],['チュール',18],['肉',5],['ケーキ',1]],high:[['魚',28],['かつお節',22],['チュール',22],['肉',14],['ケーキ',10]],next:{'魚':'です。','かつお節':'です。','チュール':'です😺','肉':'もあります。','ケーキ':'…ではありません'}},
+  '人工知能の歴史は':{low:[['1956年',45],['古く',30],['長い',17],['意外と',6],['宇宙',1]],high:[['1956年',25],['古く',22],['長い',20],['意外と',18],['宇宙',10]],next:{'1956年':'のダートマス会議から始まりました。','古く':'、70年近くあります。','長い':'冬の時代もありました。','意外と':'浅く、70年ほどです。','宇宙':'の誕生から…は言いすぎ'}}
+};
+let curP=Object.keys(NW)[0],temp='low';
+const ppick=document.getElementById('ppick');
+Object.keys(NW).forEach((k,i)=>{const b=document.createElement('button');b.className='chip'+(i?'':' on');b.textContent=k+'…';b.onclick=()=>{curP=k;ppick.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));drawNW()};ppick.appendChild(b)});
+document.querySelectorAll('.temp .chip').forEach(b=>b.onclick=()=>{temp=b.dataset.t;document.querySelectorAll('.temp .chip').forEach(x=>x.classList.toggle('on',x===b));drawNW()});
+function drawNW(pick){
+  const d=NW[curP];
+  nwSent.innerHTML=curP+(pick?`<em>${pick}</em>${d.next[pick]}`:'<span style="color:#aaa">＿＿</span>');
+  nwBars.innerHTML='';
+  d[temp].forEach(([w,p])=>{
+    const r=document.createElement('div');r.className='bar';
+    r.innerHTML=`<span class="w">${w}</span><span class="t"><i style="width:0"></i></span><span class="p">${p}%</span>`;
+    r.onclick=()=>drawNW(w);nwBars.appendChild(r);
+    requestAnimationFrame(()=>r.querySelector('i').style.width=p*1.6+'%');
+  });
+}
+drawNW();
+
+/* ---------- history ---------- */
+const ERAS=[
+  {id:'pre',name:'はじまり前',c:'#8a8f98'},
+  {id:'b1',name:'第1次ブーム',c:'#3b82c4'},
+  {id:'b2',name:'第2次ブーム',c:'#2f9e6a'},
+  {id:'b3',name:'第3次ブーム',c:'#e8a33d'},
+  {id:'gen',name:'生成AI時代',c:'#d0573d'}
+];
+const EV=[
+  ['pre','1943','人工ニューロンの数式','マカロックとピッツが、脳の神経細胞を計算のしくみとして表すモデルを発表。ニューラルネットの原点。'],
+  ['pre','1950','チューリング・テスト','アラン・チューリングが「機械は考えられるか？」を問い、会話で人間と区別できるかを試す方法を提案。',1],
+  ['b1','1956','「人工知能」誕生（ダートマス会議）','ジョン・マッカーシーらが研究会を開き、「Artificial Intelligence」という言葉が生まれる。AIの誕生年とされる。',1],
+  ['b1','1958','パーセプトロン','ローゼンブラットが学習する人工ニューロンを発表。「機械が学ぶ」ことが注目される。'],
+  ['b1','1966','ELIZA（イライザ）','カウンセラーのふりをして会話するプログラム。単純なルールなのに、人は本気で話しかけた。'],
+  ['winter','1970年代','❄️ 第1次AIの冬','パズルは解けても現実の問題は解けず、期待がしぼんで研究費が大幅カット。'],
+  ['b2','1980年代','エキスパートシステム','専門家の知識をルールとして詰めこみ、医療診断などに利用。企業が次々導入。日本も「第五世代コンピュータ」計画（1982〜）を進めた。',1],
+  ['b2','1986','誤差逆伝播法が広まる','ラメルハートやヒントンらが、多層ニューラルネットを効率よく学習させる方法を広める。今のディープラーニングの土台。'],
+  ['winter','1990年代前半','❄️ 第2次AIの冬','ルールを書く手間が膨大で、例外に弱いことが判明。ブームが去る。'],
+  ['b2','1997','ディープ・ブルーがチェス王者に勝利','IBMのコンピュータが世界チャンピオンのカスパロフに勝つ。'],
+  ['b3','2006','ディープラーニングの再出発','ヒントンらが深いネットワークをうまく学習させる手法を発表し、研究が再び盛り上がる。'],
+  ['b3','2012','画像認識でディープラーニングが圧勝','画像認識コンテストでAlexNetが2位に大差をつけて優勝。GPUとビッグデータの時代へ。同年、Googleの「猫を見つけたAI」も話題に。',1],
+  ['b3','2016','AlphaGoが囲碁で勝利','Google DeepMindのAlphaGoが、トップ棋士イ・セドルに4勝1敗。「囲碁は当分無理」の予想をくつがえした。',1],
+  ['b3','2017','トランスフォーマー登場','論文「Attention Is All You Need」が発表。のちのGPT・Claude・Geminiなどすべての土台に。',1],
+  ['b3','2018〜2020','GPTとBERT、大規模化の時代','OpenAIのGPT、GoogleのBERTが登場。モデルを大きくするほど賢くなる「スケーリング則」が見えてくる。GPT-3（2020）は文章生成で世界を驚かせた。'],
+  ['gen','2020','AlphaFold2','タンパク質の立体構造を高精度で予測。のちに2024年のノーベル化学賞につながる。'],
+  ['gen','2022','画像生成AIのブーム','Midjourney、Stable Diffusionなどで、言葉から絵を描けるように。'],
+  ['gen','2022.11','ChatGPT公開','公開から2か月で利用者1億人とも言われ、生成AIが一気に一般に広まる。',1],
+  ['gen','2023','GPT-4・Claude・Geminiが続々','高性能なLLMが各社から登場。AIの安全性をめぐる国際会議（英国AI安全サミット）も開かれる。Anthropicは2023年3月にClaudeを公開。'],
+  ['gen','2024','ノーベル賞とAI','物理学賞にホップフィールドとヒントン（ニューラルネットの基礎）、化学賞にAlphaFoldのハサビスとジャンパーら。EUではAI法が成立。',1],
+  ['gen','2024〜2025','「考える」AIとエージェント','答える前にじっくり推論するモデルが登場。AIがパソコン操作やプログラミングを自分で進める「エージェント」が実用化へ。'],
+  ['gen','2026','エージェントが当たり前に','各社が数週間おきに新モデルを出す時代に。6月にはAnthropicがClaude Fable 5 / Mythos 5を、9月にClaude Opus 5.5を公開。「AGIはもう近い？」の議論がさらに活発に。',1]
+];
+const ef=document.getElementById('eraFilter'),tl=document.getElementById('timeline');
+let curEra='all';
+[{id:'all',name:'ぜんぶ'}].concat(ERAS).forEach(e=>{const b=document.createElement('button');b.className='chip'+(e.id==='all'?' on':'');b.textContent=e.name;b.onclick=()=>{curEra=e.id;ef.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));drawTL()};ef.appendChild(b)});
+function drawTL(){
+  tl.innerHTML='';
+  let lastEra=null,box=null;
+  EV.forEach(([era,y,t,d,star])=>{
+    const isW=era==='winter';
+    const owner=isW?(lastEra||'b1'):era;
+    if(curEra!=='all'&&curEra!==owner) return;
+    if(!isW&&era!==lastEra){
+      const e=ERAS.find(x=>x.id===era);
+      const h=document.createElement('div');h.className='era-head';h.innerHTML=`<span class="dot" style="background:${e.c}"></span>${e.name}`;
+      tl.appendChild(h);box=document.createElement('div');box.className='tl';tl.appendChild(box);lastEra=era;
+    }
+    if(!box){box=document.createElement('div');box.className='tl';tl.appendChild(box)}
+    const el=document.createElement('div');
+    if(isW){el.className='winter';el.innerHTML=`<b>${y}　${t}</b><br>${d}`;}
+    else{const c=ERAS.find(x=>x.id===era).c;el.className='ev'+(star?' star':'');el.style.setProperty('--c',c);el.innerHTML=`<div class="y">${y}${star?' ⭐':''}</div><h4>${t}</h4><p>${d}</p>`;}
+    box.appendChild(el);
+  });
+}
+drawTL();
+
+/* ---------- glossary ---------- */
+const TERMS=[
+  ['AI','えーあい','人工知能。人間の知的な働き（考える・覚える・判断する）をコンピュータで実現する技術の総称。'],
+  ['AGI','えーじーあい','汎用人工知能。人間ができる知的な仕事をほぼ何でもこなせるAI。まだ実現していないとされる。'],
+  ['ASI','えーえすあい','人工超知能。あらゆる分野で人間をはるかにこえる知能。未来の仮説。'],
+  ['特化型AI（ANI）','とっかがた','特定の仕事だけが得意なAI。今あるAIはここに分類される。'],
+  ['シンギュラリティ','技術的特異点','AIが自分より賢いAIを作り続け、人間に予測できない変化が起きる時点。カーツワイルは2045年と予想した。'],
+  ['機械学習','きかいがくしゅう','データからパターンを自動で見つけて学ぶ方法。'],
+  ['ディープラーニング','しんそうがくしゅう','層を深く重ねたニューラルネットワークで学ぶ機械学習。'],
+  ['ニューラルネットワーク','','脳の神経細胞をまねた計算のしくみ。たくさんの「重み」で動く。'],
+  ['パラメータ（重み）','','AIの中にある調整用の数字。学習でこれを少しずつ直していく。'],
+  ['学習と推論','がくしゅう・すいろん','学習＝AIを鍛えること。推論＝鍛えたAIを使って答えを出すこと。'],
+  ['トランスフォーマー','','2017年に登場した、言葉どうしの関係に「注目」するしくみ。今の生成AIの土台。'],
+  ['アテンション','ちゅうい','文の中でどこに注目すべきかを計算するしくみ。トランスフォーマーの心臓部。'],
+  ['LLM','大規模言語モデル','大量の文章で学んだ巨大な言語AI。ChatGPT、Claude、Geminiなど。'],
+  ['生成AI','せいせいえーあい','文章・画像・音楽・動画などを新しく作り出すAI。'],
+  ['トークン','','AIが文章を扱うときの最小単位。日本語ならだいたい1〜数文字。'],
+  ['プロンプト','','AIへの指示文や質問のこと。'],
+  ['コンテキストウィンドウ','','AIが一度に覚えておける文章の長さ。'],
+  ['ハルシネーション','げんかく','AIがもっともらしいウソをつくこと。'],
+  ['RLHF','人間のフィードバックによる強化学習','人の評価を使って、AIの答え方を良くする方法。'],
+  ['強化学習','きょうかがくしゅう','試してみて、報酬が多くなる行動を覚える学び方。AlphaGoでも使われた。'],
+  ['マルチモーダル','','文字だけでなく画像・音声・動画などもまとめて扱えること。'],
+  ['AIエージェント','','道具を使いながら、目標に向けて何手も自分で進めるAI。'],
+  ['推論モデル','リーズニング','答える前に、頭の中で段階的に考えてから答えるタイプのAI。'],
+  ['アラインメント','','AIの目標や行動を、人間の意図や価値観に合わせること。安全性研究の中心テーマ。'],
+  ['スケーリング則','','データ・計算量・モデルの大きさを増やすほど、性能が予測どおりに上がるという法則。'],
+  ['GPU','じーぴーゆー','もとは画像処理用の半導体。大量の計算を同時にこなせるので、AIの学習に欠かせない。'],
+  ['オープンウェイト','','AIの重み（中身）を公開し、誰でもダウンロードして使えるモデル。'],
+  ['チューリング・テスト','','会話して、相手が人間か機械か見分けられなければ「知能がある」とみなす試験。'],
+  ['AIの冬','','期待はずれで研究費や関心が大きく減った時期。1970年代と1990年代前半の2回。']
+];
+const qi=document.getElementById('q'),tm=document.getElementById('terms');
+function drawTerms(){
+  const s=qi.value.trim().toLowerCase();
+  const list=TERMS.filter(t=>!s||t.join(' ').toLowerCase().includes(s));
+  tm.innerHTML=list.length?list.map(([w,k,d])=>`<div class="term"><b>${w}</b>${k?`<span class="kana">${k}</span>`:''}<p>${d}</p></div>`).join(''):'<p class="muted">見つかりませんでした</p>';
+}
+qi.oninput=drawTerms;drawTerms();
+
+/* ---------- quiz ---------- */
+const QZ=[
+  ['いま世の中に実在しているのはどれ？',['特化型AI','AGI','ASI'],0,'今あるAIはすべて特化型AI（ANI）に分類されます。AGIとASIはまだ実現していないとされます。'],
+  ['「人工知能（AI）」という言葉が生まれたのは？',['1946年','1956年','1986年'],1,'1956年のダートマス会議で、ジョン・マッカーシーらが使い始めました。'],
+  ['ChatGPTやClaudeがやっていることの根っこは？',['インターネットを毎回全部読む','次に来る言葉を確率で予想する','人間がすべての答えを書いておく'],1,'大規模言語モデルは「次の言葉当て」をくり返して文章を作ります。'],
+  ['今の生成AIの土台になった、2017年発表のしくみは？',['トランスフォーマー','パーセプトロン','エキスパートシステム'],0,'論文「Attention Is All You Need」で発表されたトランスフォーマーです。'],
+  ['AIの研究費や関心が大きく減った時期を何と呼ぶ？',['AIの夏休み','AIの冬','AIの氷河期'],1,'「AIの冬」。1970年代と1990年代前半の2回ありました。'],
+  ['2016年、囲碁でトップ棋士に勝ったAIは？',['ディープ・ブルー','AlphaGo','ELIZA'],1,'Google DeepMindのAlphaGoがイ・セドルに4勝1敗。ディープ・ブルーはチェスです。'],
+  ['AIがもっともらしいウソを言うことを何と呼ぶ？',['ハルシネーション','シンギュラリティ','アラインメント'],0,'ハルシネーション（幻覚）。大事な情報は確認するのが大切です。'],
+  ['ASIとは？',['人間なみの汎用AI','人間をはるかにこえる超知能','音声専用のAI'],1,'Artificial Super Intelligence＝人工超知能。今のところ未来の仮説です。']
+];
+let qn=0,score=0;
+const qz=document.getElementById('quiz');
+function drawQ(){
+  if(qn>=QZ.length){
+    const msg=score===QZ.length?'🎉 満点！ AIはかせです':score>=6?'👏 よくできました！':'📚 「しくみ」と「れきし」を読んでもう一度！';
+    qz.innerHTML=`<p class="big-q" style="text-align:center;font-size:22px">${score} / ${QZ.length} 問正解</p><p style="text-align:center">${msg}</p><div style="text-align:center"><button class="btn" id="qr">もう一度</button></div>`;
+    document.getElementById('qr').onclick=()=>{qn=0;score=0;drawQ()};return;
+  }
+  const [q,opts,ans,ex]=QZ[qn];
+  qz.innerHTML=`<div class="muted">第${qn+1}問 / ${QZ.length}</div><div class="qprog"><i style="width:${qn/QZ.length*100}%"></i></div><p class="big-q">${q}</p>${opts.map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}<div id="qx"></div>`;
+  qz.querySelectorAll('.qopt').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    qz.querySelectorAll('.qopt').forEach(x=>{x.disabled=true;if(+x.dataset.i===ans)x.classList.add('right')});
+    if(i===ans)score++;else b.classList.add('wrong');
+    document.getElementById('qx').innerHTML=`<div class="expl">${i===ans?'⭕ 正解！':'❌ ざんねん'}　${ex}</div><button class="btn" id="qnext">${qn+1<QZ.length?'次へ →':'結果を見る'}</button>`;
+    document.getElementById('qnext').onclick=()=>{qn++;drawQ()};
+  });
+}
+drawQ();
+</script>
+</body>
+</html>
