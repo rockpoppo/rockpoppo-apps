@@ -32,7 +32,7 @@ GitHubへのアップロード（push）やGitHub Pagesでの公開をする前�
 ## このリポジトリ（rockpoppo-apps）の決まり
 - アプリは1つにつき1フォルダ（例：tsuki-goyomi/index.html）。フォルダ名はローマ字の小文字とハイフン。
 - 各アプリのフォルダには、iPhone幅で撮った thumb.png（スクリーンショット）を入れる。
-- 新しいアプリを公開したら、apps.js の先頭に1件追加する（title / date / ask＝私がお願いした一言 / point＝工夫したところ / tags）。
+- 新しいアプリを公開したら、apps.js の先頭に1件追加する（title / copy＝ひとことキャッチコピー15字前後、「、」で2行に分かれる形 / date / ask＝私がお願いした一言、複数あるときは／で区切る / point＝工夫したところ / tags）。
 - 各アプリの左上か右上に「← アプリ一覧」（../ へのリンク）を入れる。
 - 各アプリにはホーム画面用の設定を入れる：アプリらしいアイコン（icon-180.png / icon-192.png / icon-512.png）、manifest.webmanifest（display: standalone）、apple-touch-icon と apple-mobile-web-app-capable などのmetaタグ。
 - アプリの元は、Claudeの中のアーティファクト（自分用の版）。GitHub版で中身を直したら、元のアーティファクトにも同じ修正を反映する（「← アプリ一覧」やホーム画面用の設定など、GitHub用の部分は元の版には入れない）。
