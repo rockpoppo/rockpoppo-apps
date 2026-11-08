@@ -16,6 +16,10 @@
 <meta name="description" content="プログラミングが本業ではない会社員が、Claude Opusにお願いして作ったWebアプリを並べています。">
 <meta property="og:title" content="Rockpoppo Lab ｜ Claudeでつくったアプリ">
 <meta property="og:description" content="Claude Opusにお願いして作ったWebアプリを、ここで毎日ふやしていきます。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rockpoppo.github.io/rockpoppo-apps/">
+<meta property="og:image" content="https://rockpoppo.github.io/rockpoppo-apps/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&display=swap">
@@ -28,6 +32,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
+#filter-top{scroll-margin-top:0}
 html,body{margin:0;background:var(--paper);color:var(--ink)}
 body{font-family:var(--body);font-size:15px;line-height:1.7;
   padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
@@ -70,10 +75,11 @@ h1 em{font-style:normal;background:linear-gradient(transparent 62%,#f7c9b4 62%)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column}
 .card[hidden]{display:none}
 .stage{position:relative;background:var(--tint);padding:20px 18px 0;display:grid;grid-template-columns:1fr 40%;gap:12px;align-items:end;min-height:230px}
-.copy{align-self:center;font-family:var(--round);font-weight:700;font-size:clamp(20px,5.4vw,25px);line-height:1.45;margin:0 0 20px}
-.copy span{display:block}
+.copy{align-self:center;min-width:0;font-family:var(--round);font-weight:700;font-size:clamp(20px,5.4vw,25px);line-height:1.45;margin:0 0 20px}
+.copy span{display:block;white-space:nowrap}
 .badge{position:absolute;top:14px;left:18px;font-size:11px;font-weight:700;letter-spacing:.1em;background:var(--ink);color:#fff;border-radius:999px;padding:1px 10px}
-.phone{display:block;justify-self:end;width:100%;max-width:150px;aspect-ratio:780/1180;border:5px solid #2b2622;border-bottom:0;border-radius:22px 22px 0 0;background:#fff top center/cover no-repeat;box-shadow:0 -2px 18px rgba(60,40,20,.14)}
+.phone{display:block;justify-self:end;width:100%;max-width:150px;aspect-ratio:780/1180;border:5px solid #2b2622;border-bottom:0;border-radius:22px 22px 0 0;background:#fff;overflow:hidden;box-shadow:0 -2px 18px rgba(60,40,20,.14)}
+.phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
 .body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
 .head{display:flex;gap:10px;align-items:center}
 .head img{width:38px;height:38px;border-radius:9px;flex:0 0 auto}
@@ -115,6 +121,7 @@ footer a{color:var(--mute)}
   <div class="shelf-h"><h2>アプリ一覧</h2><span>横にスクロール →</span></div>
   <ul class="shelf" id="shelf"></ul>
 
+  <div id="filter-top"></div>
   <div class="bar"><div class="chips" id="chips" role="group" aria-label="ジャンルでしぼりこむ"></div></div>
 
   <ul class="list" id="list"></ul>
@@ -149,7 +156,7 @@ footer a{color:var(--mute)}
       <div class="stage">
         ${a.date===newest?'<span class="badge">NEW</span>':''}
         <p class="copy">${String(a.copy||a.title).split(/(?<=、)/).map(t=>`<span>${esc(t)}</span>`).join("")}</p>
-        <a class="phone" href="${esc(a.path)}/" style="background-image:url('${esc(a.path)}/thumb.png')" aria-label="${esc(a.title)}を開く"></a>
+        <a class="phone" href="${esc(a.path)}/" aria-label="${esc(a.title)}を開く"><img src="${esc(a.path)}/thumb.png" alt="" loading="lazy" decoding="async"></a>
       </div>
       <div class="body">
         <div class="head">
@@ -173,6 +180,15 @@ footer a{color:var(--mute)}
     b.setAttribute("aria-expanded",open); b.textContent=open?"とじる":"くわしく";
   });
 
+  // キャッチコピーが枠からはみ出さないよう、文字の大きさを合わせる
+  const fit=()=>document.querySelectorAll(".copy").forEach(c=>{
+    c.style.fontSize="";
+    let size=parseFloat(getComputedStyle(c).fontSize);
+    while(size>13&&[...c.children].some(sp=>sp.scrollWidth>c.clientWidth+1)){size-=1;c.style.fontSize=size+"px";}
+  });
+  fit(); addEventListener("resize",fit);
+  document.fonts&&document.fonts.ready.then(fit);
+
   // ジャンルでしぼりこみ（2作品以上あるタグだけ）
   const counts={};
   apps.forEach(a=>(a.tags||[]).forEach(t=>{if(t!=="AIなし")counts[t]=(counts[t]||0)+1}));
@@ -190,6 +206,8 @@ footer a{color:var(--mute)}
       card.querySelector(".next").style.display=t?"none":"";
     });
     document.getElementById("empty").hidden=shown>0;
+    const top=document.getElementById("list").getBoundingClientRect().top;
+    if(top<0) document.getElementById("filter-top").scrollIntoView({block:"start"});
   });
 })();
 </script>
