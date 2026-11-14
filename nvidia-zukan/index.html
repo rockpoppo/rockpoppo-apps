@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>はじめてのNVIDIA図鑑</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NVIDIA図鑑">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#0d0f0c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0c; --card:#171a15; --card2:#1e221b; --line:#2c3228;
+  --green:#76b900; --green2:#a3e635; --text:#eef2ea; --sub:#a8b1a0; --warn:#f59e0b; --red:#f87171; --blue:#60a5fa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:"M PLUS Rounded 1c",system-ui,sans-serif;line-height:1.7;-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+header{position:relative;padding:22px 18px 14px;background:radial-gradient(120% 140% at 0% 0%,#22300f 0%,var(--bg) 60%);border-bottom:1px solid var(--line)}
+header .kicker{font-size:12px;color:var(--green2);letter-spacing:.12em;font-weight:700}
+header h1{font-size:26px;font-weight:800;line-height:1.3;margin-top:4px}
+header h1 span{color:var(--green)}
+header p{font-size:13px;color:var(--sub);margin-top:6px}
+main{max-width:720px;margin:0 auto;padding:16px 14px 24px}
+section.view{display:none;animation:fade .25s ease}
+section.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h2{font-size:20px;font-weight:800;margin:6px 0 10px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:6px;height:22px;background:var(--green);border-radius:3px}
+h3{font-size:16px;font-weight:800;margin:4px 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.lead{font-size:14px;color:var(--sub);margin-bottom:12px}
+.big{font-size:30px;font-weight:800;color:var(--green2);line-height:1.2}
+.small{font-size:12px;color:var(--sub)}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#26331a;color:var(--green2);margin-right:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card2);border-radius:12px;padding:10px}
+.stat .n{font-size:20px;font-weight:800;color:var(--green2)}
+.stat .l{font-size:11px;color:var(--sub)}
+/* timeline */
+.era-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;scrollbar-width:none}
+.era-tabs button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700}
+.era-tabs button.on{background:var(--green);color:#0d0f0c;border-color:var(--green)}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.ev{position:relative;margin-bottom:12px}
+.ev::before{content:"";position:absolute;left:-20px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:3px solid var(--green)}
+.ev.bad::before{border-color:var(--red)}
+.ev .y{font-size:13px;font-weight:800;color:var(--green2)}
+.ev.bad .y{color:var(--red)}
+.ev .t{font-weight:800;font-size:15px}
+.ev .d{font-size:13px;color:var(--sub);margin-top:2px}
+.ev .card{margin-bottom:0}
+/* person */
+.profile{display:flex;gap:14px;align-items:center}
+.avatar{width:76px;height:76px;flex:0 0 76px;border-radius:50%;background:linear-gradient(160deg,#2a2f26,#111);display:grid;place-items:center;border:2px solid var(--green)}
+.facts{list-style:none}
+.facts li{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.facts li:last-child{border:none}
+.facts b{flex:0 0 74px;color:var(--green2);font-size:12px;padding-top:2px}
+.story{display:flex;gap:10px;margin-bottom:10px}
+.story .age{flex:0 0 52px;font-weight:800;color:var(--green2);font-size:13px;text-align:center;background:var(--card2);border-radius:10px;padding:6px 0;height:fit-content}
+.story .age small{display:block;font-size:10px;color:var(--sub);font-weight:400}
+.flip{cursor:pointer}
+.flip .ans{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14px}
+.flip.open .ans{display:block}
+.flip .q{font-weight:800;display:flex;justify-content:space-between;gap:8px}
+.flip .q::after{content:"＋";color:var(--green)}
+.flip.open .q::after{content:"－"}
+/* chart */
+.seg{display:inline-flex;background:var(--card2);border-radius:99px;padding:3px;gap:2px}
+.seg button{border:none;background:none;color:var(--sub);font:inherit;font-size:12px;font-weight:700;padding:5px 12px;border-radius:99px}
+.seg button.on{background:var(--green);color:#0d0f0c}
+.chartwrap{position:relative;margin-top:10px}
+svg text{font-family:inherit}
+.tip{background:var(--card2);border:1px solid var(--green);border-radius:12px;padding:10px 12px;margin-top:10px;min-height:64px;font-size:13px}
+.tip b{color:var(--green2);font-size:15px}
+.calc select{width:100%;font:inherit;font-size:15px;padding:10px;border-radius:10px;background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.calc .result{margin-top:10px;font-size:14px}
+/* money */
+.bar{height:26px;border-radius:8px;display:flex;overflow:hidden;margin:8px 0}
+.bar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#0d0f0c;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+.prod{display:flex;gap:12px;align-items:flex-start}
+.prod .ic{flex:0 0 44px;height:44px;border-radius:12px;background:var(--card2);display:grid;place-items:center;font-size:22px}
+.prod .nm{font-weight:800}
+.prod .ds{font-size:13px;color:var(--sub)}
+.flow{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.flow .box{background:var(--card2);border-radius:12px;padding:10px;text-align:center;font-size:14px}
+.flow .arr{text-align:center;color:var(--green);font-size:18px;line-height:1}
+.coin{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:8px}
+.coin div{flex:1;border-radius:8px 8px 0 0;display:flex;align-items:flex-end;justify-content:center;font-size:11px;font-weight:800;padding-bottom:4px}
+.risk li{margin:0 0 8px 18px;font-size:14px}
+.risk li b{color:var(--warn)}
+.src{font-size:11px;color:var(--sub);word-break:break-all}
+.src a{color:var(--green2)}
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(13,15,12,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav button{flex:1;border:none;background:none;color:var(--sub);font:inherit;font-size:11px;font-weight:700;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .e{font-size:20px;line-height:1}
+nav button.on{color:var(--green2);background:#1c2614}
+.home{position:absolute;top:12px;right:14px;font-size:12px;font-weight:700;color:var(--green2);text-decoration:none;background:#1c2614;border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+footer{font-size:11px;color:var(--sub);text-align:center;padding:10px 0 4px}
+</style>
+</head>
+<body>
+<header>
+  <a class="home" href="../">← アプリ一覧</a>
+  <div class="kicker">NVIDIA × JENSEN HUANG</div>
+  <h1>はじめての<span>NVIDIA</span>図鑑</h1>
+  <p>ゲームの絵を描くチップの会社が、なぜ世界一級のAI企業になったのか。歴史・創業者・株価・稼ぎ方を4つのタブでざっくり。</p>
+</header>
+
+<main>
+<!-- ============ 歴史 ============ -->
+<section class="view on" id="v-history">
+  <h2>NVIDIAの歴史</h2>
+  <p class="lead">ざっくり言うと <b>「ゲーム用GPU → 何でも計算できるGPU（CUDA） → AIの心臓部」</b> と進化してきた会社です。</p>
+  <div class="card">
+    <div class="grid2">
+      <div class="stat"><div class="n">1993年</div><div class="l">創業（カリフォルニア）</div></div>
+      <div class="stat"><div class="n">2,159億ドル</div><div class="l">2026年1月期の年間売上（約32兆円）</div></div>
+      <div class="stat"><div class="n">約75%</div><div class="l">粗利益率（売値の4分の3が利益の元）</div></div>
+      <div class="stat"><div class="n">約92%</div><div class="l">売上に占めるデータセンター（AI）</div></div>
+    </div>
+    <p class="small" style="margin-top:8px">※1ドル=150円で換算。NVIDIAの決算年度は「2月〜翌1月」。</p>
+  </div>
+  <div class="era-tabs" id="eraTabs"></div>
+  <div class="tl" id="timeline"></div>
+</section>
+
+<!-- ============ ジェンスン ============ -->
+<section class="view" id="v-jensen">
+  <h2>ジェンスン・フアン</h2>
+  <div class="card">
+    <div class="profile">
+      <div class="avatar">
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="20" r="11" fill="#3a3f36"/>
+          <path d="M8 54c2-14 10-20 20-20s18 6 20 20z" fill="#0a0a0a" stroke="#76b900" stroke-width="1.5"/>
+          <path d="M28 34l-6 20M28 34l6 20" stroke="#2a2a2a" stroke-width="2"/>
+          <path d="M17 16c2-8 20-8 22 0" stroke="#d9dbd6" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="pill">創業者・CEO</div>
+        <h3 style="font-size:20px;margin-top:4px">Jensen Huang<br><span class="small">黄仁勲（ジェンスン・フアン）</span></h3>
+      </div>
+    </div>
+    <ul class="facts" style="margin-top:10px">
+      <li><b>生まれ</b><span>1963年2月17日、台湾・台南</span></li>
+      <li><b>学歴</b><span>オレゴン州立大学（電気工学）→ スタンフォード大学 修士</span></li>
+      <li><b>前職</b><span>AMD（チップ設計）、LSIロジック</span></li>
+      <li><b>トレードマーク</b><span>黒の革ジャン。発表会はいつもこの姿</span></li>
+      <li><b>CEO歴</b><span>30歳で創業してから30年以上ずっとCEO（テック業界でも異例の長さ）</span></li>
+    </ul>
+  </div>
+
+  <h3>人生のあゆみ</h3>
+  <div class="card">
+    <div class="story"><div class="age">9歳<small>1972頃</small></div><div><b>アメリカへ</b><br><span class="small">兄と一緒に親戚を頼って渡米。ケンタッキー州の全寮制の学校に入り、トイレ掃除の当番もしていたと本人が語っています。</span></div></div>
+    <div class="story"><div class="age">15歳<small>1978頃</small></div><div><b>デニーズでアルバイト</b><br><span class="small">皿洗い・給仕を経験。「どんな仕事も大切」という考えの原点だと何度も話しています。卓球も全米ジュニアで上位の腕前でした。</span></div></div>
+    <div class="story"><div class="age">21歳<small>1984</small></div><div><b>大学卒業 → 半導体の世界へ</b><br><span class="small">大学で将来の妻と出会う。AMDやLSIロジックでチップ設計を学びました。</span></div></div>
+    <div class="story"><div class="age">30歳<small>1993</small></div><div><b>デニーズで起業の相談</b><br><span class="small">仲間のクリス・マラコウスキー、カーティス・プリエムとデニーズの席で「パソコンで3Dの絵を描く専用チップ」の会社を構想。NVIDIA誕生。</span></div></div>
+    <div class="story"><div class="age">43歳<small>2006</small></div><div><b>CUDAに大きく賭ける</b><br><span class="small">「GPUを絵以外の計算にも使えるようにする」CUDAを発表。何年も儲からず株主に疑問視されても続けたことが、のちのAIブームで大当たり。</span></div></div>
+    <div class="story"><div class="age">60歳〜<small>2023〜</small></div><div><b>AI時代の顔に</b><br><span class="small">ChatGPT以降、AIに欠かせないGPUの会社として世界中の注目の的に。台湾では「ジェンスン・フィーバー」と呼ばれるほどの人気者です。</span></div></div>
+  </div>
+
+  <h3>ジェンスン流の考え方（タップで開く）</h3>
+  <div class="card flip"><div class="q">「うちは倒産まであと30日」</div><div class="ans">会社が絶好調のときでも、社員にこう言い続けてきたことで有名。油断せず、いつも危機感を持つための口ぐせです。実際1990年代には本当に倒産寸前でした。</div></div>
+  <div class="card flip"><div class="q">部下が約60人、1対1の面談なし</div><div class="ans">中間管理職を減らしたフラットな組織。個別面談の代わりに、全員の前で情報を共有するスタイル。社員は「今いちばん大事な5つのこと（Top 5 Things）」をメールで報告する文化があります。</div></div>
+  <div class="card flip"><div class="q">「苦しみが人を強くする」</div><div class="ans">学生向けの講演で「みなさんに苦労がたくさんありますように」と話して話題に。挫折や苦労が粘り強さを育てる、という考えです。</div></div>
+  <div class="card flip"><div class="q">10年先の市場をつくる</div><div class="ans">CUDAのように「まだ存在しない市場」に長く投資するのが特徴。いまはロボット・自動運転などの「フィジカルAI」にも力を入れています。</div></div>
+  <div class="card flip"><div class="q">ちょっとした豆知識</div><div class="ans">・NVIDIAの株価が100ドルを超えたら会社ロゴのタトゥーを入れると約束し、本当に腕に入れた。<br>・AMDのCEOリサ・スーとは遠い親戚だと報じられている。<br>・2016年、最初のAIスーパーコンピュータ「DGX-1」を自らOpenAIに届けた。</div></div>
+</section>
+
+<!-- ============ 株価 ============ -->
+<section class="view" id="v-stock">
+  <h2>株価の推移</h2>
+  <p class="lead">株式分割を調整した1株あたりの株価（米ドル・概算）。<b>点をタップ</b>するとその年の出来事が出ます。</p>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <div class="seg" id="scaleSeg"><button data-s="log" class="on">倍率で見る（対数）</button><button data-s="lin">そのまま</button></div>
+    </div>
+    <div class="chartwrap"><svg id="stockChart" viewBox="0 0 360 230" width="100%"></svg></div>
+    <div class="tip" id="stockTip"><b>点をタップしてね</b><br><span class="small">「対数」は、0.1→1ドルと10→100ドルを同じ高さで表示します。小さかった頃の動きも見やすくなります。</span></div>
+  </div>
+
+  <div class="card">
+    <h3>直近の動き（2026年）</h3>
+    <div class="grid2">
+      <div class="stat"><div class="n">$239.24</div><div class="l">終値の最高値（10月6日）</div></div>
+      <div class="stat"><div class="n" style="color:var(--red)">$168.89</div><div class="l">11月10日終値（最高値から約−29%）</div></div>
+    </div>
+    <p class="small" style="margin-top:8px">11月上旬、中間選挙後の規制懸念やインフレ指標をきっかけに半導体株が売られ、2026年の上昇分がいったん消えました。<b>次の決算発表は11月17日（米国時間）</b>、日本では18日の朝です。</p>
+  </div>
+
+  <div class="card calc">
+    <h3>もし10万円分買っていたら？</h3>
+    <p class="small" style="margin-bottom:8px">円安・円高や配当、税金は考えない、ざっくり計算です（2026年11月10日終値で計算）。</p>
+    <select id="buyYear"></select>
+    <div class="result" id="calcResult"></div>
+  </div>
+
+  <div class="card">
+    <h3>株式分割の歴史</h3>
+    <p class="small">株価が高くなると、1株を何株かに分けて買いやすくします。1999年の上場時の1株は、いまの<b>480株</b>分にあたります。</p>
+    <div class="legend" style="margin-top:8px">
+      <span>2000年 2分割</span><span>2001年 2分割</span><span>2006年 2分割</span><span>2007年 1.5分割</span><span>2021年 4分割</span><span>2024年 10分割</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 稼ぎ方 ============ -->
+<section class="view" id="v-money">
+  <h2>何で稼いでいる？</h2>
+  <p class="lead">一言でいうと <b>「AIを動かす工場（データセンター）に、GPUを中心とした“計算機一式”を売っている会社」</b>。ゴールドラッシュでつるはしを売る商売にたとえられます。</p>
+
+  <div class="card">
+    <h3>売上の内訳（2026年5〜7月の3か月）</h3>
+    <div class="big">962億ドル <span class="small">（約14.4兆円・前年の約2倍）</span></div>
+    <div class="bar">
+      <div style="width:50.6%;background:var(--green)">大手クラウド</div>
+      <div style="width:41.9%;background:var(--green2)">AIクラウド等</div>
+      <div style="width:7.5%;background:var(--blue)"></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--green)"></i>ハイパースケール 487億ドル</span>
+      <span><i style="background:var(--green2)"></i>ACIE 403億ドル</span>
+      <span><i style="background:var(--blue)"></i>エッジ 72億ドル</span>
+    </div>
+    <p class="small" style="margin-top:8px">2026年度から区分が「データセンター」と「エッジコンピューティング」の2つに変わりました。データセンター（緑2色）だけで<b>890億ドル＝92.5%</b>。</p>
+  </div>
+
+  <div class="card flip"><div class="q">ハイパースケールって誰？</div><div class="ans">Microsoft、Amazon（AWS）、Google、Meta、Oracleのような巨大クラウド・ネット企業。データセンター売上の約半分。</div></div>
+  <div class="card flip"><div class="q">ACIEって誰？</div><div class="ans">AI Clouds, Industrial, Enterprise の略。CoreWeaveのようなAI専門クラウド（ネオクラウド）、OpenAIやAnthropicなどのAI開発会社、国家のAI計画（ソブリンAI）、一般企業・工場など。いちばん伸びている（前年比+138%）お客さんです。</div></div>
+  <div class="card flip"><div class="q">エッジって何？</div><div class="ans">データセンターの外、手元の機械で動くもの。ゲーム用GPU「GeForce」、仕事用PCの「RTX」、自動運転の「DRIVE」、ロボット向け「Jetson」など。昔の主役だったゲームは、今では全体の1割未満です。</div></div>
+
+  <h3>売っているもの</h3>
+  <div class="card">
+    <div class="prod"><div class="ic">🧠</div><div><div class="nm">GPU（AI用チップ）</div><div class="ds">Hopper（H100）→ Blackwell（B200/B300）→ 次世代 Vera Rubin と、ほぼ毎年新世代。1枚数百万円以上。売上の柱。</div></div></div>
+  </div>
+  <div class="card">
+    <div class="prod"><div class="ic">🗄️</div><div><div class="nm">ラックまるごとのシステム</div><div class="ds">GPU72個をつないだ「GB300 NVL72」のように、冷蔵庫サイズの棚ごと売る。チップ単体より高額。</div></div></div>
+  </div>
+  <div class="card">
+    <div class="prod"><div class="ic">🔗</div><div><div class="nm">ネットワーク機器</div><div class="ds">何万個ものGPUを高速でつなぐNVLink・InfiniBand・Spectrum-X。2020年のメラノックス買収が土台。データセンター売上の約2割まで成長。</div></div></div>
+  </div>
+  <div class="card">
+    <div class="prod"><div class="ic">⚙️</div><div><div class="nm">CPU（Grace / Vera）</div><div class="ds">GPUの相棒になるCPUも自社開発。2028年度にCPU売上は2倍以上になる見込みと会社は説明。</div></div></div>
+  </div>
+  <div class="card">
+    <div class="prod"><div class="ic">💾</div><div><div class="nm">ソフトウェア（CUDA など）</div><div class="ds">CUDA自体は無料。でも世界中のAI開発者がCUDA前提で作っているので、他社チップに乗り換えにくい。これが最大の「堀（モート）」。企業向けAIソフトはサブスクで販売。</div></div></div>
+  </div>
+  <div class="card">
+    <div class="prod"><div class="ic">🎮</div><div><div class="nm">GeForce・ゲーム機向け</div><div class="ds">PCゲーム用グラボ、Nintendo Switchのチップなど。創業以来の事業。</div></div></div>
+  </div>
+
+  <h3>お金の流れ</h3>
+  <div class="card">
+    <div class="flow">
+      <div class="box">わたしたちがAI（ChatGPT・Claude・Geminiなど）を使う</div>
+      <div class="arr">▼</div>
+      <div class="box">AI企業・クラウド会社が計算能力を必要とする</div>
+      <div class="arr">▼</div>
+      <div class="box">データセンターを建てて<b>NVIDIAのGPUとネットワーク</b>を大量に買う</div>
+      <div class="arr">▼</div>
+      <div class="box" style="border:1px solid var(--green)">NVIDIAの売上に（製造は台湾TSMCに委託＝工場を持たない「ファブレス」）</div>
+    </div>
+  </div>
+
+  <h3>なぜこんなに儲かる？</h3>
+  <div class="card">
+    <p style="font-size:14px">100ドルで売ったときのイメージ（2026年5〜7月）</p>
+    <div class="coin">
+      <div style="height:25%;background:#3a3f36;color:var(--text)">原価<br>25</div>
+      <div style="height:100%;background:var(--green);color:#0d0f0c">売上<br>100</div>
+      <div style="height:62%;background:var(--green2);color:#0d0f0c">純利益<br>約62</div>
+    </div>
+    <p class="small" style="margin-top:10px">粗利益率75%、純利益は3か月で597億ドル。ふつうのメーカーの純利益率は1割前後なので、桁違いです。</p>
+    <ul class="risk" style="margin-top:10px;list-style:none;padding:0">
+      <li style="margin-left:0">✅ 性能トップで、代わりがほぼない</li>
+      <li style="margin-left:0">✅ CUDAで開発者を囲い込んでいる</li>
+      <li style="margin-left:0">✅ チップ・ネット・ソフトまで一式で売れる</li>
+      <li style="margin-left:0">✅ 需要が供給を上回り、値引きしなくても売れる</li>
+    </ul>
+  </div>
+
+  <h3>気をつけたいリスク</h3>
+  <div class="card">
+    <ul class="risk">
+      <li><b>中国</b>：米国の輸出規制で、データセンター向けの中国売上は見通しに入れていない</li>
+      <li><b>お客さんの偏り</b>：大手クラウド数社で売上の約半分。GoogleのTPUなど自社チップも増加中</li>
+      <li><b>AIバブル論</b>：AI投資が減速すれば一気に売上が落ちる心配。株価が大きく揺れる原因</li>
+      <li><b>供給の制約</b>：TSMCの製造能力やメモリ価格の上昇が、売上や利益率の天井になりうる</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>これからの見通し</h3>
+    <div class="grid2">
+      <div class="stat"><div class="n">1,080億ドル</div><div class="l">8〜10月期の売上予想（11/17発表）</div></div>
+      <div class="stat"><div class="n">約+70%</div><div class="l">2028年1月期の成長見込み（会社予想）</div></div>
+    </div>
+  </div>
+
+  <p class="small" style="margin:14px 0 6px">このアプリは非公式のまとめです。投資をすすめるものではありません。</p>
+  <div class="card src">
+    <b style="color:var(--text)">出典（2026年11月14日時点）</b><br>
+    ・<a href="https://investor.nvidia.com/financial-info/financial-results/">NVIDIA 決算資料（IR）</a><br>
+    ・<a href="https://s201.q4cdn.com/141608511/files/doc_financials/2027/Q227/Q2FY27-CFO-Commentary.pdf">Q2 FY2027 CFOコメンタリー</a><br>
+    ・<a href="https://seekingalpha.com/pr/20414347">FY2026 決算発表</a><br>
+    ・<a href="https://fourweekmba.com/ai-nvidia-erases-its-2026-gains-down-29-and-1-7t-from-peak/">2026年11月の株価（Nasdaq終値より）</a><br>
+    ・過去の年末株価は分割調整後の概算値です。
+  </div>
+</section>
+<footer>はじめてのNVIDIA図鑑 ・ made by ロックポッポ</footer>
+</main>
+
+<nav id="nav">
+  <button data-v="history" class="on"><span class="e">📜</span>歴史</button>
+  <button data-v="jensen"><span class="e">🧥</span>ジェンスン</button>
+  <button data-v="stock"><span class="e">📈</span>株価</button>
+  <button data-v="money"><span class="e">💰</span>稼ぎ方</button>
+</nav>
+
+<script>
+// ---------- 歴史 ----------
+const ERAS = [
+ {id:"all",name:"ぜんぶ"},
+ {id:"birth",name:"誕生 1993〜"},
+ {id:"cuda",name:"CUDA 2006〜"},
+ {id:"ai",name:"AI 2012〜"},
+ {id:"boom",name:"大ブーム 2022〜"}
+];
+const EVENTS = [
+ {era:"birth",y:"1993年4月",t:"3人でNVIDIA創業",d:"ジェンスン・フアン、クリス・マラコウスキー、カーティス・プリエムがデニーズで構想。パソコンで3Dグラフィックスを描く専用チップを目指す。"},
+ {era:"birth",y:"1995年",t:"最初の製品NV1が大苦戦",d:"業界標準とずれた設計で売れず、倒産寸前に。セガとの契約もうまくいかなかった。",bad:true},
+ {era:"birth",y:"1997年",t:"RIVA 128が大ヒット",d:"発売4か月で100万個を売り、会社が生き残る。「あと30日で倒産」の危機感はこの頃から。"},
+ {era:"birth",y:"1999年",t:"上場 & 「世界初のGPU」GeForce 256",d:"1月にナスダック上場（1株12ドル）。GPU（Graphics Processing Unit）という言葉を広めた。"},
+ {era:"birth",y:"2000年",t:"初代Xboxのチップを担当、ライバル3dfxを買収",d:"ゲーム業界での地位が固まる。"},
+ {era:"cuda",y:"2006年",t:"CUDA発表",d:"GPUを絵だけでなく科学計算など「何でもできる計算機」に。当時は儲からず投資家に疑問視されたが、後にAIの土台になる。"},
+ {era:"cuda",y:"2008年",t:"リーマンショック＆不良チップ問題",d:"株価が約8割下落。苦しい時期もCUDAへの投資は続けた。",bad:true},
+ {era:"ai",y:"2012年",t:"AlexNetの衝撃",d:"トロント大学のチームがNVIDIAのゲーム用GPU 2枚で画像認識AIを学習し、圧勝。ディープラーニング＝GPUの時代が始まる。"},
+ {era:"ai",y:"2016年",t:"DGX-1をOpenAIへ",d:"AI専用スーパーコンピュータの第1号を、ジェンスン自らOpenAIに届けた。"},
+ {era:"ai",y:"2017年",t:"Nintendo Switch発売・Volta登場",d:"SwitchにNVIDIAのTegraチップ。AI計算専用回路「Tensorコア」を初搭載したV100も登場。"},
+ {era:"ai",y:"2018年",t:"仮想通貨ブームの反動",d:"マイニング需要が消え在庫が余り、株価が約半分に。",bad:true},
+ {era:"ai",y:"2020年",t:"メラノックス買収（約69億ドル）",d:"データセンター用の高速ネットワーク技術を手に入れる。今の「計算機一式」で売る戦略の土台。"},
+ {era:"ai",y:"2022年",t:"Arm買収を断念、H100発表",d:"各国の規制当局の反対でArm買収は中止。一方、AI用GPUの決定版H100（Hopper）を発表。"},
+ {era:"boom",y:"2022年11月",t:"ChatGPT登場",d:"生成AIブームが爆発。AI開発に欠かせないH100の奪い合いに。"},
+ {era:"boom",y:"2023年5月",t:"時価総額1兆ドル突破",d:"半導体企業として初。"},
+ {era:"boom",y:"2024年",t:"Blackwell発表・10分割・一時世界一",d:"6月に株式を10分割し、時価総額で一時世界一の会社に。"},
+ {era:"boom",y:"2025年",t:"時価総額4兆ドル、さらに5兆ドルへ",d:"7月に世界で初めて4兆ドル、10月に5兆ドルを突破。"},
+ {era:"boom",y:"2026年2月",t:"年間売上2,159億ドル",d:"2026年1月期の売上は前年比+65%。そのうちデータセンターが1,937億ドル。"},
+ {era:"boom",y:"2026年5〜8月",t:"配当25倍・次世代Vera Rubin",d:"四半期配当を0.01ドル→0.25ドルに増額。5〜7月の売上は962億ドルと前年の約2倍。次世代Vera Rubinの出荷も始まる。"},
+ {era:"boom",y:"2026年10〜11月",t:"株価が最高値から急落",d:"10月6日に終値の最高値239.24ドル。11月10日には168.89ドルまで下がった。11月17日に次の決算。",bad:true}
+];
+let curEra="all";
+function renderEras(){
+  const box=document.getElementById("eraTabs");
+  box.innerHTML=ERAS.map(e=>`<button data-e="${e.id}" class="${e.id===curEra?"on":""}">${e.name}</button>`).join("");
+  box.querySelectorAll("button").forEach(b=>b.onclick=()=>{curEra=b.dataset.e;renderEras();renderTL();});
+}
+function renderTL(){
+  document.getElementById("timeline").innerHTML=EVENTS.filter(e=>curEra==="all"||e.era===curEra).map(e=>
+   `<div class="ev ${e.bad?"bad":""}"><div class="card"><div class="y">${e.y}</div><div class="t">${e.t}</div><div class="d">${e.d}</div></div></div>`).join("");
+}
+renderEras();renderTL();
+
+// ---------- タブ ----------
+const views=["history","jensen","stock","money"];
+function show(v){
+  if(!views.includes(v)) v="history";
+  views.forEach(x=>document.getElementById("v-"+x).classList.toggle("on",x===v));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  window.scrollTo({top:0});
+  if(v==="stock") drawStock();
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{location.hash=b.dataset.v;});
+window.addEventListener("hashchange",()=>show(location.hash.slice(1)));
+show(location.hash.slice(1)||"history");
+
+document.querySelectorAll(".flip").forEach(c=>c.onclick=()=>c.classList.toggle("open"));
+
+// ---------- 株価 ----------
+// 分割調整後・概算（米ドル）
+const STOCK=[
+ {x:1999,label:"1999年1月 上場",p:0.04,note:"上場時は1株12ドル。いまの株数に直すと約0.04ドル。"},
+ {x:2001.9,label:"2001年末",p:0.56,note:"Xbox向けチップなどで急成長。ITバブル崩壊の中でも上昇。"},
+ {x:2002.9,label:"2002年末",p:0.10,note:"ITバブル崩壊とXbox契約の問題で約8割下落。"},
+ {x:2007.9,label:"2007年末",p:0.85,note:"ゲームGPUが好調で当時の最高値圏。"},
+ {x:2008.9,label:"2008年末",p:0.20,note:"リーマンショックと不良チップ問題で急落。"},
+ {x:2012.9,label:"2012年末",p:0.31,note:"AlexNetでAIへの扉が開くが、株価はまだ静か。"},
+ {x:2015.9,label:"2015年末",p:0.82,note:"ゲームとデータセンターが伸び始める。"},
+ {x:2016.9,label:"2016年末",p:2.67,note:"AIと仮想通貨の需要で1年で約3倍に。"},
+ {x:2017.9,label:"2017年末",p:4.84,note:"Volta/V100登場、AI企業として注目。"},
+ {x:2018.9,label:"2018年末",p:3.34,note:"仮想通貨ブームの反動で秋に急落。"},
+ {x:2019.9,label:"2019年末",p:5.88,note:"メラノックス買収を発表。"},
+ {x:2020.9,label:"2020年末",p:13.05,note:"コロナ禍でゲーム・クラウド需要が拡大し約2倍。"},
+ {x:2021.9,label:"2021年末",p:29.41,note:"メタバース期待などで再び約2倍。7月に4分割。"},
+ {x:2022.9,label:"2022年末",p:14.61,note:"金利上昇と在庫調整で約半分に。11月にChatGPT登場。"},
+ {x:2023.9,label:"2023年末",p:49.52,note:"生成AIブームで約3.4倍。時価総額1兆ドルへ。"},
+ {x:2024.9,label:"2024年末",p:134.29,note:"6月に10分割、一時世界一の時価総額。約2.7倍。"},
+ {x:2025.9,label:"2025年末",p:186.50,note:"4兆・5兆ドルを突破。年間では約+39%。"},
+ {x:2026.76,label:"2026年10月6日",p:239.24,note:"終値の過去最高値。"},
+ {x:2026.86,label:"2026年11月10日",p:168.89,note:"約5週間で最高値から約29%下落し、2026年の上昇分が消えた。"}
+];
+let scale="log";
+document.querySelectorAll("#scaleSeg button").forEach(b=>b.onclick=()=>{
+  scale=b.dataset.s;document.querySelectorAll("#scaleSeg button").forEach(x=>x.classList.toggle("on",x===b));drawStock();
+});
+function drawStock(selIdx){
+  const svg=document.getElementById("stockChart");
+  const W=360,H=230,L=40,R=10,T=12,B=26;
+  const x0=1999,x1=2027;
+  const sx=x=>L+(x-x0)/(x1-x0)*(W-L-R);
+  let sy,ticks;
+  if(scale==="log"){
+    const a=Math.log10(0.02),b=Math.log10(400);
+    sy=p=>T+(1-(Math.log10(p)-a)/(b-a))*(H-T-B);
+    ticks=[0.1,1,10,100];
+  }else{
+    sy=p=>T+(1-p/260)*(H-T-B);
+    ticks=[0,50,100,150,200,250];
+  }
+  let g="";
+  ticks.forEach(t=>{const y=sy(t||0.0001);g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#2c3228" stroke-dasharray="2 3"/><text x="${L-5}" y="${y+3}" fill="#a8b1a0" font-size="9" text-anchor="end">$${t}</text>`;});
+  [2000,2005,2010,2015,2020,2025].forEach(yr=>{g+=`<text x="${sx(yr)}" y="${H-8}" fill="#a8b1a0" font-size="9" text-anchor="middle">${yr}</text>`;});
+  const pts=STOCK.map(d=>[sx(d.x),sy(d.p)]);
+  const path=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const area=path+` L${pts[pts.length-1][0]} ${H-B} L${pts[0][0]} ${H-B} Z`;
+  g+=`<defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#76b900" stop-opacity=".35"/><stop offset="1" stop-color="#76b900" stop-opacity="0"/></linearGradient></defs>`;
+  g+=`<path d="${area}" fill="url(#ga)"/><path d="${path}" fill="none" stroke="#a3e635" stroke-width="2.2" stroke-linejoin="round"/>`;
+  pts.forEach((p,i)=>{
+    const on=i===selIdx;
+    g+=`<circle cx="${p[0]}" cy="${p[1]}" r="${on?6:3.5}" fill="${on?"#a3e635":"#0d0f0c"}" stroke="#a3e635" stroke-width="2"/>`;
+    g+=`<circle class="hit" data-i="${i}" cx="${p[0]}" cy="${p[1]}" r="12" fill="transparent"/>`;
+  });
+  svg.innerHTML=g;
+  svg.querySelectorAll(".hit").forEach(c=>c.onclick=()=>{
+    const i=+c.dataset.i,d=STOCK[i];
+    document.getElementById("stockTip").innerHTML=`<b>${d.label}　$${d.p<1?d.p.toFixed(2):d.p.toFixed(2)}</b><br>${d.note}`;
+    drawStock(i);
+  });
+}
+// 計算機
+const CALC=STOCK.filter(d=>d.x<2026.5);
+const sel=document.getElementById("buyYear");
+sel.innerHTML=CALC.map((d,i)=>`<option value="${i}">${d.label}に買っていたら</option>`).join("");
+sel.value=String(CALC.findIndex(d=>d.label==="2022年末"));
+function calc(){
+  const d=CALC[+sel.value],now=168.89,r=now/d.p;
+  const v=100000*r;
+  const fmt=v>=1e8?(v/1e8).toFixed(1)+"億円":v>=1e4?Math.round(v/1e4).toLocaleString()+"万円":Math.round(v).toLocaleString()+"円";
+  document.getElementById("calcResult").innerHTML=`10万円 → <span class="big" style="font-size:24px">${fmt}</span><br><span class="small">約${r>=10?Math.round(r).toLocaleString():r.toFixed(1)}倍（$${d.p} → $${now}）</span>`;
+}
+sel.onchange=calc;calc();
+</script>
+</body>
+</html>
